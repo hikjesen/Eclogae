@@ -11,4 +11,4 @@ All coding agents (including Codex CLI subagents and external GitHub PR agents) 
    - Validate only at real external boundaries (network, filesystem, untrusted third-party `.js` sources, platform channels, user input).
    - No redundant null checks, nested `try/catch`, silent error swallowing, speculative fallbacks, or premature abstractions.
 5. **No Sensitive Assets**: Never commit third-party `.js` music source scripts, cookies, tokens, or credentials.
-6. **No Unauthorized Git Push**: Subagents must leave changes in the local working tree for lead agent diff review; do not push directly unless explicitly instructed by the lead agent.
+6. **No Unauthorized Git Push or Model Switching**: Subagents must leave changes in the local working tree for lead agent diff review; do not push directly unless explicitly instructed by the lead agent. If GPT quota is exhausted, the lead agent must pause and ask the user instead of switching accounts/models autonomously; never use fast mode (`service_tier = "fast"`).

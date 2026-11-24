@@ -77,4 +77,6 @@ GPT 模型普遍存在严重的**过度防御性编程**倾向，表现为大量
   '@ | & $codex exec --ephemeral -m gpt-6.2-sol -c model_reasoning_effort=high -s workspace-write -C "d:\namida项目\namida" -
   ```
 - **已验证模型与思维预算**：默认使用 `gpt-6.2-sol`（已实测 `read-only` 与 `workspace-write` 均可正常响应并写入工作区）。推理强度允许按任务复杂度灵活使用 `high` / `xhigh` / `max`，**禁止使用过低档位（如 `low`）**。
+- **禁止启用快速模式（Fast Mode）**：始终保持默认标准档位（`service_tier = "default"`），严禁开启或覆写为 `service_tier = "fast"`。
+- **额度耗尽处理铁律（严禁擅自切换）**：一旦 GPT / Codex 额度用尽、触发限额或配额报错，**必须立即停止当前编码派发并向用户询问处理方式**（例如：由用户更换账号、切换到指定非官方模型通道，或其他方案），**严禁主控 Agent 自行做决定或擅自切换模型/代理通道**。
 - **权限与安全**：Codex 仅在指定工作目录内执行限定编码任务，完成后由主控 Agent 审查 `git diff` 并负责后续 Git/CI 操作；Codex 严禁自行 `git push` 或回调主控 Agent。
