@@ -59,7 +59,7 @@ jobs:
         run: flutter gen-l10n
 
       - name: Analyze Dart
-        run: dart analyze --no-fatal-infos --no-fatal-warnings
+        run: dart analyze --no-fatal-warnings lib packages_compat
 
       - name: Build ARM64 release APK
         env:
