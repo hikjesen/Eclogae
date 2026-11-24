@@ -1,0 +1,74 @@
+name: Build Namida LX for Android
+
+on:
+  push:
+    branches: [main, 'feat/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build_android_arm64:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Initialize public submodules
+        run: git submodule update --init --depth 1 external/language external/party_relay external/namida-assets
+
+      - name: Free disk space
+        continue-on-error: true
+        run: |
+          sudo apt clean
+          docker image prune -af
+          df -h
+
+      - name: Remove unused SDKs
+        continue-on-error: true
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/share/vcpkg
+          sudo rm -rf /usr/local/share/miniconda
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /opt/hostedtoolcache/Swift
+          df -h
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: pubspec.yaml
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
+      - name: Analyze Dart
+        run: dart analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Build ARM64 release APK
+        env:
+          ORG_GRADLE_PROJECT_namidaLxArm64: 'true'
+        run: flutter build apk --target-platform android-arm64 --release
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: namida-lx-arm64-apk
+          path: build/app/outputs/flutter-apk/*.apk
+          if-no-files-found: error
+          retention-days: 14

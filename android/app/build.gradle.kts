@@ -20,11 +20,14 @@ if (localPropertiesFile.exists()) {
 
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
-if (keystorePropertiesFile.exists()) {
+val hasKeystoreProperties = keystorePropertiesFile.exists()
+if (hasKeystoreProperties) {
     keystorePropertiesFile.inputStream().use { stream ->
         keystoreProperties.load(stream)
     }
 }
+
+val namidaLxArm64 = project.hasProperty("namidaLxArm64")
 
 kotlin {
     jvmToolchain(17)
@@ -37,11 +40,13 @@ android {
     
     splits {
         abi {
-            isEnable = true
-            reset()
-            // -- no x86: ffmpeg_kit_extended_flutter ships no 32-bit x86 library
-            include("armeabi-v7a", "arm64-v8a", "x86_64")
-            isUniversalApk = true
+            isEnable = !namidaLxArm64
+            if (isEnable) {
+                reset()
+                // -- no x86: ffmpeg_kit_extended_flutter ships no 32-bit x86 library
+                include("armeabi-v7a", "arm64-v8a", "x86_64")
+                isUniversalApk = true
+            }
         }
     }
 
@@ -52,12 +57,18 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.msob7y.namida"
+        applicationId = "com.msob7y.namida.lx"
         minSdk = 26 // -- ffmpeg_kit_extended_flutter needs 26
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true
+        if (namidaLxArm64) {
+            ndk {
+                abiFilters.clear()
+                abiFilters.add("arm64-v8a")
+            }
+        }
     }
 
     packaging {
@@ -84,25 +95,14 @@ android {
     }
 
     signingConfigs {
-        getByName("debug") {
-            keyAlias = keystoreProperties["keyAlias"] as? String
-            keyPassword = keystoreProperties["keyPassword"] as? String
-            storeFile = (keystoreProperties["storeFile"] as? String)?.let { file(it) }
-            storePassword = keystoreProperties["storePassword"] as? String
-        }
-
-        register("release") {
-            keyAlias = keystoreProperties["keyAlias"] as? String
-            keyPassword = keystoreProperties["keyPassword"] as? String
-            storeFile = (keystoreProperties["storeFile"] as? String)?.let { file(it) }
-            storePassword = keystoreProperties["storePassword"] as? String
-        }
-
-        register("certificate") {
-            keyAlias = keystoreProperties["keyAlias"] as? String
-            keyPassword = keystoreProperties["keyPassword"] as? String
-            storeFile = (keystoreProperties["storeFile"] as? String)?.let { file(it) }
-            storePassword = keystoreProperties["storePassword"] as? String
+        if (hasKeystoreProperties) {
+            val configuredSignings = listOf(getByName("debug"), create("release"), create("certificate"))
+            for (config in configuredSignings) {
+                config.keyAlias = keystoreProperties.getProperty("keyAlias")
+                config.keyPassword = keystoreProperties.getProperty("keyPassword")
+                config.storeFile = file(keystoreProperties.getProperty("storeFile"))
+                config.storePassword = keystoreProperties.getProperty("storePassword")
+            }
         }
     }
 
@@ -118,7 +118,7 @@ android {
         }
 
         named("release") {
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.getByName(if (hasKeystoreProperties) "release" else "debug")
             isShrinkResources = false
             isMinifyEnabled = true
             setProguardFiles(listOf(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"))

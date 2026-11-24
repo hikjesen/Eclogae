@@ -1,0 +1,30 @@
+name: basic_audio_handler
+description: Audio handler compatibility package for Namida.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.13.7 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  audio_session: ^0.2.0
+  just_audio:
+    git:
+      url: https://github.com/MSOB7YY/just_audio
+      path: just_audio/
+      ref: video
+  audio_service:
+    git:
+      url: https://github.com/MSOB7YY/audio_service
+      path: audio_service/
+      ref: minor
+  nampack:
+    git:
+      url: https://github.com/MSOB7YY/nampack
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter

@@ -1,0 +1,5 @@
+name: flutter_sharing_intent
+publish_to: none
+
+environment:
+  sdk: ">=3.13.7 <4.0.0"

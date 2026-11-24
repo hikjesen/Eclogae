@@ -1,0 +1,22 @@
+name: playlist_manager
+description: JSON-backed playlists and favourites for Namida.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.13.7 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  path: ^1.9.0
+  nampack:
+    git:
+      url: https://github.com/MSOB7YY/nampack
+  dart_extensions:
+    git:
+      url: https://github.com/MSOB7YY/dart_extensions
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

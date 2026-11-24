@@ -1,0 +1,21 @@
+name: youtipie
+description: Offline Youtipie compatibility package for Namida LX.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: '>=3.13.7 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  logger: ^2.2.0
+  nampack:
+    git:
+      url: https://github.com/MSOB7YY/nampack
+  namico_login_manager:
+    path: ../namico_login_manager
+  rhttp:
+    git:
+      url: https://codeberg.org/MSOB7YY/rhttp
+      path: rhttp

@@ -28,7 +28,7 @@
      </intent>
      </queries>
     <application
-        android:label="Namida"
+        android:label="Namida LX"
         android:name=".NamidaApplication"
         android:icon="@mipmap/ic_launcher"
         android:appCategory="audio"
@@ -560,7 +560,7 @@
         <service
             android:name="NamidaQuickSettingsTile"
             android:exported="true"
-            android:label="Namida" 
+            android:label="Namida LX"
             android:icon="@drawable/ic_stat_musicnote"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <meta-data android:name="android.service.quicksettings.TOGGLEABLE_TILE"
@@ -572,7 +572,7 @@
         <service
             android:name="NamidaShuffleQuickSettingsTile"
             android:exported="true"
-            android:label="Namida Shuffle"
+            android:label="Namida LX Shuffle"
             android:icon="@drawable/shuffle"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <meta-data android:name="android.service.quicksettings.TOGGLEABLE_TILE"
