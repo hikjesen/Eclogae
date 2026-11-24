@@ -17,7 +17,7 @@ class LxUserApiStore {
 
   Future<({List<LxUserApiMeta> scripts, String? activeId})> loadAll() async {
     final manifest = File(p.join((await _root).path, 'manifest.json'));
-    if (!await manifest.exists()) return (scripts: const [], activeId: null);
+    if (!await manifest.exists()) return (scripts: const <LxUserApiMeta>[], activeId: null);
     final json = jsonDecode(await manifest.readAsString()) as Map<String, dynamic>;
     return (
       scripts: (json['scripts'] as List<dynamic>).map((data) => LxUserApiMeta.fromJson(data as Map<String, dynamic>)).toList(),
