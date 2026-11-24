@@ -51,3 +51,5 @@
 -keepclassmembers class com.ryanheise.audioservice.AudioService {
     static com.ryanheise.audioservice.AudioService instance;
 }
+-keep class com.whl.quickjs.** { *; }
+-keep class com.msob7y.namida.lx.** { *; }

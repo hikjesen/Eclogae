@@ -61,6 +61,19 @@ jobs:
       - name: Analyze Dart
         run: dart analyze --no-fatal-warnings lib packages_compat
 
+      - name: Configure fixed Android signing
+        env:
+          KEYSTORE_B64: ${{ secrets.LX_ANDROID_KEYSTORE_B64 }}
+          KEY_PROPERTIES_B64: ${{ secrets.LX_ANDROID_KEY_PROPERTIES_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ] && [ -n "$KEY_PROPERTIES_B64" ]; then
+            printf '%s' "$KEYSTORE_B64" | base64 -d > android/app/keystore.jks
+            printf '%s' "$KEY_PROPERTIES_B64" | base64 -d > android/key.properties
+            echo "Fixed Android signing configured from Actions Secrets."
+          else
+            echo "::warning::LX_ANDROID_KEYSTORE_B64 or LX_ANDROID_KEY_PROPERTIES_B64 not set; falling back to ephemeral debug signing."
+          fi
+
       - name: Build ARM64 release APK
         env:
           ORG_GRADLE_PROJECT_namidaLxArm64: 'true'

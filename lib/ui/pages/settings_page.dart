@@ -14,6 +14,7 @@ import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/lx_music/lx_prototype_page.dart';
 import 'package:namida/main_page_wrapper.dart';
 import 'package:namida/ui/pages/party_page.dart';
 import 'package:namida/ui/pages/sync_manager_page.dart';
@@ -59,6 +60,16 @@ class SettingsPage extends StatelessWidget with NamidaRouteWidget {
                       ExtrasSettings(),
                       BackupAndRestore(),
                       AdvancedSettings(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12.0),
+                        child: CustomCollapsedListTile(
+                          title: _lxPrototypeTitle,
+                          subtitle: LxPrototypePage.subtitle,
+                          icon: Icons.science_outlined,
+                          page: null,
+                          rawPage: _lxPrototypePage,
+                        ),
+                      ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 12.0),
                         child: AboutPageTileWidget(),
@@ -188,6 +199,13 @@ class CollapsedSettingTiles extends StatelessWidget {
           icon: Broken.hierarchy_3,
           page: () => const AdvancedSettings(),
         ),
+        const CustomCollapsedListTile(
+          title: _lxPrototypeTitle,
+          subtitle: LxPrototypePage.subtitle,
+          icon: Icons.science_outlined,
+          page: null,
+          rawPage: _lxPrototypePage,
+        ),
         const AboutPageTileWidget(),
         // const CollapsedSettingTileWidget(),
         kBottomPaddingWidget,
@@ -195,6 +213,9 @@ class CollapsedSettingTiles extends StatelessWidget {
     );
   }
 }
+
+String _lxPrototypeTitle() => LxPrototypePage.title;
+LxPrototypePage _lxPrototypePage() => const LxPrototypePage();
 
 class CustomCollapsedListTile extends StatelessWidget {
   final Color? bgColor;

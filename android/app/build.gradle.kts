@@ -143,6 +143,7 @@ repositories {
 }
 
 dependencies {
+    implementation("wang.harlon.quickjs:wrapper-android:2.4.0")
     implementation("com.github.chr56:jaudiotagger:0.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
     implementation("androidx.glance:glance-appwidget") {

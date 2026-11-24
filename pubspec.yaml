@@ -313,6 +313,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/lx/
     - assets/fonts/
     - assets/icons/
     - assets/icons/media_ico/

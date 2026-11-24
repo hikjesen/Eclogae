@@ -35,6 +35,7 @@ class NamidaAppChannels private constructor(private val context: Context) {
   private var multicastLock: WifiManager.MulticastLock? = null
 
   fun configureEngine(flutterEngine: FlutterEngine) {
+    com.msob7y.namida.lx.LxQuickJsBridge.get(context).attach(flutterEngine)
     try {
       flutterEngine.plugins.add(FAudioTagger())
     } catch (e: Exception) {
