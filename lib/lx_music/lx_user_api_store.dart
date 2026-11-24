@@ -9,7 +9,7 @@ import 'lx_models.dart';
 
 class LxUserApiStore {
   static final _headerPattern = RegExp(r'^/\*[\s\S]+?\*/');
-  static final _fieldPattern = RegExp(r'^\s?\*\s?@(\w+)\s(.+)$');
+  static final _fieldPattern = RegExp(r'^\s*(?:\*\s*)?@(\w+)\s+(.+)$');
   static final _idPattern = RegExp(r'^user_api_[a-f0-9-]+$');
   static const _fieldLengths = {'name': 24, 'description': 36, 'author': 56, 'homepage': 1024, 'version': 36};
 
@@ -28,13 +28,16 @@ class LxUserApiStore {
   Future<LxUserApiMeta> importFromFile(File file) async {
     final fileName = p.basename(file.path);
     if (p.extension(fileName).toLowerCase() != '.js') throw const FormatException('请选择 .js 音源文件');
-    final raw = await file.readAsString();
-    final script = raw.startsWith('\uFEFF') ? raw.substring(1) : raw;
+    return importFromScriptContent(await file.readAsString(), fileName: fileName);
+  }
+
+  Future<LxUserApiMeta> importFromScriptContent(String rawScript, {required String fileName}) async {
+    final script = rawScript.startsWith('\uFEFF') ? rawScript.substring(1) : rawScript;
     final header = _headerPattern.stringMatch(script);
     if (header == null) throw const FormatException('文件开头缺少 LX 音源注释');
 
     final fields = <String, String>{};
-    for (final line in const LineSplitter().convert(header)) {
+    for (final line in const LineSplitter().convert(header.substring(2, header.length - 2))) {
       final field = _fieldPattern.firstMatch(line);
       if (field == null) continue;
       final key = field[1]!;
@@ -59,12 +62,25 @@ class LxUserApiStore {
     final saved = await loadAll();
     final target = await _scriptFile(meta.id);
     await target.parent.create(recursive: true);
-    await target.writeAsString(script, flush: true);
-    await _writeManifest([...saved.scripts, meta], saved.activeId);
-    return meta;
+    try {
+      await target.writeAsString(script, flush: true);
+      await _writeManifest([...saved.scripts, meta], saved.activeId);
+      return meta;
+    } on FileSystemException {
+      if (await target.exists()) await target.delete();
+      rethrow;
+    }
   }
 
   Future<String> readScript(LxUserApiMeta meta) async => (await _scriptFile(meta.id)).readAsString();
+
+  Future<LxDownloadSettings> loadSettings() async {
+    final file = File(p.join((await _root).path, 'settings.json'));
+    if (!await file.exists()) return const LxDownloadSettings();
+    return LxDownloadSettings.fromJson(jsonDecode(await file.readAsString()) as Map<String, dynamic>);
+  }
+
+  Future<void> saveSettings(LxDownloadSettings settings) => _writeJson('settings.json', settings.toJson());
 
   Future<void> setActiveId(String? id) async {
     final saved = await loadAll();
@@ -84,11 +100,19 @@ class LxUserApiStore {
     return File(p.join((await _root).path, 'sources', '$id.js'));
   }
 
-  Future<void> _writeManifest(List<LxUserApiMeta> scripts, String? activeId) async {
+  Future<void> _writeManifest(List<LxUserApiMeta> scripts, String? activeId) =>
+      _writeJson('manifest.json', {'scripts': scripts, 'activeId': activeId});
+
+  Future<void> _writeJson(String fileName, Map<String, dynamic> json) async {
     final root = await _root;
     await root.create(recursive: true);
-    final staging = File(p.join(root.path, 'manifest.json.tmp'));
-    await staging.writeAsString(jsonEncode({'scripts': scripts, 'activeId': activeId}), flush: true);
-    await staging.rename(p.join(root.path, 'manifest.json'));
+    final staging = File(p.join(root.path, '$fileName.${const Uuid().v4()}.tmp'));
+    try {
+      await staging.writeAsString(jsonEncode(json), flush: true);
+      await staging.rename(p.join(root.path, fileName));
+    } on FileSystemException {
+      if (await staging.exists()) await staging.delete();
+      rethrow;
+    }
   }
 }

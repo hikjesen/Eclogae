@@ -29,6 +29,7 @@ class LxBridgeService {
   static const _bridge = MethodChannel('namida/lx_bridge');
   static const _events = EventChannel('namida/lx_events');
   static const _timeout = Duration(seconds: 20);
+  static const _maxScriptBytes = 2 * 1024 * 1024;
   static const _unsupported = 'LX 桥接仅支持 Android';
 
   final scriptsNotifier = ValueNotifier<List<LxUserApiMeta>>(const []);
@@ -90,11 +91,60 @@ class LxBridgeService {
 
   Future<void> importScript(File file) => _changeScripts(() async {
     final meta = await _store.importFromFile(file);
+    await _activateImportedScript(meta);
+  });
+
+  Future<Uint8List> fetchBinary(String url, {Map<String, String>? headers}) async => _fetchBinary(_httpUri(url), headers: headers);
+
+  Future<void> importScriptFromUrl(String url) async {
+    final uri = _httpUri(url);
+    await _changeScripts(() async {
+      final bytes = await _fetchBinary(uri, maxBytes: _maxScriptBytes);
+      final script = _decodeScript(bytes);
+      final name = (uri.pathSegments.lastOrNull ?? '').replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1f]'), '_').trim();
+      final fileName = name.isEmpty ? 'source.js' : (name.toLowerCase().endsWith('.js') ? name : '$name.js');
+      final meta = await _store.importFromScriptContent(script, fileName: fileName);
+      await _activateImportedScript(meta, host: uri.host);
+    });
+  }
+
+  Future<Uint8List> _fetchBinary(Uri uri, {Map<String, String>? headers, int? maxBytes}) async {
+    final response = await _httpProxy.execute(
+      requestKey: 'http_${_nextId++}',
+      url: uri.toString(),
+      options: {'binary': true, 'timeout': _timeout.inMilliseconds, 'headers': headers ?? const {'Accept': '*/*'}},
+    );
+    final status = response['statusCode'] as int;
+    if (status != 200) throw HttpException('HTTP 请求失败（$status）');
+    final body = response['body'] as String;
+    if (maxBytes != null && body.length > ((maxBytes + 2) ~/ 3) * 4) throw const FormatException('在线音源文件超过 2 MB');
+    final bytes = base64Decode(body);
+    if (maxBytes != null && bytes.length > maxBytes) throw const FormatException('在线音源文件超过 2 MB');
+    return bytes;
+  }
+
+  static Uri _httpUri(String url) {
+    final uri = Uri.tryParse(url.trim());
+    if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https') || uri.host.isEmpty) {
+      throw const FormatException('请输入有效的 HTTP 或 HTTPS 地址');
+    }
+    return uri;
+  }
+
+  static String _decodeScript(Uint8List bytes) {
+    try {
+      return utf8.decode(bytes);
+    } on FormatException {
+      throw const FormatException('在线音源文件必须使用 UTF-8 编码');
+    }
+  }
+
+  Future<void> _activateImportedScript(LxUserApiMeta meta, {String? host}) async {
     scriptsNotifier.value = List.unmodifiable([...scriptsNotifier.value, meta]);
-    _log(_Engine.userApi.code, 'info', '已导入 ${meta.name}');
+    _log(_Engine.userApi.code, 'info', '已导入 ${meta.name}${host == null ? '' : '（$host）'}');
     await _store.setActiveId(meta.id);
     await _activate(meta);
-  });
+  }
 
   Future<void> activateScript(String id) => _changeScripts(() async {
     final meta = scriptsNotifier.value.firstWhere((script) => script.id == id);
@@ -354,6 +404,8 @@ class LxBridgeService {
     StateError(:final message) => message,
     _ => error.toString().replaceFirst('Exception: ', ''),
   };
+
+  void logDiagnostic(String engine, String level, String message) => _log(engine, level, message);
 
   void _log(String engine, String level, String message) {
     if (_logs.length == 200) _logs.removeFirst();

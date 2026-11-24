@@ -31,6 +31,7 @@ import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/themes.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/lx_music/lx_app_bar_icon.dart';
 import 'package:namida/main_page_wrapper.dart';
 import 'package:namida/packages/searchbar_animation.dart';
 import 'package:namida/ui/dialogs/queue_insertion_dialogs.dart';
@@ -976,6 +977,7 @@ class _CustomAppBar extends StatelessWidget {
             ),
             const DateEggAppBarIcon(),
             const DownloadsAppBarIcon(),
+            const LxMusicAppBarIcon(),
             ...?actions,
           ],
         );

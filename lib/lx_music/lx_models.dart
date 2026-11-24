@@ -1,3 +1,5 @@
+import 'package:namida/class/track.dart';
+
 enum LxPlatform {
   kw('酷我'),
   kg('酷狗'),
@@ -144,4 +146,144 @@ class LxLogEntry {
 
   @override
   String toString() => '${timestamp.toIso8601String()} [$engine/$level] $message';
+}
+
+class LxDownloadSettings {
+  const LxDownloadSettings({
+    this.downloadDir,
+    this.preferredQuality = 'flac',
+    this.autoSwitchSource = true,
+    this.exportLrc = true,
+    this.embedCover = true,
+  });
+
+  static const qualityOptions = ['flac24bit', 'flac', '320k', '128k'];
+  static const _unchanged = Object();
+
+  final String? downloadDir;
+  final String preferredQuality;
+  final bool autoSwitchSource;
+  final bool exportLrc;
+  final bool embedCover;
+
+  LxDownloadSettings copyWith({
+    Object? downloadDir = _unchanged,
+    String? preferredQuality,
+    bool? autoSwitchSource,
+    bool? exportLrc,
+    bool? embedCover,
+  }) => LxDownloadSettings(
+    downloadDir: identical(downloadDir, _unchanged) ? this.downloadDir : downloadDir as String?,
+    preferredQuality: preferredQuality ?? this.preferredQuality,
+    autoSwitchSource: autoSwitchSource ?? this.autoSwitchSource,
+    exportLrc: exportLrc ?? this.exportLrc,
+    embedCover: embedCover ?? this.embedCover,
+  );
+
+  factory LxDownloadSettings.fromJson(Map<String, dynamic> json) => LxDownloadSettings(
+    downloadDir: json['downloadDir'] as String?,
+    preferredQuality: json['preferredQuality'] as String? ?? 'flac',
+    autoSwitchSource: json['autoSwitchSource'] as bool? ?? true,
+    exportLrc: json['exportLrc'] as bool? ?? true,
+    embedCover: json['embedCover'] as bool? ?? true,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'downloadDir': downloadDir,
+    'preferredQuality': preferredQuality,
+    'autoSwitchSource': autoSwitchSource,
+    'exportLrc': exportLrc,
+    'embedCover': embedCover,
+  };
+}
+
+enum LxDownloadStage {
+  queued('排队中'),
+  resolving('解析直链'),
+  downloading('网络下载'),
+  verifying('文件头校验'),
+  tagging('标签与入库'),
+  completed('已完成'),
+  failed('失败'),
+  canceled('已取消');
+
+  const LxDownloadStage(this.label);
+
+  final String label;
+}
+
+class LxDownloadTask {
+  const LxDownloadTask({
+    required this.id,
+    required this.track,
+    required this.requestedQuality,
+    required this.createdAt,
+    this.stage = LxDownloadStage.queued,
+    this.resolvedQuality,
+    this.resolvedSource,
+    this.resolveDetail,
+    this.receivedBytes = 0,
+    this.totalBytes = 0,
+    this.savedPath,
+    this.lrcPath,
+    this.indexedTrack,
+    this.failedStage,
+    this.errorMessage,
+  });
+
+  final String id;
+  final LxTrack track;
+  final String requestedQuality;
+  final LxDownloadStage stage;
+  final String? resolvedQuality;
+  final LxPlatform? resolvedSource;
+  final String? resolveDetail;
+  final int receivedBytes;
+  final int totalBytes;
+  final String? savedPath;
+  final String? lrcPath;
+  final Track? indexedTrack;
+  final LxDownloadStage? failedStage;
+  final String? errorMessage;
+  final DateTime createdAt;
+
+  bool get isActive => switch (stage) {
+    LxDownloadStage.completed || LxDownloadStage.failed || LxDownloadStage.canceled => false,
+    _ => true,
+  };
+
+  bool get canRetry => stage == LxDownloadStage.failed || stage == LxDownloadStage.canceled;
+  bool get canCancel => isActive && stage != LxDownloadStage.tagging;
+  double? get progress => totalBytes > 0 ? (receivedBytes / totalBytes).clamp(0.0, 1.0).toDouble() : null;
+
+  LxDownloadTask copyWith({
+    String? requestedQuality,
+    LxDownloadStage? stage,
+    String? resolvedQuality,
+    LxPlatform? resolvedSource,
+    String? resolveDetail,
+    int? receivedBytes,
+    int? totalBytes,
+    String? savedPath,
+    String? lrcPath,
+    Track? indexedTrack,
+    LxDownloadStage? failedStage,
+    String? errorMessage,
+  }) => LxDownloadTask(
+    id: id,
+    track: track,
+    requestedQuality: requestedQuality ?? this.requestedQuality,
+    createdAt: createdAt,
+    stage: stage ?? this.stage,
+    resolvedQuality: resolvedQuality ?? this.resolvedQuality,
+    resolvedSource: resolvedSource ?? this.resolvedSource,
+    resolveDetail: resolveDetail ?? this.resolveDetail,
+    receivedBytes: receivedBytes ?? this.receivedBytes,
+    totalBytes: totalBytes ?? this.totalBytes,
+    savedPath: savedPath ?? this.savedPath,
+    lrcPath: lrcPath ?? this.lrcPath,
+    indexedTrack: indexedTrack ?? this.indexedTrack,
+    failedStage: failedStage ?? this.failedStage,
+    errorMessage: errorMessage ?? this.errorMessage,
+  );
 }
