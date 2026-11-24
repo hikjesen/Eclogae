@@ -33,5 +33,9 @@ class FavouritePlaylist<T, E, S> extends Rx<GeneralPlaylist<T, S>> {
 
   bool isItemFavourite(T item) => isSubItemFavourite(_identifyBy(item));
   bool isSubItemFavourite(E item) => _items.containsKey(item);
-  T? firstItemForSubItem(E item) => _items[item];
+
+  ({T item})? firstItemForSubItem(E item) {
+    final match = _items[item];
+    return match == null ? null : (item: match);
+  }
 }

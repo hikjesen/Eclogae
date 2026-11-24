@@ -12,6 +12,10 @@ class CacheDetailsBase {
 class CacheDetails<T> {
   const CacheDetails();
 
+  // The offline backend has no cache entries to age or read.
+  CacheDetails<T> withMaxPeriod({required Duration allowedDuration}) => this;
+  (T, bool)? readSyncRaw() => null;
+
   Future<T?> read() async => null;
   T? readSync() => null;
 }

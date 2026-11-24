@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -379,18 +380,22 @@ class SponsorBlockService {
   Future<SponsorBlockSegmentsResult?> getSegments(
     String videoId, {
     required List<String> categories,
-    required String serverAddress,
+    required String? serverAddress,
     ExecuteDetails? details,
-  }) async => const SponsorBlockSegmentsResult();
+  }) async => SponsorBlockSegmentsResult();
 
-  Future<void> trackSkippedSegment(String uuid, {required String serverAddress}) async {}
+  Future<void> trackSkippedSegment(String uuid, {required String? serverAddress}) async {}
+}
+
+extension type DislikeVoteRequest(Future<void> _future) implements Future<void> {
+  Future<void> ignoreError() => _future.onError((_, _) {});
 }
 
 class DislikeService {
   const DislikeService();
 
   Future<({int? dislikes})?> fetchDislikes(String videoId) async => null;
-  Future<void> sendVoteAction(String videoId, LikeAction action) async {}
+  DislikeVoteRequest sendVoteAction(String videoId, LikeAction action) => DislikeVoteRequest(Future<void>.value());
 }
 
 class MissingInfoService {

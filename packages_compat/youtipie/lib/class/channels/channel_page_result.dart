@@ -3,7 +3,7 @@ import 'channel_info.dart';
 import 'channel_tab.dart';
 
 class YoutiPieChannelPageResult extends YoutiPieChannelInfo {
-  const YoutiPieChannelPageResult({
+  YoutiPieChannelPageResult({
     required super.id,
     super.handler,
     super.title,
@@ -14,6 +14,7 @@ class YoutiPieChannelPageResult extends YoutiPieChannelInfo {
     super.channelEngagement,
     super.subscribed,
     super.notifications,
+    super.notificationParameters,
     this.tabs = const [],
     this.banners = const [],
     this.tvbanners = const [],

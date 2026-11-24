@@ -3,7 +3,7 @@ import '../../core/url_utils.dart';
 import '../youtipie_feed/channel_info_item.dart';
 
 class YoutiPieChannelInfo extends ChannelInfoItem {
-  const YoutiPieChannelInfo({
+  YoutiPieChannelInfo({
     required super.id,
     super.handler,
     super.title,
@@ -14,13 +14,26 @@ class YoutiPieChannelInfo extends ChannelInfoItem {
     this.channelEngagement,
     this.subscribed,
     this.notifications,
+    this.notificationParameters,
   });
 
   final int? subscribersCount;
   final String? subscribersCountText;
-  final bool? isVerified, subscribed;
+  final bool? isVerified;
   final ChannelEngagement? channelEngagement;
-  final ChannelNotifications? notifications;
+  bool? subscribed;
+  ChannelNotifications? notifications;
+  Map<ChannelNotifications, String>? notificationParameters;
+
+  void rebuild({
+    required bool? newSubscribed,
+    required ChannelNotifications? newNotifications,
+    required Map<ChannelNotifications, String>? newNotificationParameters,
+  }) {
+    subscribed = newSubscribed;
+    notifications = newNotifications;
+    notificationParameters = newNotificationParameters;
+  }
 
   String buildUrl() => YTUrlUtils.buildChannelUrl(id);
 }

@@ -19,5 +19,7 @@ class YoutiPieCommentResult extends YoutiPieListWrapper<CommentInfoItem> {
   final String? createParams;
   final Map<CommentsSortType, String> sorters;
 
+  CommentInfoItem? operator [](int index) => index >= 0 && index < items.length ? items[index] : null;
+
   void transferLocalItemsTo(YoutiPieCommentResult result) {}
 }

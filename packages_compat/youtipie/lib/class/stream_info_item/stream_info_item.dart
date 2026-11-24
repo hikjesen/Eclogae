@@ -1,3 +1,4 @@
+import '../../core/url_utils.dart';
 import '../publish_time.dart';
 import '../thumbnail.dart';
 import '../youtipie_feed/channel_info_item.dart';
@@ -41,6 +42,8 @@ class StreamInfoItem extends YoutubeFeed {
   String? get availableDescription => shortDescription;
   @override
   bool get isShortContent => isActuallyShortContent ?? false;
+
+  String buildUrl() => YTUrlUtils.buildVideoUrl(id);
 
   factory StreamInfoItem.fromMap(Map<Object?, Object?> map) {
     final channel = map['channel'] as Map<Object?, Object?>?;

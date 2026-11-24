@@ -12,9 +12,13 @@ class QueueShuffler<Q> {
   }
 
   static void swap<T>(List<T> items, List<int>? pairedIndices, int a, int b) {
-    (items[a], items[b]) = (items[b], items[a]);
+    final item = items[a];
+    items[a] = items[b];
+    items[b] = item;
     if (pairedIndices != null) {
-      (pairedIndices[a], pairedIndices[b]) = (pairedIndices[b], pairedIndices[a]);
+      final index = pairedIndices[a];
+      pairedIndices[a] = pairedIndices[b];
+      pairedIndices[b] = index;
     }
   }
 }
@@ -32,6 +36,7 @@ class QueueSnapshot<Q> {
 class PlaybackQueue<Q> {
   final queueRx = Rx<List<Q>>(const <Never>[]);
   List<Q> get value => queueRx.value;
+  int get length => value.length;
   List<int>? get originalIndices => _originalIndices;
   List<int>? _originalIndices;
 

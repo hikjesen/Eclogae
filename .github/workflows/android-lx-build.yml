@@ -20,7 +20,7 @@ jobs:
           persist-credentials: false
 
       - name: Initialize public submodules
-        run: git submodule update --init --depth 1 external/language external/party_relay external/namida-assets
+        run: git submodule update --init --remote --depth 1 external/language external/party_relay external/namida-assets
 
       - name: Free disk space
         continue-on-error: true

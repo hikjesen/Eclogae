@@ -1,7 +1,6 @@
-import '../map_serializable.dart';
 import 'codec_info.dart';
 
-abstract class StreamBase extends MapSerializable {
+abstract class StreamBase {
   const StreamBase({
     required this.itag,
     required this.codecInfo,
@@ -32,7 +31,6 @@ abstract class StreamBase extends MapSerializable {
 
   String bitrateText() => '${bitrate ~/ 1000} kbps';
 
-  @override
   Map<String, Object?> toMap() => {
     'itag': itag,
     'codecInfo': codecInfo.toMap(),

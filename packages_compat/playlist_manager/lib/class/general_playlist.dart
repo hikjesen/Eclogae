@@ -69,6 +69,8 @@ class GeneralPlaylist<T, S> {
   bool get isReadOnly => remoteSource != null;
   bool get canSyncRenames => !isFav && m3uPath == null && !isReadOnly && creationDate > 0;
 
+  String toTagsAndMoodsText() => [...tags, ...moods].join(', ');
+
   factory GeneralPlaylist.fromJson(
     Map<String, dynamic> json,
     T Function(Map<String, dynamic>) itemFromJson,

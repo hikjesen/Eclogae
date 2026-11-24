@@ -222,19 +222,67 @@ class ParametricEqualizer {
     return 10 * math.log(math.max(1e-12, squaredMagnitude(b0, b1, b2) / squaredMagnitude(a0, a1, a2))) / math.ln10;
   }
 
+  String toEqualizerApo() {
+    final output = StringBuffer()..writeln('Preamp: ${computeEffectivePreamp().toStringAsFixed(6)} dB');
+    var channel = EqualizerChannel.all;
+    var filterNumber = 0;
+    for (final band in bands) {
+      if (band.channel != channel) {
+        channel = band.channel;
+        final name = switch (channel) {
+          EqualizerChannel.all => 'all',
+          EqualizerChannel.left => 'L',
+          EqualizerChannel.right => 'R',
+        };
+        output.writeln('Channel: $name');
+      }
+
+      final type = switch (band.type) {
+        EqualizerBandType.peak => 'PK',
+        EqualizerBandType.lowShelf => 'LSC',
+        EqualizerBandType.highShelf => 'HSC',
+        EqualizerBandType.lowPass => 'LPQ',
+        EqualizerBandType.highPass => 'HPQ',
+        EqualizerBandType.bandPass => 'BP',
+        EqualizerBandType.notch => 'NO',
+        EqualizerBandType.allPass => 'AP',
+      };
+      final state = band.enabled ? 'ON' : 'OFF';
+      final gain = band.type.hasGain ? ' Gain ${band.gain.toStringAsFixed(6)} dB' : '';
+      for (var section = 0; section < band.sectionCount; section++) {
+        output.writeln('Filter ${++filterNumber}: $state $type Fc ${band.frequency} Hz$gain Q ${band.sectionQ(section)}');
+      }
+    }
+    return output.toString();
+  }
+
   static ParametricEqualizer? fromEqualizerApo(String input) {
     final bands = <EqualizerBand>[];
     var preamp = 0.0;
     var hasPreamp = false;
+    var channel = EqualizerChannel.all;
     final filter = RegExp(r'^Filter\s*\d*:\s*(ON|OFF)\s+(\w+)\s+Fc\s+([\d.]+)\s+Hz(?:\s+Gain\s+([-+\d.]+)\s+dB)?(?:\s+Q\s+([\d.]+))?', caseSensitive: false);
     final preampLine = RegExp(r'^Preamp:\s*([-+\d.]+)\s*dB', caseSensitive: false);
+    final channelLine = RegExp(r'^Channel:\s*(all|L|R)$', caseSensitive: false);
     const types = {
-      'PK': EqualizerBandType.peak, 'LS': EqualizerBandType.lowShelf, 'HS': EqualizerBandType.highShelf,
-      'LP': EqualizerBandType.lowPass, 'HP': EqualizerBandType.highPass, 'BP': EqualizerBandType.bandPass,
-      'NO': EqualizerBandType.notch, 'AP': EqualizerBandType.allPass,
+      'PK': EqualizerBandType.peak,
+      'LS': EqualizerBandType.lowShelf, 'LSC': EqualizerBandType.lowShelf,
+      'HS': EqualizerBandType.highShelf, 'HSC': EqualizerBandType.highShelf,
+      'LP': EqualizerBandType.lowPass, 'LPQ': EqualizerBandType.lowPass,
+      'HP': EqualizerBandType.highPass, 'HPQ': EqualizerBandType.highPass,
+      'BP': EqualizerBandType.bandPass, 'NO': EqualizerBandType.notch, 'AP': EqualizerBandType.allPass,
     };
     for (final raw in input.split('\n')) {
       final line = raw.trim();
+      final channelName = channelLine.firstMatch(line)?[1];
+      if (channelName != null) {
+        channel = switch (channelName.toUpperCase()) {
+          'L' => EqualizerChannel.left,
+          'R' => EqualizerChannel.right,
+          _ => EqualizerChannel.all,
+        };
+        continue;
+      }
       final gain = double.tryParse(preampLine.firstMatch(line)?.group(1) ?? '');
       if (gain != null) {
         preamp = gain.clamp(kMinPreamp, kMaxPreamp).toDouble();
@@ -247,7 +295,7 @@ class ParametricEqualizer {
       if (type == null || frequency == null) continue;
       bands.add(EqualizerBand(
         id: bands.length, frequency: frequency.clamp(EqualizerBand.kMinFrequency, EqualizerBand.kMaxFrequency).toDouble(),
-        type: type, enabled: match[1]!.toUpperCase() == 'ON',
+        type: type, channel: channel, enabled: match[1]!.toUpperCase() == 'ON',
         gain: (double.tryParse(match[4] ?? '') ?? 0.0).clamp(EqualizerBand.kMinGain, EqualizerBand.kMaxGain).toDouble(),
         q: (double.tryParse(match[5] ?? '') ?? EqualizerBand.kDefaultQ).clamp(EqualizerBand.kMinQ, EqualizerBand.kMaxQ).toDouble(),
       ));
@@ -413,6 +461,19 @@ class PlayerConfigOverrides {
 
   PlayerConfigOverrides copyWithEqualizer(ParametricEqualizer equalizer, EqualizerPreset? preset) =>
     copyWith(equalizer: equalizer, preset: preset);
+
+  PlayerConfigOverrides clear({bool volume = false, bool speed = false, bool pitch = false, bool loudnessEnhancer = false}) => PlayerConfigOverrides(
+    skipSilence: skipSilence,
+    loudnessEnhancerEnabled: loudnessEnhancerEnabled,
+    loudnessEnhancer: loudnessEnhancer ? null : this.loudnessEnhancer,
+    equalizerEnabled: equalizerEnabled,
+    equalizer: equalizer,
+    preset: preset,
+    speed: speed ? null : this.speed,
+    volume: volume ? null : this.volume,
+    pitch: pitch ? null : this.pitch,
+    modifiedDate: modifiedDate,
+  );
 }
 
 ParametricEqualizerMessage _equalizerMessage(ParametricEqualizer? equalizer) => ParametricEqualizerMessage(
@@ -469,6 +530,8 @@ class LoudnessEnhancerExtended {
     targetGainTrack.value = gain;
     return _apply();
   }
+
+  Future<void> refreshEnabled() => _apply();
 
   Future<void> _apply() async {
     final gain = getActualGainFromUser(_enabledUser, _gainUser);

@@ -47,8 +47,18 @@ void main() {
     expect(playlist.moods, ['Calm']);
     expect(playlist.isPinned, isTrue);
     expect(reloaded.tagsFilter.colorsOf(playlist.tags), [0xff123456]);
-    expect(reloaded.favouritesPlaylist.firstItemForSubItem('keep')!.dateAddedMS, 3);
+    expect(reloaded.favouritesPlaylist.firstItemForSubItem('keep')?.item.dateAddedMS, 3);
+    expect(reloaded.favouritesPlaylist.firstItemForSubItem('gone'), isNull);
     expect(reloaded.favouritesPlaylist.isSubItemFavourite('gone'), isFalse);
+  });
+
+  test('playlist display text lists tags before moods', () {
+    final playlist = GeneralPlaylist<_Item, String>(name: 'mix', tracks: [], creationDate: 0, modifiedDate: 0);
+
+    expect(playlist.toTagsAndMoodsText(), isEmpty);
+    expect(playlist.copyWith(tags: ['Music/Live']).toTagsAndMoodsText(), 'Music/Live');
+    expect(playlist.copyWith(moods: ['Calm']).toTagsAndMoodsText(), 'Calm');
+    expect(playlist.copyWith(tags: ['Music/Live', 'Mix'], moods: ['Calm']).toTagsAndMoodsText(), 'Music/Live, Mix, Calm');
   });
 
   test('a synchronous favourite toggle survives a concurrent async track sort', () async {

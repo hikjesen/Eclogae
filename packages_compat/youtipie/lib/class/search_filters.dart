@@ -53,6 +53,7 @@ class YoutiPieSearchFilters {
   final YoutiPieSearchDate? after, before;
 
   bool get hasDateRange => after != null || before != null;
+  bool get isDefault => type == defaults.type && sort == defaults.sort && uploadDate == defaults.uploadDate && !hasDateRange;
 
   YoutiPieSearchFilters copyWith({
     YoutiPieSearchType? type,

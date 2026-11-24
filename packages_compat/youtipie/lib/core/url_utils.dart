@@ -15,6 +15,8 @@ abstract final class YTUrlUtils {
 extension YTStringUtils on String {
   static final _videoId = RegExp(r'^[A-Za-z0-9_-]{11}$');
 
+  bool get isDummyVideoId => isEmpty || this == 'null' || contains(' ');
+
   bool isYTTitleFaulty() {
     if (isEmpty || _videoId.hasMatch(this)) return true;
     final host = Uri.tryParse(this)?.host.toLowerCase();

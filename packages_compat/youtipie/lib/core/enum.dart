@@ -1,3 +1,4 @@
+export '../class/feedback_menu_action.dart' show FeedbackMenuActionType;
 export '../class/streams/endscreens/endscreen_item_base.dart' show VideoEndScreenItemType;
 export '../class/search_filters.dart' show YoutiPieSearchType, YoutiPieSearchSort, YoutiPieSearchUploadDate, YoutiPieSearchMatchMode;
 

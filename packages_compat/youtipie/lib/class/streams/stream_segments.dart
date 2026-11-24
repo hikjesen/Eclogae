@@ -1,7 +1,10 @@
+import '../thumbnail.dart';
+
 class StreamSegment {
-  const StreamSegment({required this.title, this.startSeconds});
+  const StreamSegment({required this.title, this.startSeconds, this.thumbnail});
   final String title;
   final int? startSeconds;
+  final YoutiPieThumbnail? thumbnail;
 }
 
 extension StreamSegmentLookup on List<StreamSegment> {
