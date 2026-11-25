@@ -907,8 +907,9 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
 
   @override
   String? itemToTotalListenTimeKey(Q? item) {
+    if (_isPreviewItem(item)) return null;
     return item?.execute(
-      selectable: (finalItem) => LxPreviewPlayer.isPreviewPath(finalItem.track.path) ? null : LibraryCategory.localTracks,
+      selectable: (_) => LibraryCategory.localTracks,
       youtubeID: (_) => LibraryCategory.youtube,
     );
   }

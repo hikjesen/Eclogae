@@ -337,8 +337,7 @@ class LxSearchController extends ChangeNotifier {
 
     final attempts = await Future.wait(platforms.map(searchPlatform));
     final successes = {
-      for (final attempt in attempts)
-        if (attempt.result case final result?) attempt.platform: result,
+      for (final attempt in attempts) attempt.platform: ?attempt.result,
     };
     if (successes.isEmpty) throw attempts.first.error!;
     return successes;
