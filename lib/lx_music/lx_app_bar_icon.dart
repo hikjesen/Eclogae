@@ -8,14 +8,17 @@ import 'package:namida/core/utils.dart';
 import 'package:namida/ui/widgets/custom_widgets.dart';
 
 import 'lx_download_manager.dart';
-import 'lx_music_page.dart';
+import 'lx_settings_page.dart';
 
 class LxMusicAppBarIcon extends StatelessWidget {
   const LxMusicAppBarIcon({super.key});
 
   @override
   Widget build(BuildContext context) => Obx((context) {
-    if (NamidaNavigator.inst.currentRouteR?.route == RouteType.YOUTUBE_HOME) return const SizedBox.shrink();
+    final current = NamidaNavigator.inst.currentRouteR;
+    if (current is LxSettingsPage || current?.route == RouteType.YOUTUBE_HOME || current?.route == RouteType.YOUTUBE_HOME_SECTION) {
+      return const SizedBox.shrink();
+    }
 
     return ValueListenableBuilder<int>(
       valueListenable: LxDownloadManager.inst.activeCountNotifier,
@@ -24,7 +27,7 @@ class LxMusicAppBarIcon extends StatelessWidget {
         return NamidaAppBarIcon(
           icon: Broken.document_download,
           tooltip: () => '在线曲库下载中 ($count)',
-          onPressed: () => LxMusicPage.openSection(1),
+          onPressed: LxSettingsPage.openDownloads,
           child: Stack(
             clipBehavior: Clip.none,
             children: [

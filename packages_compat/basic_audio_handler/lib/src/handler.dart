@@ -411,8 +411,7 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
     if (index < 0 || index >= items.length) return;
     final queueItem = items[index];
     if (index == currentIndex.value && _sourceReady) {
-      await seekToItemStart();
-      if (playWhenReady.value) await onPlayRaw();
+      await _restartCurrentItem(resume: playWhenReady.value);
       return;
     }
     final request = ++_queueNavigationRequest;
@@ -465,8 +464,7 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
         numberOfRepeats.value = _repeatsLeft;
         if (_repeatsLeft == 0) onRepeatModeChange(PlayerRepeatMode.none);
       }
-      await seekToItemStart();
-      await onPlayRaw(attemptFixVolume: false);
+      await _restartCurrentItem(resume: true);
       return;
     }
 
@@ -576,11 +574,60 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
       }
       return;
     }
-    if (checkIfPlaybackEnded && currentState.value == ProcessingState.completed) await seekToItemStart();
+    if (checkIfPlaybackEnded && currentState.value == ProcessingState.completed) {
+      await _restartCurrentItem(resume: true);
+      return;
+    }
     await onPlayRaw();
   }
 
-  Future<void> onPlayRaw({bool attemptFixVolume = true}) async {
+  Future<void> _restartCurrentItem({required bool resume}) async {
+    final player = _player;
+    final item = currentItem.value;
+    final index = currentIndex.value;
+    final selection = _selection;
+    if (player == null || item == null) return;
+    if (!_sourceReady) {
+      if (index >= 0 && index < currentQueue.value.length) await _playQueueIndex(index);
+      return;
+    }
+
+    await onPauseRaw();
+    if (selection != _selection || !identical(item, currentItem.value)) return;
+    try {
+      await seekToItemStart().timeout(const Duration(seconds: 5));
+    } catch (_) {
+      if (selection == _selection && identical(item, currentItem.value)) {
+        final reloadIndex = currentIndex.value;
+        if (reloadIndex >= 0 && reloadIndex < currentQueue.value.length) await _playQueueIndex(reloadIndex);
+      }
+      return;
+    }
+    if (selection != _selection || !identical(item, currentItem.value)) return;
+
+    var state = player.processingState;
+    if (state == ProcessingState.completed || state == ProcessingState.buffering) {
+      try {
+        state = await player.processingStateStream
+            .where((s) => s == ProcessingState.ready || s == ProcessingState.idle)
+            .timeout(const Duration(milliseconds: 500))
+            .first;
+      } catch (_) {
+        state = player.processingState;
+      }
+    }
+    if (selection != _selection || !identical(item, currentItem.value)) return;
+    if (state != ProcessingState.ready) {
+      final reloadIndex = currentIndex.value;
+      if (reloadIndex >= 0 && reloadIndex < currentQueue.value.length) await _playQueueIndex(reloadIndex);
+      return;
+    }
+    if (resume && playWhenReady.value) {
+      await onPlayRaw(attemptFixVolume: false, allowFade: false);
+    }
+  }
+
+  Future<void> onPlayRaw({bool attemptFixVolume = true, bool allowFade = true}) async {
     final player = _player;
     if (player == null || !_sourceReady) return;
     final request = ++_transportRequest;
@@ -597,7 +644,7 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
       }
     }
     if (request != _transportRequest || !identical(player, _player)) return;
-    final fade = !player.playing
+    final fade = allowFade && !player.playing
         ? math.max(_incomingFadeMilliseconds, enableVolumeFadeOnPlayPause ? playerPlayFadeDurInMilli : 0)
         : 0;
     _incomingFadeMilliseconds = 0;

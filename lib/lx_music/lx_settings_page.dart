@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:namida/class/route.dart';
+import 'package:namida/class/track.dart';
 import 'package:namida/controller/file_browser.dart';
 import 'package:namida/controller/navigator_controller.dart';
 import 'package:namida/controller/platform/namida_storage/namida_storage.dart';
+import 'package:namida/controller/player_controller.dart';
 import 'package:namida/core/dimensions.dart';
 import 'package:namida/core/enums.dart';
 import 'package:namida/core/extensions.dart';
 import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/ntheme.dart';
+import 'package:namida/ui/pages/main_page.dart';
 import 'package:namida/ui/widgets/custom_widgets.dart';
 import 'package:namida/ui/widgets/mascots/mascots.dart';
 import 'package:namida/ui/widgets/settings_card.dart';
@@ -17,14 +20,28 @@ import 'package:namida/ui/widgets/settings_card.dart';
 import 'lx_bridge_service.dart';
 import 'lx_download_manager.dart';
 import 'lx_models.dart';
+import 'lx_music_page.dart';
+import 'lx_preview_player.dart';
 import 'widgets/lx_cover_thumb.dart';
+import 'widgets/lx_download_task_card.dart';
 import 'widgets/lx_source_dialogs.dart';
 
 class LxSettingsPage extends StatefulWidget with NamidaRouteWidget {
-  const LxSettingsPage({super.key});
+  const LxSettingsPage({super.key, this.initialTab = 0});
+
+  final int initialTab;
 
   static const title = '在线曲库设置';
-  static const subtitle = '自定义音源、试听与下载音质、下载目录、并发数与诊断日志';
+  static const subtitle = '自定义音源、下载管理、试听缓存、音质与诊断日志';
+  static final _requestedTab = ValueNotifier<int?>(null);
+
+  static Future<void> openDownloads() async {
+    if (NamidaNavigator.inst.currentRoute is LxSettingsPage) {
+      _requestedTab.value = 1;
+      return;
+    }
+    await const LxSettingsPage(initialTab: 1).navigate();
+  }
 
   @override
   RouteType get route => RouteType.SETTINGS_subpage;
@@ -36,22 +53,44 @@ class LxSettingsPage extends StatefulWidget with NamidaRouteWidget {
   State<LxSettingsPage> createState() => _LxSettingsPageState();
 }
 
-class _LxSettingsPageState extends State<LxSettingsPage> {
+class _LxSettingsPageState extends State<LxSettingsPage> with SingleTickerProviderStateMixin {
   final _bridge = LxBridgeService.inst;
   final _downloads = LxDownloadManager.inst;
+  late final TabController _tabs;
   late final _sourceChanges = Listenable.merge([_bridge.scriptsNotifier, _bridge.userApiStateNotifier, _bridge.updateAlertNotifier]);
 
   bool _editingSources = false;
   bool _editingDownloads = false;
   bool _logsExpanded = false;
+  bool _clearingCache = false;
+  bool _previewCacheReadFailed = false;
+  int? _previewCacheBytes;
   String? _sourceError;
   String? _downloadError;
 
   @override
   void initState() {
     super.initState();
+    _tabs = TabController(length: 2, initialIndex: widget.initialTab.clampInt(0, 1), vsync: this);
+    LxSettingsPage._requestedTab.addListener(_onTabRequested);
+    _onTabRequested();
     _editSources('读取音源', _bridge.ensureInitialized);
     _editDownloads('读取下载偏好', _downloads.ensureLoaded);
+    _loadPreviewCache();
+  }
+
+  @override
+  void dispose() {
+    LxSettingsPage._requestedTab.removeListener(_onTabRequested);
+    _tabs.dispose();
+    super.dispose();
+  }
+
+  void _onTabRequested() {
+    final index = LxSettingsPage._requestedTab.value;
+    if (index == null || !identical(NamidaNavigator.inst.currentRoute, widget)) return;
+    LxSettingsPage._requestedTab.value = null;
+    _tabs.animateTo(index);
   }
 
   @override
@@ -79,13 +118,76 @@ class _LxSettingsPageState extends State<LxSettingsPage> {
           ),
         ),
         const Positioned.fill(child: NamidaMascotBackground.settings()),
-        SuperSmoothListView(
-          padding: EdgeInsets.symmetric(horizontal: Dimensions.inst.getSettingsHorizontalMargin(context)),
-          children: [_buildSources(), _buildDownloadPreferences(), _buildLogs(), kBottomPaddingWidget],
+        Column(
+          children: [
+            _buildTabBar(context),
+            Expanded(
+              child: TabBarView(
+                controller: _tabs,
+                children: [
+                  SuperSmoothListView(
+                    key: const PageStorageKey('online-library-settings'),
+                    padding: EdgeInsets.symmetric(horizontal: Dimensions.inst.getSettingsHorizontalMargin(context)),
+                    children: [_buildSources(), _buildDownloadPreferences(), _buildLogs(), kBottomPaddingWidget],
+                  ),
+                  const _DownloadsSection(),
+                ],
+              ),
+            ),
+          ],
         ),
       ],
     ),
   );
+
+  Widget _buildTabBar(BuildContext context) {
+    final colors = NColorsData.of(context);
+    final pillRadius = BorderRadius.circular(10.0.multipliedRadius);
+    return NContainer(
+      margin: EdgeInsets.symmetric(horizontal: Dimensions.inst.getSettingsHorizontalMargin(context).withMinimum(12.0), vertical: 6),
+      padding: const EdgeInsets.all(3),
+      decoration: (colors) => BoxDecoration(color: colors.cardTheme, borderRadius: BorderRadius.circular(12.0.multipliedRadius)),
+      child: TabBar(
+        controller: _tabs,
+        dividerHeight: 0,
+        labelColor: colors.primary,
+        unselectedLabelColor: colors.onSurface,
+        labelStyle: NText.small.of(context),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: BoxDecoration(color: colors.primary.withOpacityExt(0.16), borderRadius: pillRadius),
+        splashBorderRadius: pillRadius,
+        tabs: [
+          const Tab(
+            height: 36,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Icon(Broken.setting_2, size: 16), SizedBox(width: 5), Text('设置')],
+            ),
+          ),
+          Tab(
+            height: 36,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Broken.document_download, size: 16),
+                const SizedBox(width: 5),
+                const Flexible(child: Text('下载管理', maxLines: 1, overflow: TextOverflow.ellipsis)),
+                ValueListenableBuilder<int>(
+                  valueListenable: _downloads.activeCountNotifier,
+                  builder: (context, count, _) => count > 0
+                      ? Padding(
+                          padding: const EdgeInsetsDirectional.only(start: 5),
+                          child: Badge.count(count: count, backgroundColor: colors.secondaryContainer, textColor: colors.onSecondaryContainer),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Future<void> _editSources(String action, Future<void> Function() edit) async {
     if (_editingSources) return;
@@ -235,6 +337,38 @@ class _LxSettingsPageState extends State<LxSettingsPage> {
     if (picked != null) await _downloads.updateSettings(_downloads.settingsNotifier.value.copyWith(downloadDir: picked.path));
   });
 
+  Future<void> _loadPreviewCache() async {
+    try {
+      final bytes = await LxPreviewPlayer.inst.computePreviewCacheBytes();
+      if (mounted) {
+        setState(() {
+          _previewCacheBytes = bytes;
+          _previewCacheReadFailed = false;
+        });
+      }
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _previewCacheReadFailed = true);
+      snackyy(icon: Broken.info_circle, message: '读取在线试听缓存失败：$error', isError: true);
+    }
+  }
+
+  Future<void> _clearPreviewCache() async {
+    setState(() => _clearingCache = true);
+    try {
+      await LxPreviewPlayer.inst.clearPreviewCache();
+      final bytes = await LxPreviewPlayer.inst.computePreviewCacheBytes();
+      if (!mounted) return;
+      _previewCacheBytes = bytes;
+      _previewCacheReadFailed = false;
+      snackyy(icon: Broken.tick_circle, message: '已清理在线试听缓存');
+    } catch (error) {
+      if (mounted) snackyy(icon: Broken.info_circle, message: '清理在线试听缓存失败：$error', isError: true);
+    } finally {
+      if (mounted) setState(() => _clearingCache = false);
+    }
+  }
+
   Future<void> _pickQuality({required bool preview}) {
     final title = preview ? '试听默认音质' : '默认音质';
     return _editDownloads('设置$title', () async {
@@ -329,6 +463,21 @@ class _LxSettingsPageState extends State<LxSettingsPage> {
               enabled: canEdit,
               trailingRaw: const NIcon(Broken.arrow_right_3, size: 17),
               onTap: () => _pickQuality(preview: true),
+            ),
+            CustomListTile(
+              title: '在线试听缓存',
+              icon: Broken.archive_tick,
+              subtitle: switch (_previewCacheBytes) {
+                final bytes? => '${bytes.fileSizeFormatted} · 清理不影响已下载歌曲',
+                null when _previewCacheReadFailed => '无法读取缓存大小',
+                null => '计算中…',
+              },
+              trailingRaw: NamidaButton(
+                text: _clearingCache ? '清理中' : '清理',
+                dense: true,
+                enabled: !_clearingCache && (_previewCacheBytes ?? 0) > 0,
+                onTap: _clearPreviewCache,
+              ),
             ),
             CustomSwitchListTile(
               title: '默认使用上次选择的音质',
@@ -472,6 +621,78 @@ class _LxSettingsPageState extends State<LxSettingsPage> {
       );
     },
   );
+}
+
+class _DownloadsSection extends StatelessWidget {
+  const _DownloadsSection();
+
+  Future<void> _playTrack(Track track) async {
+    try {
+      await Player.inst.playKeepingQueue([track], QueueSource.others(LxMusicPage.title));
+    } catch (error) {
+      snackyy(icon: Broken.info_circle, message: '播放失败：$error', isError: true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final downloads = LxDownloadManager.inst;
+    final margin = Dimensions.inst.getSettingsHorizontalMargin(context);
+    return ValueListenableBuilder<List<LxDownloadTask>>(
+      valueListenable: downloads.tasksNotifier,
+      builder: (context, tasks, _) => ValueListenableBuilder<LxDownloadSettings>(
+        valueListenable: downloads.settingsNotifier,
+        builder: (context, settings, _) => SuperSmoothListView.builder(
+          key: const PageStorageKey('lx-downloads'),
+          padding: EdgeInsets.fromLTRB(margin, 4, margin, Dimensions.globalBottomPaddingTotal),
+          itemCount: tasks.isEmpty ? 2 : tasks.length + 1,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    NamidaText('下载任务 (${tasks.length})', style: NText.medium),
+                    NContainer(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: (colors) => BoxDecoration(color: colors.cardTheme, borderRadius: BorderRadius.circular(10.0.multipliedRadius)),
+                      child: NamidaText('并行 ${settings.maxConcurrent}', style: NText.small),
+                    ),
+                    NamidaButton(
+                      text: '清理已完成',
+                      dense: true,
+                      enabled: tasks.any((task) => !task.isActive),
+                      onTap: downloads.clearFinished,
+                    ),
+                  ],
+                ),
+              );
+            }
+            if (tasks.isEmpty) {
+              return const CustomListTile(
+                icon: Broken.document_download,
+                title: '暂无下载任务',
+                subtitle: '在在线曲库搜索歌曲即可加入下载队列',
+              );
+            }
+            final task = tasks[index - 1];
+            return Padding(
+              key: ValueKey(task.id),
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+              child: LxDownloadTaskCard(
+                task: task,
+                onPlay: _playTrack,
+                onLocateInLibrary: MainPageFABResumeButton.jumpToTrackInTracksPage,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
 class _SettingsError extends StatelessWidget {

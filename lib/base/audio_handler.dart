@@ -1234,6 +1234,8 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
     videoPlayerInfo.value = null;
     Lyrics.inst.resetLyrics(hide: false);
     WaveformController.inst.resetWaveform();
+    _previewWaveformTriggeredPath = null;
+    _pendingPreviewWaveform = null;
     VideoController.inst.currentVideoConfig.resetAll();
     YoutubeInfoController.current.resetAll();
 
@@ -1246,6 +1248,9 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
           return current is Selectable && path == current.track.path;
         },
       );
+    } else if (isPreview) {
+      final localFile = LxPreviewPlayer.inst.existingLocalAudioFileSync(tr.path);
+      if (localFile != null) _triggerPreviewWaveform(tr, localFile);
     }
     Lyrics.inst.updateLyrics(pi).ignoreError();
     Subtitles.inst.onItemChange(pi).ignoreError();
@@ -1316,6 +1321,10 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
       if (dur != null) {
         if (isPreview) {
           LxPreviewPlayer.inst.updateDuration(tr.path, dur);
+          final pending = _pendingPreviewWaveform;
+          if (pending != null && pending.previewPath == tr.path && dur > Duration.zero) {
+            _triggerPreviewWaveform(tr, pending.audioFile, knownDuration: dur);
+          }
         } else {
           Indexer.inst.updateTrackDuration(tr, dur);
         }
@@ -1366,7 +1375,7 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
       await _applyReplayGainForSelectable(item, replayGainType);
     }
 
-    if (preparedConfig?.videoOptions == null) VideoController.inst.updateCurrentVideo(tr, returnEarly: false);
+    if (!isPreview && preparedConfig?.videoOptions == null) VideoController.inst.updateCurrentVideo(tr, returnEarly: false);
 
     // -- to fix a bug where [headset buttons/android next gesture] sometimes don't get detected.
     if (playWhenReady.value) onPlayRaw(attemptFixVolume: false);
@@ -3603,9 +3612,45 @@ UriSource _buildCacheableAVSource(
   );
 }
 
+String? _previewWaveformTriggeredPath;
+({String previewPath, File audioFile})? _pendingPreviewWaveform;
+
+void _triggerPreviewWaveform(Track tr, File audioFile, {Duration? knownDuration}) {
+  bool stillPlaying(String path) {
+    final current = Player.inst.currentItem.value;
+    return current is Selectable && path == current.track.path;
+  }
+
+  if (!stillPlaying(tr.path) || _previewWaveformTriggeredPath == tr.path) return;
+  final dur = knownDuration ?? (tr.durationMS > 0 ? Duration(milliseconds: tr.durationMS) : Player.inst.currentItemDuration.value);
+  if (dur == null || dur <= Duration.zero) {
+    _pendingPreviewWaveform = (previewPath: tr.path, audioFile: audioFile);
+    return;
+  }
+
+  _previewWaveformTriggeredPath = tr.path;
+  _pendingPreviewWaveform = null;
+  WaveformController.inst.generateWaveform(
+    path: audioFile.path,
+    duration: dur,
+    stillPlaying: (_) => stillPlaying(tr.path),
+  );
+}
+
 Future<UriSource> _buildTrackNetworkAudioSource({required Track tr}) {
   if (LxPreviewPlayer.isPreviewPath(tr.path)) {
-    return LxPreviewPlayer.inst.buildAudioSource(tr.path);
+    return LxPreviewPlayer.inst.buildAudioSource(
+      tr.path,
+      buildCacheableSource: ({required uri, headers, required cacheFile, required onFetched}) => _buildCacheableAVSource(
+        uri,
+        size: null,
+        headers: headers,
+        cacheFile: cacheFile,
+        onFirstCacheDone: (_) {},
+        onFetched: onFetched,
+      ),
+      onAudioFileReady: (file) => _triggerPreviewWaveform(tr, file),
+    );
   }
 
   bool stillPlaying(String path) {

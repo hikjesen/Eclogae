@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:namida/class/route.dart';
 import 'package:namida/class/track.dart';
-import 'package:namida/controller/navigator_controller.dart';
 import 'package:namida/controller/player_controller.dart';
 import 'package:namida/core/dimensions.dart';
 import 'package:namida/core/enums.dart';
@@ -16,6 +15,7 @@ import 'lx_bridge_service.dart';
 import 'lx_download_manager.dart';
 import 'lx_models.dart';
 import 'lx_preview_player.dart';
+import 'lx_settings_page.dart';
 import 'widgets/lx_cover_thumb.dart';
 import 'widgets/lx_download_actions.dart';
 import 'widgets/lx_lyrics_sheet.dart';
@@ -104,15 +104,7 @@ class _LxSonglistDetailPageState extends State<LxSonglistDetailPage> {
     }
   }
 
-  VoidCallback? get _openDownloads {
-    final open = widget.onOpenDownloads;
-    if (open == null) return null;
-    return () async {
-      final navigator = NamidaNavigator.inst;
-      if (identical(navigator.currentRoute, widget)) await navigator.popPage(fromMainPage: true);
-      open();
-    };
-  }
+  VoidCallback get _openDownloads => widget.onOpenDownloads ?? LxSettingsPage.openDownloads;
 
   void _toggleMultiSelect() => setState(() {
     _multiSelect = !_multiSelect;

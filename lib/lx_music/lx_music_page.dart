@@ -11,7 +11,6 @@ import 'package:namida/core/extensions.dart';
 import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/utils.dart';
-import 'package:namida/ui/pages/main_page.dart';
 import 'package:namida/ui/widgets/custom_widgets.dart';
 
 import 'lx_bridge_service.dart';
@@ -22,7 +21,6 @@ import 'lx_search_controller.dart';
 import 'lx_settings_page.dart';
 import 'lx_songlist_detail_page.dart';
 import 'widgets/lx_download_actions.dart';
-import 'widgets/lx_download_task_card.dart';
 import 'widgets/lx_lyrics_sheet.dart';
 import 'widgets/lx_songlist_card.dart';
 import 'widgets/lx_source_dialogs.dart';
@@ -32,14 +30,6 @@ class LxMusicPage extends StatefulWidget with NamidaRouteWidget {
   const LxMusicPage({super.key});
 
   static const title = '在线曲库';
-  static final _requestedSection = ValueNotifier<int?>(null);
-
-  static void openSection(int index) {
-    _requestedSection.value = index;
-    if (NamidaNavigator.inst.currentRoute?.route != RouteType.YOUTUBE_HOME) {
-      ScrollSearchController.inst.animatePageController(LibraryTab.youtube, jumpToTopIfSamePage: false);
-    }
-  }
 
   @override
   RouteType get route => RouteType.YOUTUBE_HOME;
@@ -66,13 +56,10 @@ BoxDecoration _pillDecoration(NColorsData colors) => BoxDecoration(
   borderRadius: BorderRadius.circular(12.0.multipliedRadius),
 );
 
-class _LxMusicPageState extends State<LxMusicPage> with SingleTickerProviderStateMixin {
+class _LxMusicPageState extends State<LxMusicPage> {
   final _bridge = LxBridgeService.inst;
   final _downloads = LxDownloadManager.inst;
   final _searchScroll = NamidaScrollController.create(keepScrollOffset: false);
-  final _downloadsScroll = NamidaScrollController.create();
-  late final TabController _tabs;
-  late int _section;
 
   bool _showingUpdate = false;
   String? _initializationError;
@@ -80,11 +67,7 @@ class _LxMusicPageState extends State<LxMusicPage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _section = LxMusicPage._requestedSection.value ?? 0;
-    LxMusicPage._requestedSection.value = null;
-    _tabs = TabController(length: 2, initialIndex: _section, vsync: this)..addListener(_onTabChanged);
-    ScrollSearchController.inst.registerPageScrollController(LibraryTab.youtube, _scrollFor(_section));
-    LxMusicPage._requestedSection.addListener(_onSectionRequested);
+    ScrollSearchController.inst.registerPageScrollController(LibraryTab.youtube, _searchScroll);
     _bridge.updateAlertNotifier.addListener(_scheduleUpdateAlert);
     NamidaNavigator.inst.currentWidgetStack.addListener(_scheduleUpdateAlert);
     _scheduleUpdateAlert();
@@ -97,25 +80,6 @@ class _LxMusicPageState extends State<LxMusicPage> with SingleTickerProviderStat
     } catch (error) {
       if (mounted) setState(() => _initializationError = '初始化在线曲库失败：$error');
     }
-  }
-
-  ScrollController _scrollFor(int index) => index == 0 ? _searchScroll : _downloadsScroll;
-
-  void _onTabChanged() {
-    final index = _tabs.index;
-    if (index == _section) return;
-    final scrollSearch = ScrollSearchController.inst;
-    scrollSearch.unregisterPageScrollController(LibraryTab.youtube, _scrollFor(_section));
-    scrollSearch.registerPageScrollController(LibraryTab.youtube, _scrollFor(index));
-    FocusScope.of(context).unfocus();
-    setState(() => _section = index);
-  }
-
-  void _onSectionRequested() {
-    final index = LxMusicPage._requestedSection.value;
-    if (index == null || NamidaNavigator.inst.currentRoute?.route != RouteType.YOUTUBE_HOME) return;
-    LxMusicPage._requestedSection.value = null;
-    _tabs.animateTo(index);
   }
 
   void _scheduleUpdateAlert() {
@@ -140,11 +104,8 @@ class _LxMusicPageState extends State<LxMusicPage> with SingleTickerProviderStat
   void dispose() {
     NamidaNavigator.inst.currentWidgetStack.removeListener(_scheduleUpdateAlert);
     _bridge.updateAlertNotifier.removeListener(_scheduleUpdateAlert);
-    LxMusicPage._requestedSection.removeListener(_onSectionRequested);
-    ScrollSearchController.inst.unregisterPageScrollController(LibraryTab.youtube, _scrollFor(_section));
-    _tabs.dispose();
+    ScrollSearchController.inst.unregisterPageScrollController(LibraryTab.youtube, _searchScroll);
     _searchScroll.dispose();
-    _downloadsScroll.dispose();
     super.dispose();
   }
 
@@ -161,65 +122,12 @@ class _LxMusicPageState extends State<LxMusicPage> with SingleTickerProviderStat
         ),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _PillGroup(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _Pill(
-                              label: '搜索',
-                              icon: Broken.search_normal_1,
-                              selected: _section == 0,
-                              onTap: () => _tabs.animateTo(0),
-                            ),
-                          ),
-                          Expanded(
-                            child: ValueListenableBuilder<int>(
-                              valueListenable: _downloads.activeCountNotifier,
-                              builder: (context, count, _) => _Pill(
-                                label: '下载管理',
-                                icon: Broken.document_download,
-                                selected: _section == 1,
-                                count: count,
-                                onTap: () => _tabs.animateTo(1),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  NDecoratedBox(
-                    decoration: _pillDecoration,
-                    child: NamidaIconButton(
-                      icon: Broken.setting_2,
-                      padding: const EdgeInsets.all(11),
-                      tooltip: () => LxSettingsPage.title,
-                      onPressed: () => const LxSettingsPage().navigate(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             if (_initializationError case final error?)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: _Notice(icon: Broken.info_circle, title: error, isError: true),
+                child: _InitializationNotice(error),
               ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabs,
-                children: [
-                  _SearchSection(controller: _searchScroll, onShowDownloads: () => LxMusicPage.openSection(1)),
-                  _DownloadsSection(controller: _downloadsScroll),
-                ],
-              ),
-            ),
+            Expanded(child: _SearchSection(controller: _searchScroll, onShowDownloads: LxSettingsPage.openDownloads)),
           ],
         ),
       ),
@@ -237,7 +145,7 @@ class _SearchSection extends StatefulWidget {
   State<_SearchSection> createState() => _SearchSectionState();
 }
 
-class _SearchSectionState extends State<_SearchSection> with AutomaticKeepAliveClientMixin<_SearchSection> {
+class _SearchSectionState extends State<_SearchSection> {
   final _search = LxSearchController.inst;
   final _downloads = LxDownloadManager.inst;
   final _preview = LxPreviewPlayer.inst;
@@ -255,9 +163,6 @@ class _SearchSectionState extends State<_SearchSection> with AutomaticKeepAliveC
   bool get _showSongs => _search.mode == LxSearchMode.songs;
   LxPagedState<Object> get _result => _showSongs ? _search.songState : _search.songlistState;
   double get _savedOffset => _showSongs ? _search.songsScrollOffset : _search.songlistsScrollOffset;
-
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -366,13 +271,36 @@ class _SearchSectionState extends State<_SearchSection> with AutomaticKeepAliveC
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final colors = NColorsData.of(context);
     final result = _result;
     return Column(
       children: [
-        _buildSearchBar(colors),
-        _buildModeBar(result),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+          child: Row(
+            children: [
+              Expanded(child: _buildSearchBar(colors)),
+              const SizedBox(width: 6),
+              _PillGroup(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final mode in LxSearchMode.values)
+                      _Pill(
+                        label: mode.label,
+                        selected: _search.mode == mode,
+                        onTap: () {
+                          _dismissTips();
+                          _search.setMode(mode);
+                        },
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (_multiSelect) _buildMultiSelectBar(),
         Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) => Stack(
@@ -409,7 +337,6 @@ class _SearchSectionState extends State<_SearchSection> with AutomaticKeepAliveC
   }
 
   Widget _buildSearchBar(NColorsData colors) => NContainer(
-    margin: const EdgeInsets.symmetric(horizontal: 12),
     clipBehavior: Clip.antiAlias,
     decoration: (_) => BoxDecoration(
       color: colors.cardTheme,
@@ -431,7 +358,7 @@ class _SearchSectionState extends State<_SearchSection> with AutomaticKeepAliveC
             button: true,
             child: NamidaInkWell(
               onTap: openMenu,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -454,14 +381,14 @@ class _SearchSectionState extends State<_SearchSection> with AutomaticKeepAliveC
             onTap: () => _search.setTipsVisible(true),
             style: NText.medium.of(context),
             decoration: InputDecoration(
-              hintText: _showSongs ? '搜索歌曲、歌手或专辑' : '搜索歌单',
+              hintText: _showSongs ? '搜索歌曲、歌手' : '搜索歌单',
               hintMaxLines: 1,
               filled: false,
               isDense: true,
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 11),
             ),
           ),
         ),
@@ -469,7 +396,7 @@ class _SearchSectionState extends State<_SearchSection> with AutomaticKeepAliveC
           NamidaIconButton(
             icon: Broken.close_circle,
             iconSize: 17,
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 11),
             tooltip: () => '清空关键词',
             onPressed: () {
               _keyword.clear();
@@ -479,7 +406,7 @@ class _SearchSectionState extends State<_SearchSection> with AutomaticKeepAliveC
         NamidaIconButton(
           icon: Broken.search_normal_1,
           iconSize: 19,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 11),
           tooltip: () => '搜索',
           onPressed: () => _submit(_keyword.text),
         ),
@@ -487,84 +414,36 @@ class _SearchSectionState extends State<_SearchSection> with AutomaticKeepAliveC
     ),
   );
 
-  Widget _buildModeBar(LxPagedState<Object> result) {
+  Widget _buildMultiSelectBar() {
     final tracks = _search.songState.items;
     final allSelected = tracks.isNotEmpty && tracks.every((track) => _selected.contains(track.uniqueKey));
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 6, 12, 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
+      child: Wrap(
+        spacing: 4,
+        runSpacing: 4,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          _PillGroup(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (final mode in LxSearchMode.values)
-                  _Pill(
-                    label: mode.label,
-                    selected: _search.mode == mode,
-                    onTap: () {
-                      _dismissTips();
-                      _search.setMode(mode);
-                    },
-                  ),
-              ],
-            ),
+          NamidaText('已选 ${_selected.length} 首', style: NText.small),
+          NamidaButton(
+            text: allSelected ? '取消全选' : '全选',
+            dense: true,
+            enabled: tracks.isNotEmpty,
+            onTap: () => setState(() {
+              if (allSelected) {
+                _selected.clear();
+              } else {
+                _selected.addAll(tracks.map((track) => track.uniqueKey));
+              }
+            }),
           ),
-          if (_multiSelect)
-            Flexible(
-              child: Wrap(
-                alignment: WrapAlignment.end,
-                spacing: 4,
-                runSpacing: 4,
-                children: [
-                  NamidaButton(
-                    text: allSelected ? '取消全选' : '全选',
-                    dense: true,
-                    enabled: tracks.isNotEmpty,
-                    onTap: () => setState(() {
-                      if (allSelected) {
-                        _selected.clear();
-                      } else {
-                        _selected.addAll(tracks.map((track) => track.uniqueKey));
-                      }
-                    }),
-                  ),
-                  NamidaButton(
-                    text: '下载(${_selected.length})',
-                    dense: true,
-                    enabled: _selected.isNotEmpty && !_downloadingSelected,
-                    onTap: _downloadSelected,
-                  ),
-                  NamidaButton(text: '取消', dense: true, onTap: _toggleMultiSelect),
-                ],
-              ),
-            )
-          else if (result.items.isNotEmpty)
-            Flexible(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: NamidaText(
-                      '共 ${result.total} ${_showSongs ? '首' : '张'}',
-                      style: NText.small,
-                      color: const NColors(.onSurface, opacity: 0.64),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (_showSongs)
-                    NamidaIconButton(
-                      icon: Broken.tick_square,
-                      iconSize: 18,
-                      padding: const EdgeInsetsDirectional.fromSTEB(10, 8, 4, 8),
-                      tooltip: () => '多选批量下载',
-                      onPressed: _toggleMultiSelect,
-                    ),
-                ],
-              ),
-            ),
+          NamidaButton(
+            text: '下载(${_selected.length})',
+            dense: true,
+            enabled: _selected.isNotEmpty && !_downloadingSelected,
+            onTap: _downloadSelected,
+          ),
+          NamidaButton(text: '取消', dense: true, onTap: _toggleMultiSelect),
         ],
       ),
     );
@@ -813,68 +692,6 @@ class _TipList extends StatelessWidget {
   );
 }
 
-class _DownloadsSection extends StatelessWidget {
-  const _DownloadsSection({required this.controller});
-
-  final ScrollController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final downloads = LxDownloadManager.inst;
-    return ValueListenableBuilder<List<LxDownloadTask>>(
-      valueListenable: downloads.tasksNotifier,
-      builder: (context, tasks, _) => ValueListenableBuilder<LxDownloadSettings>(
-        valueListenable: downloads.settingsNotifier,
-        builder: (context, settings, _) => SuperSmoothListView.builder(
-          key: const PageStorageKey('lx-downloads'),
-          controller: controller,
-          padding: _listPadding,
-          itemCount: tasks.isEmpty ? 2 : tasks.length + 1,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 6,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    NamidaText('下载任务 (${tasks.length})', style: NText.medium),
-                    _Pill(label: '并行 ${settings.maxConcurrent}'),
-                    NamidaButton(
-                      text: '清理已完成',
-                      dense: true,
-                      enabled: tasks.any((task) => !task.isActive),
-                      onTap: downloads.clearFinished,
-                    ),
-                  ],
-                ),
-              );
-            }
-            if (tasks.isEmpty) {
-              return const _Notice(
-                icon: Broken.document_download,
-                title: '暂无下载任务',
-                subtitle: '在搜索页选择歌曲即可加入下载队列',
-              );
-            }
-            final task = tasks[index - 1];
-            return Padding(
-              key: ValueKey(task.id),
-              padding: const EdgeInsets.only(bottom: 8),
-              child: LxDownloadTaskCard(
-                task: task,
-                onPlay: _playTrack,
-                onLocateInLibrary: MainPageFABResumeButton.jumpToTrackInTracksPage,
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
 class _PillGroup extends StatelessWidget {
   const _PillGroup({required this.child});
 
@@ -888,86 +705,50 @@ class _PillGroup extends StatelessWidget {
 }
 
 class _Pill extends StatelessWidget {
-  const _Pill({required this.label, this.icon, this.selected = false, this.count = 0, this.onTap});
+  const _Pill({required this.label, required this.selected, required this.onTap});
 
   final String label;
-  final IconData? icon;
   final bool selected;
-  final int count;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = NColorsData.of(context);
     final foreground = selected ? NColors.primary : null;
     return Semantics(
-      button: onTap != null,
-      selected: onTap == null ? null : selected,
+      button: true,
+      selected: selected,
       child: NamidaInkWell(
         onTap: onTap,
         borderRadius: 10,
         animationDurationMS: 160,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 9),
         bgColor: NColors.fixed(selected ? colors.primary.withOpacityExt(0.16) : colors.cardTheme),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              NIcon(icon, size: 16, color: foreground),
-              const SizedBox(width: 5),
-            ],
-            Flexible(child: NamidaText(label, style: NText.small, color: foreground, maxLines: 1, overflow: TextOverflow.ellipsis)),
-            if (count > 0)
-              NContainer(
-                margin: const EdgeInsetsDirectional.only(start: 5),
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                decoration: (colors) => BoxDecoration(
-                  color: colors.secondaryContainer,
-                  borderRadius: BorderRadius.circular(8.0.multipliedRadius),
-                ),
-                child: NamidaText('$count', style: const NText(.small, size: .s10), color: NColors.onSecondaryContainer),
-              ),
-          ],
-        ),
+        child: NamidaText(label, style: NText.small, color: foreground, maxLines: 1),
       ),
     );
   }
 }
 
-class _Notice extends StatelessWidget {
-  const _Notice({required this.icon, required this.title, this.subtitle, this.isError = false});
+class _InitializationNotice extends StatelessWidget {
+  const _InitializationNotice(this.message);
 
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final bool isError;
+  final String message;
 
   @override
-  Widget build(BuildContext context) {
-    final subtitle = this.subtitle;
-    return NContainer(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      padding: const EdgeInsets.all(12),
-      decoration: (colors) => BoxDecoration(
-        color: isError ? colors.error.withOpacityExt(0.09) : colors.cardTheme,
-        borderRadius: BorderRadius.circular(14.0.multipliedRadius),
-      ),
-      child: Row(
-        children: [
-          NIcon(icon, size: 22, color: isError ? NColors.error : NColors.primary),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                NamidaText(title, style: NText.medium, color: isError ? NColors.error : null),
-                if (subtitle != null) NamidaText(subtitle, style: NText.small),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => NContainer(
+    margin: const EdgeInsets.symmetric(vertical: 4),
+    padding: const EdgeInsets.all(12),
+    decoration: (colors) => BoxDecoration(
+      color: colors.error.withOpacityExt(0.09),
+      borderRadius: BorderRadius.circular(14.0.multipliedRadius),
+    ),
+    child: Row(
+      children: [
+        const NIcon(Broken.info_circle, size: 22, color: NColors.error),
+        const SizedBox(width: 10),
+        Expanded(child: NamidaText(message, style: NText.medium, color: NColors.error)),
+      ],
+    ),
+  );
 }

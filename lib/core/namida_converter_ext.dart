@@ -58,7 +58,9 @@ import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/lx_music/lx_download_manager.dart';
 import 'package:namida/lx_music/lx_music_page.dart';
+import 'package:namida/lx_music/lx_settings_page.dart';
 import 'package:namida/ui/dialogs/add_to_playlist_dialog.dart';
 import 'package:namida/ui/dialogs/common_dialogs.dart';
 import 'package:namida/ui/dialogs/edit_tags_dialog.dart';
@@ -1626,6 +1628,7 @@ extension RouteUtils on NamidaRoute {
   }
 
   List<Widget> toActions({required bool isInnerPage}) {
+    final isLxRoute = route == RouteType.YOUTUBE_HOME || route == RouteType.YOUTUBE_HOME_SECTION;
     final shouldShowProgressPercentage = route != RouteType.SETTINGS_page && route != RouteType.SETTINGS_subpage;
     const shouldShowMissingServerDirAuth = true;
 
@@ -1906,16 +1909,45 @@ extension RouteUtils on NamidaRoute {
           duration: const Duration(milliseconds: 300),
           turns: shouldShowSettingsIcon ? 0.0 : 0.25,
           curve: Curves.easeOutQuart,
-          child: NamidaAppBarIcon(
-            icon: Broken.setting_2,
-            onPressed: const SettingsPage().navigate,
-            child: const DiscordSharingDotWrapper(
-              child: SyncStatusIconWrapper(
-                icon: Broken.setting_2,
-                showDisconnectedDot: false,
-              ),
-            ),
-          ),
+          child: isLxRoute
+              ? NamidaAppBarIcon(
+                  icon: Broken.setting_2,
+                  tooltip: () => LxSettingsPage.title,
+                  onPressed: const LxSettingsPage().navigate,
+                  child: ValueListenableBuilder<int>(
+                    valueListenable: LxDownloadManager.inst.activeCountNotifier,
+                    builder: (context, count, icon) => Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        ?icon,
+                        if (count > 0)
+                          PositionedDirectional(
+                            top: -2,
+                            end: -2,
+                            child: NDecoratedBox(
+                              decoration: (colors) => BoxDecoration(
+                                color: colors.primary.withOpacityExt(0.8),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: colors.scaffold),
+                              ),
+                              child: const SizedBox.square(dimension: 8),
+                            ),
+                          ),
+                      ],
+                    ),
+                    child: const NIcon(Broken.setting_2, color: NColors.secondary),
+                  ),
+                )
+              : NamidaAppBarIcon(
+                  icon: Broken.setting_2,
+                  onPressed: const SettingsPage().navigate,
+                  child: const DiscordSharingDotWrapper(
+                    child: SyncStatusIconWrapper(
+                      icon: Broken.setting_2,
+                      showDisconnectedDot: false,
+                    ),
+                  ),
+                ),
         ),
         shouldShow: shouldShowSettingsIcon,
       ),
