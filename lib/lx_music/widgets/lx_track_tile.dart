@@ -5,7 +5,6 @@ import 'package:namida/core/extensions.dart';
 import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/ntheme.dart';
 import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/popup_wrapper.dart';
 
 import '../lx_models.dart';
 import 'lx_cover_thumb.dart';
@@ -137,7 +136,7 @@ class LxTrackTile extends StatelessWidget {
                       tooltip: () => completed || existsOnDisk ? '已下载（长按重选音质）' : '下载（长按选音质）',
                     ),
                   NamidaPopupWrapper(
-                    child: const Semantics(label: '更多操作', button: true, child: Padding(padding: EdgeInsets.all(6), child: MoreIcon(iconSize: 18))),
+                    child: Semantics(label: '更多操作', button: true, child: const Padding(padding: EdgeInsets.all(6), child: MoreIcon(iconSize: 18))),
                     childrenDefault: () => [
                       if (playableTrack != null && play != null)
                         NamidaPopupItem(icon: Broken.play, title: '立即播放', onTap: () => play(playableTrack)),

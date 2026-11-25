@@ -397,9 +397,10 @@ enum LibraryTab {
   party;
 
   final bool isInDrawerOnlyWhenActive;
-  final bool hasSectionsMenu;
 
-  const LibraryTab({this.isInDrawerOnlyWhenActive = false, this.hasSectionsMenu = false});
+  bool get hasSectionsMenu => false;
+
+  const LibraryTab({this.isInDrawerOnlyWhenActive = false});
 
   LibraryTab get group => switch (this) {
     LibraryTab.tracksMusic || LibraryTab.tracksVideos => LibraryTab.tracks,

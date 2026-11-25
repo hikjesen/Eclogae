@@ -746,10 +746,10 @@ class _PlaylistPreview extends StatelessWidget {
             crossAxisSpacing: 10,
             mainAxisSpacing: 12,
           ),
-          itemBuilder: (context, index) => Column(
+          itemBuilder: (context, index) => const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Expanded(
+              Expanded(
                 child: NContainer(
                   width: double.infinity,
                   alignment: Alignment.center,
@@ -757,8 +757,8 @@ class _PlaylistPreview extends StatelessWidget {
                   child: NIcon(Broken.music_playlist, size: 28, color: NColors.disabled),
                 ),
               ),
-              const SizedBox(height: 7),
-              const FractionallySizedBox(
+              SizedBox(height: 7),
+              FractionallySizedBox(
                 widthFactor: 0.68,
                 child: NContainer(height: 6, decoration: _pillDecoration),
               ),

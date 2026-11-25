@@ -65,6 +65,10 @@ class _LxImportUrlDialogState extends State<LxImportUrlDialog> {
       normalTitleStyle: true,
       icon: Broken.import_1,
       title: '从链接导入自定义音源',
+      actions: [
+        const CancelButton(),
+        NamidaButton(text: '导入', icon: Broken.import_1, dense: true, onTap: _submit),
+      ],
       child: Form(
         key: _form,
         child: CustomTagTextField(
@@ -83,10 +87,6 @@ class _LxImportUrlDialogState extends State<LxImportUrlDialog> {
           ),
         ),
       ),
-      actions: [
-        const CancelButton(),
-        NamidaButton(text: '导入', icon: Broken.import_1, dense: true, onTap: _submit),
-      ],
     );
   }
 }
@@ -100,6 +100,9 @@ class LxSourceDetailDialog {
         normalTitleStyle: true,
         icon: Broken.info_circle,
         title: '自定义音源详情',
+        actions: [
+          NamidaButton(text: '知道了', dense: true, onTap: NamidaNavigator.inst.closeDialog),
+        ],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -132,9 +135,6 @@ class LxSourceDetailDialog {
             ],
           ],
         ),
-        actions: [
-          NamidaButton(text: '知道了', dense: true, onTap: NamidaNavigator.inst.closeDialog),
-        ],
       ),
     );
   }
@@ -208,6 +208,11 @@ class LxUpdateAlertDialog {
         normalTitleStyle: true,
         title: '自定义音源更新',
         icon: Broken.refresh,
+        actions: [
+          NamidaButton(text: '知道了', dense: true, onTap: NamidaNavigator.inst.closeDialog),
+          if (url != null)
+            NamidaButton(text: '打开更新链接', icon: Broken.link, dense: true, onTap: () => NamidaLinkUtils.openLink(url)),
+        ],
         child: Builder(
           builder: (context) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,11 +223,6 @@ class LxUpdateAlertDialog {
             ],
           ),
         ),
-        actions: [
-          NamidaButton(text: '知道了', dense: true, onTap: NamidaNavigator.inst.closeDialog),
-          if (url != null)
-            NamidaButton(text: '打开更新链接', icon: Broken.link, dense: true, onTap: () => NamidaLinkUtils.openLink(url)),
-        ],
       ),
     );
   }
@@ -248,16 +248,6 @@ class LxDuplicateConfirmDialog {
         normalTitleStyle: true,
         title: '确认下载',
         icon: Broken.document_download,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            NamidaText(singleTrackName ?? '所选曲目中有重复下载项。', style: NText.medium, maxLines: 2, overflow: TextOverflow.ellipsis),
-            const SizedBox(height: 8),
-            if (onDiskCount > 0) NamidaText('本地已有 $onDiskCount 首', style: NText.small),
-            if (inQueueCount > 0) NamidaText('下载队列中已有 $inQueueCount 首', style: NText.small),
-            if (freshCount > 0) NamidaText('新曲目 $freshCount 首', style: NText.small),
-          ],
-        ),
         actions: [
           const CancelButton(),
           if (freshCount > 0)
@@ -273,6 +263,16 @@ class LxDuplicateConfirmDialog {
             onTap: () => choose(LxDuplicateAction.downloadAll),
           ),
         ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            NamidaText(singleTrackName ?? '所选曲目中有重复下载项。', style: NText.medium, maxLines: 2, overflow: TextOverflow.ellipsis),
+            const SizedBox(height: 8),
+            if (onDiskCount > 0) NamidaText('本地已有 $onDiskCount 首', style: NText.small),
+            if (inQueueCount > 0) NamidaText('下载队列中已有 $inQueueCount 首', style: NText.small),
+            if (freshCount > 0) NamidaText('新曲目 $freshCount 首', style: NText.small),
+          ],
+        ),
       ),
     );
     return action;

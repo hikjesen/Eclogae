@@ -96,7 +96,7 @@ class _LxSettingsPageState extends State<LxSettingsPage> {
     try {
       await edit();
     } catch (error) {
-      if (mounted) setState(() => _sourceError = '${action}失败：$error');
+      if (mounted) setState(() => _sourceError = '$action失败：$error');
     } finally {
       if (mounted) setState(() => _editingSources = false);
     }
@@ -224,7 +224,7 @@ class _LxSettingsPageState extends State<LxSettingsPage> {
     try {
       await edit();
     } catch (error) {
-      if (mounted) setState(() => _downloadError = '${action}失败：$error');
+      if (mounted) setState(() => _downloadError = '$action失败：$error');
     } finally {
       if (mounted) setState(() => _editingDownloads = false);
     }
