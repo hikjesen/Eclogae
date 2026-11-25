@@ -100,8 +100,7 @@ class ScrollSearchController {
     hideSearchMenu();
 
     if (NamidaNavigator.inst.currentRoute?.isSameRouteAs(w) == true) {
-      final pageTab = tab == LibraryTab.youtube ? settings.extra.ytInitialHomePage.value.libraryTab : tab;
-      final tabScrollController = _pageScrollControllers[pageTab]?.lastOrNull ?? tab.scrollController;
+      final tabScrollController = _pageScrollControllers[tab]?.lastOrNull ?? tab.scrollController;
       if (tabScrollController.hasClients) {
         MiniPlayerController.inst.snapToMini();
         if (jumpToTopIfSamePage) tabScrollController.animateToEff(0.0, duration: const Duration(milliseconds: 400), curve: Curves.easeInOutQuart);

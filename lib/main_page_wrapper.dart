@@ -27,7 +27,6 @@ import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/ui_scale.dart';
 import 'package:namida/core/utils.dart';
-import 'package:namida/lx_music/lx_music_page.dart';
 import 'package:namida/packages/miniplayer.dart';
 import 'package:namida/ui/dialogs/edit_tags_dialog.dart';
 import 'package:namida/ui/pages/about_page.dart';
@@ -428,15 +427,6 @@ class NamidaDrawer extends StatelessWidget {
                         ),
                       ),
                     ),
-                NamidaDrawerListTile(
-                  enabled: false,
-                  title: LxMusicPage.title,
-                  icon: Broken.music_square_search,
-                  onTap: () {
-                    toggleDrawer();
-                    const LxMusicPage().navigate();
-                  },
-                ),
               ],
             ),
           ),

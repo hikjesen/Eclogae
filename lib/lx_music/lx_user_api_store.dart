@@ -8,6 +8,8 @@ import 'package:uuid/uuid.dart';
 import 'lx_models.dart';
 
 class LxUserApiStore {
+  static const maxSearchHistory = 15;
+
   static final _headerPattern = RegExp(r'^/\*[\s\S]+?\*/');
   static final _fieldPattern = RegExp(r'^\s*(?:\*\s*)?@(\w+)\s+(.+)$');
   static final _idPattern = RegExp(r'^user_api_[a-f0-9-]+$');
@@ -34,7 +36,7 @@ class LxUserApiStore {
   Future<LxUserApiMeta> importFromScriptContent(String rawScript, {required String fileName}) async {
     final script = rawScript.startsWith('\uFEFF') ? rawScript.substring(1) : rawScript;
     final header = _headerPattern.stringMatch(script);
-    if (header == null) throw const FormatException('文件开头缺少 LX 音源注释');
+    if (header == null) throw const FormatException('文件开头缺少自定义音源注释');
 
     final fields = <String, String>{};
     for (final line in const LineSplitter().convert(header.substring(2, header.length - 2))) {
@@ -81,6 +83,15 @@ class LxUserApiStore {
   }
 
   Future<void> saveSettings(LxDownloadSettings settings) => _writeJson('settings.json', settings.toJson());
+
+  Future<List<String>> loadSearchHistory() async {
+    final file = File(p.join((await _root).path, 'search_history.json'));
+    if (!await file.exists()) return const <String>[];
+    final json = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
+    return List<String>.from(json['keywords'] as List<dynamic>);
+  }
+
+  Future<void> saveSearchHistory(List<String> keywords) => _writeJson('search_history.json', {'keywords': keywords.take(maxSearchHistory).toList()});
 
   Future<void> setActiveId(String? id) async {
     final saved = await loadAll();

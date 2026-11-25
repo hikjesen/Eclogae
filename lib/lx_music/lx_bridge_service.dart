@@ -30,12 +30,13 @@ class LxBridgeService {
   static const _events = EventChannel('namida/lx_events');
   static const _timeout = Duration(seconds: 20);
   static const _maxScriptBytes = 2 * 1024 * 1024;
-  static const _unsupported = 'LX 桥接仅支持 Android';
+  static const _unsupported = '在线曲库桥接仅支持 Android';
 
   final scriptsNotifier = ValueNotifier<List<LxUserApiMeta>>(const []);
   final userApiStateNotifier = ValueNotifier<LxUserApiState>(const LxUserApiState());
   final musicSdkReadyNotifier = ValueNotifier<bool>(false);
   final logsNotifier = ValueNotifier<List<LxLogEntry>>(const []);
+  final updateAlertNotifier = ValueNotifier<LxUpdateAlert?>(null);
 
   final _store = LxUserApiStore();
   late final _httpProxy = LxHttpProxy();
@@ -95,6 +96,28 @@ class LxBridgeService {
   });
 
   Future<Uint8List> fetchBinary(String url, {Map<String, String>? headers}) async => _fetchBinary(_httpUri(url), headers: headers);
+
+  Future<int?> probeContentLength(String url, {Map<String, String>? headers}) async {
+    try {
+      final response = await _httpProxy.execute(
+        requestKey: 'http_${_nextId++}',
+        url: _httpUri(url).toString(),
+        options: {'method': 'HEAD', 'timeout': 5000, 'headers': headers},
+      );
+      final status = response['statusCode'] as int;
+      if (status < 200 || status >= 400) return null;
+      final responseHeaders = response['headers'] as Map<String, String>;
+      for (final entry in responseHeaders.entries) {
+        if (entry.key.toLowerCase() != 'content-length') continue;
+        final length = int.tryParse(entry.value.trim());
+        return length != null && length > 0 ? length : null;
+      }
+      return null;
+    } catch (_) {
+      // A download can proceed when the server does not support probing its size.
+      return null;
+    }
+  }
 
   Future<void> importScriptFromUrl(String url) async {
     final uri = _httpUri(url);
@@ -236,7 +259,10 @@ class LxBridgeService {
     }
   }
 
+  void dismissUpdateAlert() => updateAlertNotifier.value = null;
+
   Future<void> _destroyUserApi() async {
+    updateAlertNotifier.value = null;
     if (!_userEngineStarted) return;
     _userEngineStarted = false;
     for (final key in _pending.keys.where((key) => key.$1 == _Engine.userApi).toList()) {
@@ -337,6 +363,16 @@ class LxBridgeService {
         case (_Engine.userApi, 'init'):
           final signal = _userApiInit;
           if (signal != null && !signal.isCompleted) signal.complete(jsonDecode(raw!) as Map<String, dynamic>);
+        case (_Engine.userApi, 'showUpdateAlert'):
+          if (!_userEngineStarted) return;
+          final data = jsonDecode(raw!) as Map<String, dynamic>;
+          final log = (data['log'] as String?)?.trim() ?? '';
+          if (log.isEmpty) return;
+          final name = (data['name'] as String?)?.trim() ?? '';
+          final updateUrl = (data['updateUrl'] as String?)?.trim() ?? '';
+          final sourceName = name.isNotEmpty ? name : (userApiStateNotifier.value.meta?.name ?? '自定义音源');
+          updateAlertNotifier.value = LxUpdateAlert(sourceName: sourceName, log: log, updateUrl: updateUrl.isEmpty ? null : updateUrl);
+          _log(engine.code, 'info', '$sourceName 提供了更新提示');
         case (_Engine.userApi, 'response') || (_Engine.musicSdk, 'rpcResponse'):
           final reply = jsonDecode(raw!) as Map<String, dynamic>;
           final id = reply[engine == _Engine.userApi ? 'requestKey' : 'callId'] as String;

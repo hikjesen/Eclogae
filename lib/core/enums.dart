@@ -377,7 +377,7 @@ enum LibraryTab {
   foldersMusic,
   foldersVideos,
   search,
-  youtube(hasSectionsMenu: true),
+  youtube,
   ytHome(isInDrawerOnlyWhenActive: true),
   ytMusic(isInDrawerOnlyWhenActive: true),
   ytNotifications(isInDrawerOnlyWhenActive: true),

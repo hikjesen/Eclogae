@@ -1,33 +1,44 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'package:path/path.dart' as p;
 
 import 'package:namida/class/route.dart';
-import 'package:namida/controller/file_browser.dart';
+import 'package:namida/class/track.dart';
 import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/platform/namida_storage/namida_storage.dart';
 import 'package:namida/controller/player_controller.dart';
+import 'package:namida/controller/scroll_search_controller.dart';
 import 'package:namida/core/dimensions.dart';
 import 'package:namida/core/enums.dart';
 import 'package:namida/core/extensions.dart';
+import 'package:namida/core/icon_fonts/broken_icons.dart';
+import 'package:namida/core/ntheme.dart';
+import 'package:namida/ui/pages/main_page.dart';
+import 'package:namida/ui/widgets/custom_widgets.dart';
 
 import 'lx_bridge_service.dart';
 import 'lx_download_manager.dart';
 import 'lx_models.dart';
+import 'lx_settings_page.dart';
+import 'lx_user_api_store.dart';
+import 'widgets/lx_download_quality_dialog.dart';
+import 'widgets/lx_download_task_card.dart';
+import 'widgets/lx_lyrics_sheet.dart';
+import 'widgets/lx_source_dialogs.dart';
+import 'widgets/lx_track_tile.dart';
 
 class LxMusicPage extends StatefulWidget with NamidaRouteWidget {
-  const LxMusicPage({super.key, this.initialTab = 0});
+  const LxMusicPage({super.key});
 
-  static const title = 'LX Music';
-  static const subtitle = '多平台音乐搜索、在线/本地音源管理、下载校验与自动入库';
+  static const title = '在线曲库';
+  static final _requestedSection = ValueNotifier<int?>(null);
 
-  final int initialTab;
+  static void openSection(int index) {
+    _requestedSection.value = index;
+    if (NamidaNavigator.inst.currentRoute?.route != RouteType.YOUTUBE_HOME) {
+      ScrollSearchController.inst.animatePageController(LibraryTab.youtube, jumpToTopIfSamePage: false);
+    }
+  }
 
   @override
-  RouteType get route => RouteType.SETTINGS_subpage;
+  RouteType get route => RouteType.YOUTUBE_HOME;
 
   @override
   String? get name => title;
@@ -36,410 +47,175 @@ class LxMusicPage extends StatefulWidget with NamidaRouteWidget {
   State<LxMusicPage> createState() => _LxMusicPageState();
 }
 
-const _tabPadding = EdgeInsets.fromLTRB(16, 12, 16, 16 + Dimensions.globalBottomPaddingTotal);
+const _listPadding = EdgeInsets.fromLTRB(12, 4, 12, Dimensions.globalBottomPaddingTotal);
+
+Future<void> _playTrack(Track track) async {
+  try {
+    await Player.inst.playKeepingQueue([track], QueueSource.others(LxMusicPage.title));
+  } catch (error) {
+    snackyy(icon: Broken.info_circle, message: '播放失败：$error', isError: true);
+  }
+}
+
+BoxDecoration _pillDecoration(NColorsData colors) => BoxDecoration(
+  color: colors.cardTheme,
+  borderRadius: BorderRadius.circular(12.0.multipliedRadius),
+);
 
 class _LxMusicPageState extends State<LxMusicPage> with SingleTickerProviderStateMixin {
   final _bridge = LxBridgeService.inst;
   final _downloads = LxDownloadManager.inst;
-  late final _tabs = TabController(length: 3, initialIndex: widget.initialTab, vsync: this);
-  late final _sourceChanges = Listenable.merge([_bridge.scriptsNotifier, _bridge.userApiStateNotifier]);
+  final _searchScroll = NamidaScrollController.create();
+  final _downloadsScroll = NamidaScrollController.create();
+  late final TabController _tabs;
+  late int _section;
 
-  bool _editingSources = false;
-  bool _editingDownloadSettings = false;
-  String? _sourceError;
-  String? _downloadSettingsError;
+  bool _showingUpdate = false;
+  String? _initializationError;
 
   @override
   void initState() {
     super.initState();
-    _editSources('读取音源', _bridge.ensureInitialized);
-    _editDownloadSettings(_downloads.ensureLoaded);
+    _section = LxMusicPage._requestedSection.value ?? 0;
+    LxMusicPage._requestedSection.value = null;
+    _tabs = TabController(length: 2, initialIndex: _section, vsync: this)..addListener(_onTabChanged);
+    ScrollSearchController.inst.registerPageScrollController(LibraryTab.youtube, _scrollFor(_section));
+    LxMusicPage._requestedSection.addListener(_onSectionRequested);
+    _bridge.updateAlertNotifier.addListener(_scheduleUpdateAlert);
+    NamidaNavigator.inst.currentWidgetStack.addListener(_scheduleUpdateAlert);
+    _scheduleUpdateAlert();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    try {
+      await Future.wait([_bridge.ensureInitialized(), _downloads.ensureLoaded()]);
+    } catch (error) {
+      if (mounted) setState(() => _initializationError = '初始化在线曲库失败：$error');
+    }
+  }
+
+  ScrollController _scrollFor(int index) => index == 0 ? _searchScroll : _downloadsScroll;
+
+  void _onTabChanged() {
+    final index = _tabs.index;
+    if (index == _section) return;
+    final scrollSearch = ScrollSearchController.inst;
+    scrollSearch.unregisterPageScrollController(LibraryTab.youtube, _scrollFor(_section));
+    scrollSearch.registerPageScrollController(LibraryTab.youtube, _scrollFor(index));
+    FocusScope.of(context).unfocus();
+    setState(() => _section = index);
+  }
+
+  void _onSectionRequested() {
+    final index = LxMusicPage._requestedSection.value;
+    if (index == null || NamidaNavigator.inst.currentRoute?.route != RouteType.YOUTUBE_HOME) return;
+    LxMusicPage._requestedSection.value = null;
+    _tabs.animateTo(index);
+  }
+
+  void _scheduleUpdateAlert() {
+    if (_showingUpdate || _bridge.updateAlertNotifier.value == null || NamidaNavigator.inst.currentRoute?.route != RouteType.YOUTUBE_HOME) return;
+    _showingUpdate = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final alert = _bridge.updateAlertNotifier.value;
+      if (alert != null && NamidaNavigator.inst.currentRoute?.route == RouteType.YOUTUBE_HOME) {
+        final dialog = LxUpdateAlertDialog.show(alert);
+        _bridge.dismissUpdateAlert();
+        await dialog;
+      }
+      if (!mounted) return;
+      _showingUpdate = false;
+      _scheduleUpdateAlert();
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   @override
   void dispose() {
+    NamidaNavigator.inst.currentWidgetStack.removeListener(_scheduleUpdateAlert);
+    _bridge.updateAlertNotifier.removeListener(_scheduleUpdateAlert);
+    LxMusicPage._requestedSection.removeListener(_onSectionRequested);
+    ScrollSearchController.inst.unregisterPageScrollController(LibraryTab.youtube, _scrollFor(_section));
     _tabs.dispose();
+    _searchScroll.dispose();
+    _downloadsScroll.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final usesNamidaAppBar = identical(Navigator.maybeOf(context), NamidaNavigator.inst.navKey.currentState);
-    return Scaffold(
-      appBar: usesNamidaAppBar ? null : AppBar(title: const Text(LxMusicPage.title)),
-      body: SafeArea(
-        top: usesNamidaAppBar,
+    return BackgroundWrapper(
+      child: NDecoratedBox(
+        decoration: (colors) => BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [(colors.accent ?? colors.primary).withOpacityExt(0.10), Colors.transparent],
+          ),
+        ),
         child: Column(
           children: [
-            ValueListenableBuilder<int>(
-              valueListenable: _downloads.activeCountNotifier,
-              builder: (context, count, _) => TabBar(
-                controller: _tabs,
-                tabs: [
-                  const Tab(text: '搜索下载'),
-                  Tab(text: count > 0 ? '下载管理 ($count)' : '下载管理'),
-                  const Tab(text: '音源与日志'),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 760),
-                  child: TabBarView(
-                    controller: _tabs,
-                    children: [
-                      _SearchTab(onShowDownloads: () => _tabs.animateTo(1)),
-                      _buildDownloads(),
-                      ListView(
-                        key: const PageStorageKey('lx-sources'),
-                        padding: _tabPadding,
-                        children: [_buildSources(), const SizedBox(height: 12), _buildLogs()],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _PillGroup(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _Pill(
+                              label: '搜索',
+                              icon: Broken.search_normal_1,
+                              selected: _section == 0,
+                              onTap: () => _tabs.animateTo(0),
+                            ),
+                          ),
+                          Expanded(
+                            child: ValueListenableBuilder<int>(
+                              valueListenable: _downloads.activeCountNotifier,
+                              builder: (context, count, _) => _Pill(
+                                label: '下载管理',
+                                icon: Broken.document_download,
+                                selected: _section == 1,
+                                count: count,
+                                onTap: () => _tabs.animateTo(1),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _editDownloadSettings(Future<void> Function() edit) async {
-    if (_editingDownloadSettings) return;
-    setState(() {
-      _editingDownloadSettings = true;
-      _downloadSettingsError = null;
-    });
-    try {
-      await edit();
-    } catch (error) {
-      if (mounted) setState(() => _downloadSettingsError = '[下载设置] ${_displayError(error)}');
-    } finally {
-      if (mounted) setState(() => _editingDownloadSettings = false);
-    }
-  }
-
-  Widget _buildDownloadSettings() => ValueListenableBuilder<LxDownloadSettings>(
-    valueListenable: _downloads.settingsNotifier,
-    builder: (context, options, _) {
-      final directory = _downloads.resolveEffectiveDownloadDir();
-      final canEdit = !_editingDownloadSettings;
-      final qualities = LxDownloadSettings.qualityOptions;
-      void save(LxDownloadSettings next) => _editDownloadSettings(() => _downloads.updateSettings(next));
-      return Card.outlined(
-        margin: EdgeInsets.zero,
-        child: ExpansionTile(
-          key: const PageStorageKey('lx-download-settings'),
-          title: const Text('下载设置'),
-          subtitle: Text(_downloadSettingsError ?? directory, maxLines: 2, overflow: TextOverflow.ellipsis),
-          expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
-          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-          children: [
-            SelectableText(directory),
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: [
-                OutlinedButton(
-                  onPressed: canEdit
-                      ? () => _editDownloadSettings(() async {
-                          final picked = await NamidaFileBrowser.pickDirectory(note: '选择 LX 下载目录', initialDirectory: directory);
-                          if (picked != null) {
-                            await _downloads.updateSettings(_downloads.settingsNotifier.value.copyWith(downloadDir: picked.path));
-                          }
-                        })
-                      : null,
-                  child: const Text('选择目录'),
-                ),
-                TextButton(
-                  onPressed: canEdit && options.downloadDir != null ? () => save(options.copyWith(downloadDir: null)) : null,
-                  child: const Text('恢复默认'),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(child: Text('首选音质')),
-                DropdownButton<String>(
-                  value: qualities.contains(options.preferredQuality) ? options.preferredQuality : null,
-                  hint: const Text('选择音质'),
-                  items: [for (final quality in qualities) DropdownMenuItem(value: quality, child: Text(quality))],
-                  onChanged: canEdit
-                      ? (quality) {
-                          if (quality != null) save(options.copyWith(preferredQuality: quality));
-                        }
-                      : null,
-                ),
-              ],
-            ),
-            SwitchListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              title: const Text('自动跨平台换源'),
-              value: options.autoSwitchSource,
-              onChanged: canEdit ? (value) => save(options.copyWith(autoSwitchSource: value)) : null,
-            ),
-            SwitchListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              title: const Text('导出同名 .lrc 歌词'),
-              value: options.exportLrc,
-              onChanged: canEdit ? (value) => save(options.copyWith(exportLrc: value)) : null,
-            ),
-            SwitchListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              title: const Text('内嵌专辑封面'),
-              value: options.embedCover,
-              onChanged: canEdit ? (value) => save(options.copyWith(embedCover: value)) : null,
-            ),
-            if (_editingDownloadSettings) const LinearProgressIndicator(),
-            if (_downloadSettingsError case final error?) _ErrorText(error),
-          ],
-        ),
-      );
-    },
-  );
-
-  Widget _buildDownloads() => ValueListenableBuilder<List<LxDownloadTask>>(
-    valueListenable: _downloads.tasksNotifier,
-    child: _buildDownloadSettings(),
-    builder: (context, tasks, settingsCard) => ListView.builder(
-      key: const PageStorageKey('lx-downloads'),
-      padding: _tabPadding,
-      itemCount: tasks.isEmpty ? 3 : tasks.length + 2,
-      itemBuilder: (context, index) {
-        if (index == 0) return settingsCard!;
-        if (index == 1) {
-          return Row(
-            children: [
-              Expanded(child: Text('下载任务 (${tasks.length})', style: Theme.of(context).textTheme.titleMedium)),
-              Tooltip(
-                message: '清理已完成、失败和已取消的任务',
-                child: TextButton(
-                  onPressed: tasks.any((task) => !task.isActive) ? _downloads.clearFinished : null,
-                  child: const Text('清理已完成'),
-                ),
-              ),
-            ],
-          );
-        }
-        if (tasks.isEmpty) return const Text('暂无下载任务');
-        final task = tasks[index - 2];
-        return _DownloadTaskCard(key: ValueKey(task.id), task: task);
-      },
-    ),
-  );
-
-  Future<void> _editSources(String stage, Future<void> Function() edit) async {
-    if (_editingSources) return;
-    setState(() {
-      _editingSources = true;
-      _sourceError = null;
-    });
-    try {
-      await edit();
-    } catch (error) {
-      if (mounted) setState(() => _sourceError = '[$stage] ${_displayError(error)}');
-    } finally {
-      if (mounted) setState(() => _editingSources = false);
-    }
-  }
-
-  Future<void> _importLocal() => _editSources('本地导入', () async {
-    final file = await NamidaFileBrowser.pickFile(note: '选择 LX .js 音源', memeType: NamidaStorageFileMemeType.any);
-    if (file != null) await _bridge.importScript(file);
-  });
-
-  Future<void> _importOnline() => _editSources('在线导入', () async {
-    var input = '';
-    final url = await showDialog<String>(
-      context: context,
-      builder: (dialogContext) {
-        void submit(String value) => Navigator.of(dialogContext).pop(value);
-        return AlertDialog(
-          title: const Text('在线 URL 导入'),
-          content: TextField(
-            autofocus: true,
-            decoration: const InputDecoration(labelText: '音源 URL', hintText: 'https://example.com/source.js'),
-            keyboardType: TextInputType.url,
-            textInputAction: TextInputAction.done,
-            onChanged: (value) => input = value,
-            onSubmitted: submit,
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('取消')),
-            FilledButton(onPressed: () => submit(input), child: const Text('导入')),
-          ],
-        );
-      },
-    );
-    if (url != null) await _bridge.importScriptFromUrl(url);
-  });
-
-  Widget _buildSources() => AnimatedBuilder(
-    animation: _sourceChanges,
-    builder: (context, _) {
-      final state = _bridge.userApiStateNotifier.value;
-      final scripts = _bridge.scriptsNotifier.value;
-      final activeId = state.meta?.id;
-      final selectedId = scripts.any((script) => script.id == activeId) ? activeId : null;
-      final busy = _editingSources || state.status == LxUserApiStatus.loading;
-      final canEdit = LxBridgeService.isSupported && !busy;
-      final status = switch (state.status) {
-        LxUserApiStatus.idle => 'Idle',
-        LxUserApiStatus.loading => 'Loading',
-        LxUserApiStatus.ready => 'Ready',
-        LxUserApiStatus.error => 'Error',
-      };
-      return Card.filled(
-        margin: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Wrap(
-                spacing: 12,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [Text('自定义音源', style: Theme.of(context).textTheme.titleLarge), Chip(label: Text(status))],
-              ),
-              DropdownButton<String>(
-                isExpanded: true,
-                value: selectedId,
-                hint: Text(scripts.isEmpty ? '暂无已导入音源' : '选择音源'),
-                items: [
-                  for (final script in scripts)
-                    DropdownMenuItem(value: script.id, child: Text('${script.name} (${script.fileName})', overflow: TextOverflow.ellipsis)),
-                ],
-                onChanged: canEdit
-                    ? (id) {
-                        if (id != null && id != selectedId) _editSources('切换音源', () => _bridge.activateScript(id));
-                      }
-                    : null,
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  FilledButton.tonal(onPressed: canEdit ? _importLocal : null, child: const Text('本地导入 .js')),
-                  OutlinedButton(onPressed: canEdit ? _importOnline : null, child: const Text('在线 URL 导入')),
-                  TextButton(onPressed: canEdit && selectedId != null ? () => _editSources('重载音源', _bridge.reloadActiveScript) : null, child: const Text('重载')),
-                  TextButton(
-                    onPressed: canEdit && selectedId != null ? () => _editSources('删除音源', () => _bridge.deleteScript(selectedId)) : null,
-                    child: const Text('删除当前音源'),
-                  ),
-                ],
-              ),
-              if (busy) ...[const SizedBox(height: 12), const LinearProgressIndicator()],
-              if (_sourceError case final error?) _ErrorText(error),
-              if (state.errorMessage case final error?) _ErrorText(error),
-              if (state.status == LxUserApiStatus.ready) ...[
-                const SizedBox(height: 12),
-                if (state.supportedActions.isEmpty) const Text('音源未声明支持的音乐平台'),
-                for (final platform in LxPlatform.values)
-                  if (state.supportedActions.containsKey(platform.code))
-                    Text('${platform.label}  ${(state.supportedQualities[platform.code] ?? const []).join(' / ')}'),
-              ],
-            ],
-          ),
-        ),
-      );
-    },
-  );
-
-  Widget _buildLogs() => ValueListenableBuilder<List<LxLogEntry>>(
-    valueListenable: _bridge.logsNotifier,
-    builder: (context, logs, _) => Card.outlined(
-      margin: EdgeInsets.zero,
-      child: ExpansionTile(
-        key: const PageStorageKey('lx-diagnostic-logs'),
-        title: const Text('诊断日志'),
-        subtitle: Text('${logs.length} 条'),
-        expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
-        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        children: [
-          Wrap(
-            spacing: 8,
-            children: [
-              OutlinedButton(onPressed: logs.isEmpty ? null : () => _copy(context, logs.join('\n')), child: const Text('复制日志')),
-              TextButton(onPressed: logs.isEmpty ? null : _bridge.clearLogs, child: const Text('清空')),
-            ],
-          ),
-          if (logs.isNotEmpty)
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 320),
-              child: SingleChildScrollView(
-                primary: false,
-                child: SelectableText(logs.reversed.join('\n'), style: Theme.of(context).textTheme.bodySmall),
-              ),
-            ),
-        ],
-      ),
-    ),
-  );
-}
-
-class _DownloadTaskCard extends StatelessWidget {
-  const _DownloadTaskCard({super.key, required this.task});
-
-  final LxDownloadTask task;
-
-  @override
-  Widget build(BuildContext context) {
-    final downloads = LxDownloadManager.inst;
-    final indexedTrack = task.indexedTrack;
-    final resolvedSource = task.resolvedSource;
-    final savedPath = task.savedPath;
-    final completed = task.stage == LxDownloadStage.completed;
-    return Card.filled(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Expanded(child: Text(task.track.name, style: Theme.of(context).textTheme.titleMedium)),
-                const SizedBox(width: 8),
-                Chip(label: Text(task.stage.label), visualDensity: VisualDensity.compact),
-              ],
-            ),
-            if (task.track.singer.isNotEmpty) Text(task.track.singer),
-            Text(resolvedSource == null ? '请求音质 · ${task.requestedQuality}' : '${resolvedSource.label} · ${task.resolvedQuality}'),
-            if (task.isActive) ...[
-              const SizedBox(height: 8),
-              const LinearProgressIndicator(),
-              const SizedBox(height: 4),
-              Text('已接收 ${task.receivedBytes.fileSizeFormatted}'),
-            ],
-            if (completed && savedPath != null) Text('${p.basename(savedPath)}${task.lrcPath != null ? ' · .lrc' : ''}'),
-            if (task.errorMessage case final error?) _ErrorText(error),
-            if (task.canCancel || !task.isActive)
-              Wrap(
-                spacing: 8,
-                children: [
-                  if (task.canCancel) TextButton(onPressed: () => downloads.cancel(task.id), child: const Text('取消')),
-                  if (task.canRetry) TextButton(onPressed: () => downloads.retry(task.id), child: const Text('重试')),
-                  if (completed && indexedTrack != null)
-                    FilledButton.tonal(
-                      onPressed: () async {
-                        try {
-                          await Player.inst.playKeepingQueue([indexedTrack], QueueSource.others(LxMusicPage.title));
-                        } catch (error) {
-                          if (context.mounted) _showMessage(context, '[播放] ${_displayError(error)}');
-                        }
-                      },
-                      child: const Text('立即播放'),
                     ),
-                  if (!task.isActive) TextButton(onPressed: () => downloads.removeTask(task.id), child: const Text('移除')),
+                  ),
+                  const SizedBox(width: 8),
+                  NDecoratedBox(
+                    decoration: _pillDecoration,
+                    child: NamidaIconButton(
+                      icon: Broken.setting_2,
+                      padding: const EdgeInsets.all(11),
+                      tooltip: () => LxSettingsPage.title,
+                      onPressed: () => const LxSettingsPage().navigate(),
+                    ),
+                  ),
                 ],
               ),
+            ),
+            if (_initializationError case final error?)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: _Notice(icon: Broken.info_circle, title: error, isError: true),
+              ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabs,
+                children: [
+                  _SearchSection(controller: _searchScroll, onShowDownloads: () => LxMusicPage.openSection(1)),
+                  _DownloadsSection(controller: _downloadsScroll),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -447,28 +223,52 @@ class _DownloadTaskCard extends StatelessWidget {
   }
 }
 
-class _SearchTab extends StatefulWidget {
-  const _SearchTab({required this.onShowDownloads});
+enum _SearchMode {
+  songs('歌曲'),
+  playlists('歌单');
 
+  const _SearchMode(this.label);
+  final String label;
+}
+
+class _SearchSection extends StatefulWidget {
+  const _SearchSection({required this.controller, required this.onShowDownloads});
+
+  final ScrollController controller;
   final VoidCallback onShowDownloads;
 
   @override
-  State<_SearchTab> createState() => _SearchTabState();
+  State<_SearchSection> createState() => _SearchSectionState();
 }
 
-class _SearchTabState extends State<_SearchTab> with AutomaticKeepAliveClientMixin<_SearchTab> {
+class _SearchSectionState extends State<_SearchSection> with AutomaticKeepAliveClientMixin<_SearchSection> {
+  final _bridge = LxBridgeService.inst;
+  final _downloads = LxDownloadManager.inst;
+  final _store = LxUserApiStore();
   final _keyword = TextEditingController();
   final _selection = <String, LxTrack>{};
+  late final _trackChanges = Listenable.merge([_downloads.tasksNotifier, _downloads.existingFilesVersion]);
+  late final Future<void> _historyLoaded;
+
   LxPlatform _platform = LxPlatform.kw;
+  _SearchMode _mode = _SearchMode.songs;
+  List<String> _history = const [];
+  bool _savingHistory = false;
   bool _searching = false;
+  bool _startingDownload = false;
   bool _multiSelect = false;
   String _lastQuery = '';
   String? _searchError;
   LxSearchResult? _result;
-  LxTrack? _expandedTrack;
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _historyLoaded = _loadHistory();
+  }
 
   @override
   void dispose() {
@@ -476,401 +276,657 @@ class _SearchTabState extends State<_SearchTab> with AutomaticKeepAliveClientMix
     super.dispose();
   }
 
-  Future<void> _search(String query, {int? page}) async {
-    if (_searching || !LxBridgeService.isSupported) return;
+  Future<void> _loadHistory() async {
+    try {
+      final history = await _store.loadSearchHistory();
+      if (mounted) setState(() => _history = history);
+    } catch (error) {
+      _bridge.logDiagnostic('search', 'warning', '读取搜索历史失败：$error');
+    }
+  }
+
+  Future<void> _saveHistory(List<String> history) async {
+    setState(() => _savingHistory = true);
+    try {
+      await _store.saveSearchHistory(history);
+      if (mounted) setState(() => _history = history);
+    } catch (error) {
+      if (mounted) snackyy(icon: Broken.info_circle, message: '保存搜索历史失败：$error', isError: true);
+    } finally {
+      if (mounted) setState(() => _savingHistory = false);
+    }
+  }
+
+  Future<void> _search(String input, {int? page}) async {
+    final query = input.trim();
+    if (query.isEmpty || _mode != _SearchMode.songs || _searching || _savingHistory || !LxBridgeService.isSupported) return;
+    FocusScope.of(context).unfocus();
     setState(() {
       _searching = true;
       _searchError = null;
-      _expandedTrack = null;
       if (page == null) {
         _selection.clear();
         _result = null;
       }
     });
     try {
-      final result = await LxBridgeService.inst.search(platform: _platform, keyword: query, page: page ?? 1);
+      if (page == null) {
+        await _historyLoaded;
+        if (!mounted) return;
+        await _saveHistory([query, ..._history.where((item) => item != query)].take(LxUserApiStore.maxSearchHistory).toList());
+      }
+      final result = await _bridge.search(platform: _platform, keyword: query, page: page ?? 1);
       if (!mounted) return;
+      if (widget.controller.hasClients) widget.controller.jumpTo(0);
       setState(() {
         _lastQuery = query;
         _result = result;
       });
     } catch (error) {
-      if (mounted) setState(() => _searchError = _displayError(error));
+      if (mounted) setState(() => _searchError = '搜索失败：$error');
     } finally {
       if (mounted) setState(() => _searching = false);
     }
   }
 
-  void _enqueueSelection() {
-    final added = LxDownloadManager.inst.enqueueBatch(_selection.values);
-    setState(_selection.clear);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('已加入下载队列 (${added.length})'),
-        action: SnackBarAction(
-          label: '查看下载',
-          onPressed: () {
-            if (mounted) widget.onShowDownloads();
-          },
-        ),
-      ),
-    );
+  void _selectPlatform(LxPlatform platform) {
+    if (_platform == platform || _searching) return;
+    setState(() {
+      _platform = platform;
+      _selection.clear();
+      _result = null;
+      _searchError = null;
+    });
+  }
+
+  void _toggleMultiSelect() => setState(() {
+    _multiSelect = !_multiSelect;
+    if (!_multiSelect) _selection.clear();
+  });
+
+  void _toggleSelected(LxTrack track) => setState(() {
+    final key = track.uniqueKey;
+    if (_selection.remove(key) == null) _selection[key] = track;
+  });
+
+  Future<void> _startDownload(List<LxTrack> tracks, {required bool forceQualityDialog}) async {
+    if (_startingDownload) return;
+    setState(() => _startingDownload = true);
+    try {
+      await _downloads.ensureLoaded();
+      if (!mounted) return;
+      final (:fresh, :inQueue, :onDisk) = _downloads.classifyDuplicates(tracks);
+      final single = tracks.length == 1;
+      if (fresh.isEmpty && onDisk.isEmpty) {
+        snackyy(icon: Broken.info_circle, message: single ? '该曲目已在下载队列中' : '所选曲目均已在下载队列中');
+        return;
+      }
+
+      var target = fresh;
+      if (onDisk.isNotEmpty || inQueue.isNotEmpty) {
+        final action = await LxDuplicateConfirmDialog.show(
+          freshCount: fresh.length,
+          onDiskCount: onDisk.length,
+          inQueueCount: inQueue.length,
+          singleTrackName: single ? tracks.single.name : null,
+        );
+        if (!mounted || action == LxDuplicateAction.cancel) return;
+        if (action == LxDuplicateAction.downloadAll) target = [...fresh, ...onDisk];
+      }
+
+      final options = _downloads.settingsNotifier.value;
+      var quality = options.effectiveQuickQuality;
+      if (forceQualityDialog || !options.rememberLastQuality) {
+        final chosenQuality = await LxDownloadQualityDialog.show(
+          trackCount: target.length,
+          singleTrack: target.length == 1 ? target.single : null,
+          initialSettings: options,
+          effectiveDir: _downloads.resolveEffectiveDownloadDir(),
+          onSettingsChanged: _downloads.updateSettings,
+        );
+        if (!mounted || chosenQuality == null) return;
+        quality = chosenQuality;
+      }
+
+      final added = _downloads.enqueueBatch(target, quality: quality);
+      setState(() {
+        for (final track in tracks) {
+          _selection.remove(track.uniqueKey);
+        }
+      });
+      snackyy(
+        icon: Broken.document_download,
+        message: added.length == 1
+            ? '已加入下载队列（${LxDownloadSettings.qualityLabel(quality)}）'
+            : '已加入下载队列（${added.length} 首 · ${LxDownloadSettings.qualityLabel(quality)}）',
+        button: SnackbarButton(text: '查看下载', function: widget.onShowDownloads),
+      );
+    } catch (error) {
+      if (mounted) snackyy(icon: Broken.info_circle, message: '加入下载队列失败：$error', isError: true);
+    } finally {
+      if (mounted) setState(() => _startingDownload = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final result = _result;
-    final canSearch = LxBridgeService.isSupported && !_searching;
-    return ListView(
-      key: const PageStorageKey('lx-search'),
-      padding: _tabPadding,
-      children: [
-        Wrap(
-          spacing: 8,
-          runSpacing: 4,
-          children: [
-            for (final platform in LxPlatform.values)
-              ChoiceChip(
-                label: Text(platform.label),
-                selected: platform == _platform,
-                onSelected: canSearch
-                    ? (selected) {
-                        if (!selected) return;
-                        setState(() {
-                          _platform = platform;
-                          _selection.clear();
-                          _result = null;
-                          _searchError = null;
-                          _expandedTrack = null;
-                        });
-                      }
-                    : null,
-              ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _keyword,
-                enabled: LxBridgeService.isSupported,
-                decoration: const InputDecoration(labelText: '关键词', border: OutlineInputBorder()),
-                textInputAction: TextInputAction.search,
-                onSubmitted: _search,
-              ),
-            ),
-            const SizedBox(width: 8),
-            FilledButton.icon(onPressed: canSearch ? () => _search(_keyword.text) : null, icon: const Icon(Icons.search), label: const Text('搜索')),
-          ],
-        ),
-        if (!LxBridgeService.isSupported) const _ErrorText('LX 桥接仅支持 Android'),
-        if (_searching) ...[const SizedBox(height: 12), const LinearProgressIndicator()],
-        if (_searchError case final error?) _ErrorText(error),
-        if (result != null) ...[
-          const SizedBox(height: 12),
-          Text(result.tracks.isEmpty ? '未找到歌曲' : '共 ${result.total} 首歌曲'),
-          if (result.tracks.isNotEmpty || _selection.isNotEmpty) _buildBatchActions(result.tracks),
-          for (final track in result.tracks) _buildTrack(context, track),
-          if (result.allPage > 1)
-            Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 8,
-              children: [
-                TextButton(onPressed: canSearch && result.page > 1 ? () => _search(_lastQuery, page: result.page - 1) : null, child: const Text('上一页')),
-                Text('${result.page} / ${result.allPage}'),
-                TextButton(onPressed: canSearch && result.page < result.allPage ? () => _search(_lastQuery, page: result.page + 1) : null, child: const Text('下一页')),
-              ],
-            ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildBatchActions(List<LxTrack> tracks) {
-    final pageSelected = tracks.every((track) => _selection.containsKey(track.id));
-    return Wrap(
-      spacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        TextButton(
-          onPressed: () => setState(() {
-            _multiSelect = !_multiSelect;
-            if (!_multiSelect) _selection.clear();
-          }),
-          child: Text(_multiSelect ? '退出多选' : '多选'),
-        ),
-        if (_multiSelect) ...[
-          if (tracks.isNotEmpty)
-            TextButton(
-              onPressed: () => setState(() {
-                for (final track in tracks) {
-                  if (pageSelected) {
-                    _selection.remove(track.id);
-                  } else {
-                    _selection[track.id] = track;
-                  }
-                }
-              }),
-              child: Text(pageSelected ? '取消本页全选' : '全选本页'),
-            ),
-          FilledButton(
-            onPressed: _selection.isEmpty ? null : _enqueueSelection,
-            child: Text('下载已选 (${_selection.length})'),
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildTrack(BuildContext context, LxTrack track) {
-    final scheme = Theme.of(context).colorScheme;
-    final selected = _selection.containsKey(track.id);
-    final expanded = identical(_expandedTrack, track);
-    final details = [track.singer, track.albumName, track.interval].where((value) => value.isNotEmpty).join(' · ');
-    void toggleSelection() => setState(() {
-      if (selected) {
-        _selection.remove(track.id);
-      } else {
-        _selection[track.id] = track;
-      }
-    });
-    void toggleDetails() => setState(() => _expandedTrack = expanded ? null : track);
     return Column(
-      key: ObjectKey(track),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Material(
-          color: selected || expanded ? scheme.surfaceContainerHighest : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            textColor: scheme.onSurface,
-            leading: _multiSelect ? Checkbox(value: selected, onChanged: (_) => toggleSelection(), semanticLabel: '选择 ${track.name}') : null,
-            title: Text(track.name),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (details.isNotEmpty) Text(details),
-                if (track.qualities.isNotEmpty)
-                  Wrap(spacing: 6, children: [for (final quality in track.qualities) Chip(label: Text(quality), visualDensity: VisualDensity.compact)]),
-              ],
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  onPressed: () => _enqueueTrack(context, track),
-                  tooltip: '下载 ${track.name}',
-                  icon: const Icon(Icons.download_outlined),
+        _buildSearchControls(),
+        if (_searching) const LinearProgressIndicator(minHeight: 2),
+        Expanded(
+          child: SuperSmoothListView(
+            key: const PageStorageKey('lx-search'),
+            controller: widget.controller,
+            padding: _listPadding,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              if (!LxBridgeService.isSupported)
+                const _Notice(icon: Broken.info_circle, title: '在线曲库桥接仅支持 Android', isError: true)
+              else
+                ValueListenableBuilder<LxUserApiState>(
+                  valueListenable: _bridge.userApiStateNotifier,
+                  builder: (context, state, _) => state.status == LxUserApiStatus.ready
+                      ? const SizedBox.shrink()
+                      : _Notice(
+                          icon: Broken.code_circle,
+                          title: '尚未就绪自定义音源，下载前请先导入并启用音源',
+                          action: NamidaButton(
+                            text: '前往设置',
+                            icon: Broken.setting_2,
+                            dense: true,
+                            onTap: () => const LxSettingsPage().navigate(),
+                          ),
+                        ),
                 ),
-                IconButton(
-                  onPressed: toggleDetails,
-                  tooltip: expanded ? '收起详情' : '展开详情',
-                  icon: Icon(expanded ? Icons.expand_less : Icons.expand_more),
-                ),
+              if (_mode == _SearchMode.playlists)
+                const _PlaylistPreview()
+              else ...[
+                if (_searchError case final error?) _Notice(icon: Broken.info_circle, title: error, isError: true),
+                if (_result case final result?)
+                  ..._buildResults(result)
+                else if (!_searching) ...[
+                  ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: _keyword,
+                    builder: (context, value, _) {
+                      final pending = value.text.trim();
+                      if (pending.isEmpty || !LxBridgeService.isSupported) return const SizedBox.shrink();
+                      return _Notice(
+                        icon: Broken.search_normal_1,
+                        title: '在 ${_platform.label} 搜索「$pending」',
+                        action: NamidaButton(
+                          text: '立即搜索',
+                          icon: Broken.search_normal_1,
+                          dense: true,
+                          enabled: !_savingHistory,
+                          onTap: () => _search(pending),
+                        ),
+                      );
+                    },
+                  ),
+                  if (_history.isNotEmpty) _buildHistory(),
+                ],
               ],
-            ),
-            onTap: _multiSelect ? toggleSelection : toggleDetails,
+            ],
           ),
         ),
-        if (expanded) _TrackDetails(track: track),
-        const Divider(height: 1),
       ],
     );
   }
-}
 
-class _TrackDetails extends StatefulWidget {
-  const _TrackDetails({required this.track});
-
-  final LxTrack track;
-
-  @override
-  State<_TrackDetails> createState() => _TrackDetailsState();
-}
-
-class _TrackDetailsState extends State<_TrackDetails> {
-  final _bridge = LxBridgeService.inst;
-  String? _selectedQuality;
-  String? _urlError;
-  String? _lyricError;
-  bool _resolving = false;
-  bool _fetchingLyric = false;
-  String _lyricMode = '原文';
-  ({String url, String quality, int elapsedMs})? _urlResult;
-  ({LxLyricResult lyrics, int elapsedMs})? _lyricResult;
-
-  Future<void> _resolve(String quality) async {
-    setState(() {
-      _resolving = true;
-      _urlError = null;
-      _urlResult = null;
-    });
-    try {
-      final result = await _bridge.resolveMusicUrl(track: widget.track, quality: quality);
-      if (mounted) setState(() => _urlResult = result);
-    } catch (error) {
-      if (mounted) setState(() => _urlError = _displayError(error));
-    } finally {
-      if (mounted) setState(() => _resolving = false);
-    }
-  }
-
-  Future<void> _fetchLyric() async {
-    setState(() {
-      _fetchingLyric = true;
-      _lyricError = null;
-      _lyricResult = null;
-      _lyricMode = '原文';
-    });
-    final elapsed = Stopwatch()..start();
-    try {
-      final lyrics = await _bridge.fetchLyric(track: widget.track);
-      if (mounted) setState(() => _lyricResult = (lyrics: lyrics, elapsedMs: elapsed.elapsedMilliseconds));
-    } catch (error) {
-      if (mounted) setState(() => _lyricError = _displayError(error));
-    } finally {
-      if (mounted) setState(() => _fetchingLyric = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) => ValueListenableBuilder<LxUserApiState>(
-    valueListenable: _bridge.userApiStateNotifier,
-    builder: (context, state, _) {
-      final track = widget.track;
-      final supported = state.supportedQualities[track.source.code] ?? const <String>[];
-      final listed = track.qualities.isEmpty ? supported : track.qualities;
-      final matching = listed.where(supported.contains).toSet();
-      final choices = matching.isEmpty ? listed.toSet() : matching;
-      final downloadQualities = choices.where(LxDownloadSettings.qualityOptions.contains);
-      final quality = choices.contains(_selectedQuality) ? _selectedQuality : downloadQualities.firstOrNull ?? choices.firstOrNull;
-      final canDownload = downloadQualities.contains(quality);
-      final link = _urlResult;
-      final lyric = _lyricResult;
-      return Card.outlined(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget _buildSearchControls() {
+    final canSearch = LxBridgeService.isSupported && !_searching && !_savingHistory && _mode == _SearchMode.songs;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
+      child: Column(
+        children: [
+          Row(
             children: [
-              DropdownButton<String>(
-                isExpanded: true,
-                value: quality,
-                hint: const Text('无可选音质'),
-                items: [for (final choice in choices) DropdownMenuItem(value: choice, child: Text(choice))],
-                onChanged: _resolving || choices.isEmpty
-                    ? null
-                    : (value) => setState(() {
-                        _selectedQuality = value;
-                        _urlError = null;
-                        _urlResult = null;
-                      }),
+              Expanded(
+                child: NContainer(
+                  decoration: (colors) => BoxDecoration(
+                    color: colors.cardTheme,
+                    borderRadius: BorderRadius.circular(14.0.multipliedRadius),
+                    border: Border.all(color: colors.onSurface.withOpacityExt(0.09)),
+                  ),
+                  child: Row(
+                    children: [
+                      NamidaIconButton(
+                        icon: Broken.search_normal_1,
+                        iconSize: 18,
+                        padding: const EdgeInsets.all(10),
+                        tooltip: () => '搜索',
+                        onPressed: canSearch ? () => _search(_keyword.text) : null,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: _keyword,
+                          enabled: canSearch,
+                          textInputAction: TextInputAction.search,
+                          onSubmitted: _search,
+                          style: NText.medium.of(context),
+                          decoration: InputDecoration(
+                            hintText: _mode == _SearchMode.songs ? '搜索歌曲或歌手' : '搜索歌单',
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                      ValueListenableBuilder<TextEditingValue>(
+                        valueListenable: _keyword,
+                        builder: (context, value, _) => value.text.isEmpty
+                            ? const SizedBox(width: 8)
+                            : NamidaIconButton(
+                                icon: Broken.close_circle,
+                                iconSize: 17,
+                                padding: const EdgeInsets.all(9),
+                                tooltip: () => '清空关键词',
+                                onPressed: canSearch
+                                    ? () {
+                                        _keyword.clear();
+                                        setState(() {
+                                          _selection.clear();
+                                          _result = null;
+                                          _searchError = null;
+                                        });
+                                      }
+                                    : null,
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
+              const SizedBox(width: 6),
+              _PillGroup(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final mode in _SearchMode.values)
+                      _Pill(
+                        label: mode.label,
+                        selected: _mode == mode,
+                        onTap: () {
+                          FocusScope.of(context).unfocus();
+                          if (_mode != mode && widget.controller.hasClients) widget.controller.jumpTo(0);
+                          setState(() => _mode = mode);
+                        },
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: SmoothSingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
                 children: [
-                  FilledButton.tonal(onPressed: canDownload ? () => _enqueueTrack(context, track, quality: quality) : null, child: const Text('按所选音质下载')),
-                  OutlinedButton(onPressed: !_resolving && quality != null ? () => _resolve(quality) : null, child: const Text('测试解析直链')),
-                  OutlinedButton(onPressed: _fetchingLyric ? null : _fetchLyric, child: const Text('拉取完整歌词')),
+                  for (final platform in LxPlatform.values)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(end: 4),
+                      child: _Pill(
+                        label: platform.label,
+                        selected: _platform == platform,
+                        onTap: _searching ? null : () => _selectPlatform(platform),
+                      ),
+                    ),
                 ],
               ),
-              if (_resolving || _fetchingLyric) ...[const SizedBox(height: 8), const LinearProgressIndicator()],
-              if (_urlError case final error?) _ErrorText(error),
-              if (link != null) ...[
-                const SizedBox(height: 12),
-                Text('直链 ${link.quality} · ${link.elapsedMs} ms'),
-                SelectableText(link.url),
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: TextButton(onPressed: () => _copy(context, link.url), child: const Text('复制直链')),
-                ),
-              ],
-              if (_lyricError case final error?) _ErrorText(error),
-              if (lyric != null) ...[const SizedBox(height: 12), _buildLyrics(lyric.lyrics, lyric.elapsedMs)],
-            ],
+            ),
           ),
-        ),
-      );
-    },
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistory() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        children: [
+          const Expanded(child: NamidaText('最近搜索', style: NText.medium)),
+          NamidaButton(
+            text: '清空',
+            dense: true,
+            enabled: !_savingHistory,
+            onTap: () => _saveHistory(const []),
+          ),
+        ],
+      ),
+      const SizedBox(height: 6),
+      Wrap(
+        spacing: 6,
+        runSpacing: 6,
+        children: [
+          for (final query in _history)
+            _Pill(
+              label: query,
+              onTap: _savingHistory
+                  ? null
+                  : () {
+                      _keyword.text = query;
+                      _search(query);
+                    },
+            ),
+        ],
+      ),
+    ],
   );
 
-  Widget _buildLyrics(LxLyricResult lyrics, int elapsedMs) {
-    final translation = lyrics.tlyric;
-    final romanization = lyrics.rlyric;
-    final modes = {
-      '原文': lyrics.lyric,
-      if (translation != null && translation.trim().isNotEmpty) '翻译': translation,
-      if (romanization != null && romanization.trim().isNotEmpty) '罗马音': romanization,
-    };
-    final text = modes[_lyricMode]!;
-    final lines = const LineSplitter().convert(text).length;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Wrap(
-          alignment: WrapAlignment.spaceBetween,
+  List<Widget> _buildResults(LxSearchResult result) {
+    final tracks = result.tracks;
+    final allSelected = tracks.isNotEmpty && tracks.every((track) => _selection.containsKey(track.uniqueKey));
+    return [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 6,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Text('歌词共 $lines 行 · $elapsedMs ms'),
-            TextButton(onPressed: text.isEmpty ? null : () => _copy(context, text), child: const Text('复制歌词')),
+            NamidaText('共 ${result.total} 首', style: NText.medium),
+            if (tracks.isNotEmpty || _multiSelect)
+              NamidaButton(text: _multiSelect ? '退出多选' : '多选', dense: true, onTap: _toggleMultiSelect),
+            if (_multiSelect) ...[
+              NamidaButton(
+                text: allSelected ? '取消全选' : '全选本页',
+                dense: true,
+                enabled: tracks.isNotEmpty,
+                onTap: () => setState(() {
+                  for (final track in tracks) {
+                    if (allSelected) {
+                      _selection.remove(track.uniqueKey);
+                    } else {
+                      _selection[track.uniqueKey] = track;
+                    }
+                  }
+                }),
+              ),
+              NamidaButton(
+                text: '下载已选 (${_selection.length})',
+                dense: true,
+                enabled: _selection.isNotEmpty && !_startingDownload,
+                onTap: () => _startDownload(_selection.values.toList(), forceQualityDialog: false),
+              ),
+            ],
           ],
         ),
-        if (modes.length > 1)
-          Wrap(
-            spacing: 8,
+      ),
+      if (tracks.isEmpty) const _Notice(icon: Broken.search_normal_1, title: '未找到歌曲'),
+      AnimatedBuilder(
+        animation: _trackChanges,
+        builder: (context, _) => Column(children: [for (final track in tracks) _buildTrack(track)]),
+      ),
+      if (result.allPage > 1)
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 10,
             children: [
-              for (final mode in modes.keys)
-                ChoiceChip(label: Text(mode), selected: _lyricMode == mode, onSelected: (_) => setState(() => _lyricMode = mode)),
+              NamidaButton(
+                text: '上一页',
+                dense: true,
+                enabled: !_searching && result.page > 1,
+                onTap: () => _search(_lastQuery, page: result.page - 1),
+              ),
+              NamidaText('${result.page} / ${result.allPage}', style: NText.small),
+              NamidaButton(
+                text: '下一页',
+                dense: true,
+                enabled: !_searching && result.page < result.allPage,
+                onTap: () => _search(_lastQuery, page: result.page + 1),
+              ),
             ],
           ),
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 280),
-          child: SingleChildScrollView(
-            key: ValueKey(_lyricMode),
-            primary: false,
-            child: SelectableText(text.isEmpty ? '该曲目暂无歌词' : text),
-          ),
         ),
-      ],
+    ];
+  }
+
+  Widget _buildTrack(LxTrack track) {
+    final task = _downloads.latestTaskForTrack(track);
+    void download() => _startDownload([track], forceQualityDialog: false);
+    void chooseQuality() => _startDownload([track], forceQualityDialog: true);
+    return LxTrackTile(
+      key: ValueKey(track.uniqueKey),
+      track: track,
+      task: task,
+      existsOnDisk: _downloads.cachedExistingAudioPath(track) != null,
+      multiSelect: _multiSelect,
+      selected: _selection.containsKey(track.uniqueKey),
+      onDownload: download,
+      onChooseQualityDownload: chooseQuality,
+      onShowDetails: () => LxLyricsSheet.show(
+        track: track,
+        playableTrack: task?.stage == LxDownloadStage.completed ? task?.indexedTrack : null,
+        onDownload: download,
+        onChooseQualityDownload: chooseQuality,
+        onPlay: _playTrack,
+      ),
+      onToggleMultiSelect: _toggleMultiSelect,
+      onToggleSelected: () => _toggleSelected(track),
+      onLongPressSelect: () => setState(() {
+        _multiSelect = true;
+        _selection[track.uniqueKey] = track;
+      }),
+      onOpenDownloads: widget.onShowDownloads,
+      onPlay: _playTrack,
     );
   }
 }
 
-class _ErrorText extends StatelessWidget {
-  const _ErrorText(this.message);
-
-  final String message;
+class _PlaylistPreview extends StatelessWidget {
+  const _PlaylistPreview();
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 8),
-    child: SelectableText(message, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+  Widget build(BuildContext context) => Column(
+    children: [
+      const _Notice(
+        icon: Broken.music_playlist,
+        title: '歌单搜索即将上线',
+        subtitle: 'Stage 4 将接入五平台歌单搜索、歌单详情与整张歌单批量下载。当前页面已预留布局槽位。',
+      ),
+      const SizedBox(height: 6),
+      ExcludeSemantics(
+        child: GridView.builder(
+          shrinkWrap: true,
+          primary: false,
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 6,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            childAspectRatio: 0.78,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 12,
+          ),
+          itemBuilder: (context, index) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Expanded(
+                child: NContainer(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  decoration: _pillDecoration,
+                  child: NIcon(Broken.music_playlist, size: 28, color: NColors.disabled),
+                ),
+              ),
+              const SizedBox(height: 7),
+              const FractionallySizedBox(
+                widthFactor: 0.68,
+                child: NContainer(height: 6, decoration: _pillDecoration),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
   );
 }
 
-String _displayError(Object error) => switch (error) {
-  FormatException(:final message) => message,
-  StateError(:final message) => message,
-  _ => error.toString().replaceFirst('Exception: ', ''),
-};
+class _DownloadsSection extends StatelessWidget {
+  const _DownloadsSection({required this.controller});
 
-void _enqueueTrack(BuildContext context, LxTrack track, {String? quality}) {
-  LxDownloadManager.inst.enqueue(track, quality: quality);
-  _showMessage(context, '已加入下载队列');
+  final ScrollController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final downloads = LxDownloadManager.inst;
+    return ValueListenableBuilder<List<LxDownloadTask>>(
+      valueListenable: downloads.tasksNotifier,
+      builder: (context, tasks, _) => ValueListenableBuilder<LxDownloadSettings>(
+        valueListenable: downloads.settingsNotifier,
+        builder: (context, settings, _) => SuperSmoothListView.builder(
+          key: const PageStorageKey('lx-downloads'),
+          controller: controller,
+          padding: _listPadding,
+          itemCount: tasks.isEmpty ? 2 : tasks.length + 1,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    NamidaText('下载任务 (${tasks.length})', style: NText.medium),
+                    _Pill(label: '并行 ${settings.maxConcurrent}'),
+                    NamidaButton(
+                      text: '清理已完成',
+                      dense: true,
+                      enabled: tasks.any((task) => !task.isActive),
+                      onTap: downloads.clearFinished,
+                    ),
+                  ],
+                ),
+              );
+            }
+            if (tasks.isEmpty) {
+              return const _Notice(
+                icon: Broken.document_download,
+                title: '暂无下载任务',
+                subtitle: '在搜索页选择歌曲即可加入下载队列',
+              );
+            }
+            final task = tasks[index - 1];
+            return Padding(
+              key: ValueKey(task.id),
+              padding: const EdgeInsets.only(bottom: 8),
+              child: LxDownloadTaskCard(
+                task: task,
+                onPlay: _playTrack,
+                onLocateInLibrary: MainPageFABResumeButton.jumpToTrackInTracksPage,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
-void _showMessage(BuildContext context, String message) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+class _PillGroup extends StatelessWidget {
+  const _PillGroup({required this.child});
 
-Future<void> _copy(BuildContext context, String text) async {
-  try {
-    await Clipboard.setData(ClipboardData(text: text));
-    if (context.mounted) _showMessage(context, '已复制');
-  } catch (error) {
-    if (context.mounted) _showMessage(context, '[复制] ${_displayError(error)}');
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => NDecoratedBox(
+    decoration: _pillDecoration,
+    child: Padding(padding: const EdgeInsets.all(3), child: child),
+  );
+}
+
+class _Pill extends StatelessWidget {
+  const _Pill({required this.label, this.icon, this.selected = false, this.count = 0, this.onTap});
+
+  final String label;
+  final IconData? icon;
+  final bool selected;
+  final int count;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = NColorsData.of(context);
+    final foreground = selected ? NColors.primary : null;
+    return Semantics(
+      button: onTap != null,
+      selected: onTap == null ? null : selected,
+      child: NamidaInkWell(
+        onTap: onTap,
+        borderRadius: 10,
+        animationDurationMS: 160,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        bgColor: NColors.fixed(selected ? colors.primary.withOpacityExt(0.16) : colors.cardTheme),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              NIcon(icon, size: 16, color: foreground),
+              const SizedBox(width: 5),
+            ],
+            Flexible(child: NamidaText(label, style: NText.small, color: foreground, maxLines: 1, overflow: TextOverflow.ellipsis)),
+            if (count > 0)
+              NContainer(
+                margin: const EdgeInsetsDirectional.only(start: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                decoration: (colors) => BoxDecoration(
+                  color: colors.secondaryContainer,
+                  borderRadius: BorderRadius.circular(8.0.multipliedRadius),
+                ),
+                child: NamidaText('$count', style: const NText(.small, size: .s10), color: NColors.onSecondaryContainer),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Notice extends StatelessWidget {
+  const _Notice({required this.icon, required this.title, this.subtitle, this.action, this.isError = false});
+
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Widget? action;
+  final bool isError;
+
+  @override
+  Widget build(BuildContext context) {
+    final subtitle = this.subtitle;
+    return NContainer(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.all(12),
+      decoration: (colors) => BoxDecoration(
+        color: isError ? colors.error.withOpacityExt(0.09) : colors.cardTheme,
+        borderRadius: BorderRadius.circular(14.0.multipliedRadius),
+      ),
+      child: Row(
+        children: [
+          NIcon(icon, size: 22, color: isError ? NColors.error : NColors.primary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                NamidaText(title, style: NText.medium, color: isError ? NColors.error : null),
+                if (subtitle != null) NamidaText(subtitle, style: NText.small),
+              ],
+            ),
+          ),
+          if (action case final action?) ...[const SizedBox(width: 8), action],
+        ],
+      ),
+    );
   }
 }

@@ -33,6 +33,10 @@ class LxTrack {
   final List<String> qualities;
   final Map<String, dynamic> rawMusicInfo;
 
+  String get uniqueKey => '${source.code}:$id';
+
+  String? get highestQuality => LxDownloadSettings.qualityOptions.where(qualities.contains).firstOrNull ?? qualities.firstOrNull;
+
   static List<String> _readQualities(Map<String, dynamic> info) {
     final types = info['types'] as List<dynamic>?;
     final indexed = info['_types'] as Map<String, dynamic>?;
@@ -148,6 +152,14 @@ class LxLogEntry {
   String toString() => '${timestamp.toIso8601String()} [$engine/$level] $message';
 }
 
+class LxUpdateAlert {
+  const LxUpdateAlert({required this.sourceName, required this.log, this.updateUrl});
+
+  final String sourceName;
+  final String log;
+  final String? updateUrl;
+}
+
 class LxDownloadSettings {
   const LxDownloadSettings({
     this.downloadDir,
@@ -155,9 +167,15 @@ class LxDownloadSettings {
     this.autoSwitchSource = true,
     this.exportLrc = true,
     this.embedCover = true,
+    this.rememberLastQuality = false,
+    this.lastSelectedQuality,
+    this.includeTranslationLyric = true,
+    this.includeRomanizationLyric = true,
+    this.maxConcurrent = 1,
   });
 
   static const qualityOptions = ['flac24bit', 'flac', '320k', '128k'];
+  static const concurrentOptions = [1, 2, 3];
   static const _unchanged = Object();
 
   final String? downloadDir;
@@ -165,6 +183,32 @@ class LxDownloadSettings {
   final bool autoSwitchSource;
   final bool exportLrc;
   final bool embedCover;
+  final bool rememberLastQuality;
+  final String? lastSelectedQuality;
+  final bool includeTranslationLyric;
+  final bool includeRomanizationLyric;
+  final int maxConcurrent;
+
+  static String qualityLabel(String quality) => switch (quality) {
+    'flac24bit' => 'FLAC Hi-Res',
+    'flac' => 'FLAC 无损',
+    '320k' => 'MP3 320K',
+    '128k' => 'MP3 128K',
+    _ => quality,
+  };
+
+  static String qualityBadge(String quality) => switch (quality) {
+    'flac24bit' => 'Hi-Res',
+    'flac' => 'SQ',
+    '320k' => 'HQ',
+    '128k' => 'STD',
+    _ => quality.toUpperCase(),
+  };
+
+  String get effectiveQuickQuality {
+    final selected = lastSelectedQuality;
+    return rememberLastQuality && selected != null && qualityOptions.contains(selected) ? selected : preferredQuality;
+  }
 
   LxDownloadSettings copyWith({
     Object? downloadDir = _unchanged,
@@ -172,12 +216,22 @@ class LxDownloadSettings {
     bool? autoSwitchSource,
     bool? exportLrc,
     bool? embedCover,
+    bool? rememberLastQuality,
+    Object? lastSelectedQuality = _unchanged,
+    bool? includeTranslationLyric,
+    bool? includeRomanizationLyric,
+    int? maxConcurrent,
   }) => LxDownloadSettings(
     downloadDir: identical(downloadDir, _unchanged) ? this.downloadDir : downloadDir as String?,
     preferredQuality: preferredQuality ?? this.preferredQuality,
     autoSwitchSource: autoSwitchSource ?? this.autoSwitchSource,
     exportLrc: exportLrc ?? this.exportLrc,
     embedCover: embedCover ?? this.embedCover,
+    rememberLastQuality: rememberLastQuality ?? this.rememberLastQuality,
+    lastSelectedQuality: identical(lastSelectedQuality, _unchanged) ? this.lastSelectedQuality : lastSelectedQuality as String?,
+    includeTranslationLyric: includeTranslationLyric ?? this.includeTranslationLyric,
+    includeRomanizationLyric: includeRomanizationLyric ?? this.includeRomanizationLyric,
+    maxConcurrent: maxConcurrent ?? this.maxConcurrent,
   );
 
   factory LxDownloadSettings.fromJson(Map<String, dynamic> json) => LxDownloadSettings(
@@ -186,6 +240,11 @@ class LxDownloadSettings {
     autoSwitchSource: json['autoSwitchSource'] as bool? ?? true,
     exportLrc: json['exportLrc'] as bool? ?? true,
     embedCover: json['embedCover'] as bool? ?? true,
+    rememberLastQuality: json['rememberLastQuality'] as bool? ?? false,
+    lastSelectedQuality: json['lastSelectedQuality'] as String?,
+    includeTranslationLyric: json['includeTranslationLyric'] as bool? ?? true,
+    includeRomanizationLyric: json['includeRomanizationLyric'] as bool? ?? true,
+    maxConcurrent: (json['maxConcurrent'] as int? ?? 1).clamp(1, 3).toInt(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -194,6 +253,11 @@ class LxDownloadSettings {
     'autoSwitchSource': autoSwitchSource,
     'exportLrc': exportLrc,
     'embedCover': embedCover,
+    'rememberLastQuality': rememberLastQuality,
+    'lastSelectedQuality': lastSelectedQuality,
+    'includeTranslationLyric': includeTranslationLyric,
+    'includeRomanizationLyric': includeRomanizationLyric,
+    'maxConcurrent': maxConcurrent,
   };
 }
 
@@ -224,6 +288,7 @@ class LxDownloadTask {
     this.resolveDetail,
     this.receivedBytes = 0,
     this.totalBytes = 0,
+    this.bytesPerSecond = 0,
     this.savedPath,
     this.lrcPath,
     this.indexedTrack,
@@ -240,6 +305,7 @@ class LxDownloadTask {
   final String? resolveDetail;
   final int receivedBytes;
   final int totalBytes;
+  final int bytesPerSecond;
   final String? savedPath;
   final String? lrcPath;
   final Track? indexedTrack;
@@ -264,6 +330,7 @@ class LxDownloadTask {
     String? resolveDetail,
     int? receivedBytes,
     int? totalBytes,
+    int? bytesPerSecond,
     String? savedPath,
     String? lrcPath,
     Track? indexedTrack,
@@ -280,6 +347,7 @@ class LxDownloadTask {
     resolveDetail: resolveDetail ?? this.resolveDetail,
     receivedBytes: receivedBytes ?? this.receivedBytes,
     totalBytes: totalBytes ?? this.totalBytes,
+    bytesPerSecond: bytesPerSecond ?? this.bytesPerSecond,
     savedPath: savedPath ?? this.savedPath,
     lrcPath: lrcPath ?? this.lrcPath,
     indexedTrack: indexedTrack ?? this.indexedTrack,

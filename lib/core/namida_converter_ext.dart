@@ -58,6 +58,7 @@ import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/lx_music/lx_music_page.dart';
 import 'package:namida/ui/dialogs/add_to_playlist_dialog.dart';
 import 'package:namida/ui/dialogs/common_dialogs.dart';
 import 'package:namida/ui/dialogs/edit_tags_dialog.dart';
@@ -228,7 +229,7 @@ extension LibraryTabUtils on LibraryTab {
       LibraryTab.foldersMusic => FoldersPage.tracks(),
       LibraryTab.foldersVideos => FoldersPage.videos(),
       LibraryTab.home => const HomePageLocal(),
-      LibraryTab.youtube => const YouTubeHomeView(),
+      LibraryTab.youtube => const LxMusicPage(),
       LibraryTab.ytHome => const YouTubeHomeSectionView(section: YTHomePages.home),
       LibraryTab.ytMusic => const YouTubeHomeSectionView(section: YTHomePages.music),
       LibraryTab.ytNotifications => const YouTubeHomeSectionView(section: YTHomePages.notifications),
@@ -1540,6 +1541,9 @@ extension RouteUtils on NamidaRoute {
         displaySettingSearch = true;
         finalWidget = getTextWidget(name ?? '');
         break;
+      case RouteType.YOUTUBE_HOME:
+        finalWidget = getTextWidget(LxMusicPage.title);
+        break;
       case RouteType.SEARCH_albumResults:
         finalWidget = ObxO(
           rx: SearchSortController.inst.albumSearchTemp,
@@ -2104,7 +2108,7 @@ extension LibraryTabL10n on LibraryTab {
     LibraryTab.foldersVideos => "${lang.folders}: ${lang.videos}",
     LibraryTab.home => lang.home,
     LibraryTab.search => lang.search,
-    LibraryTab.youtube => lang.youtube,
+    LibraryTab.youtube => LxMusicPage.title,
     LibraryTab.ytHome => YTHomePages.home._toLibraryTabText(),
     LibraryTab.ytMusic => YTHomePages.music._toLibraryTabText(),
     LibraryTab.ytNotifications => YTHomePages.notifications._toLibraryTabText(),
@@ -2148,7 +2152,7 @@ extension LibraryTabL10n on LibraryTab {
     LibraryTab.foldersVideos => MediaType.folderVideo.toIcon(),
     LibraryTab.home => Broken.home_2,
     LibraryTab.search => Broken.search_normal_1,
-    LibraryTab.youtube => Broken.video_square,
+    LibraryTab.youtube => Broken.music_square_search,
     LibraryTab.ytHome => YTHomePages.home.toIcon(),
     LibraryTab.ytMusic => YTHomePages.music.toIcon(),
     LibraryTab.ytNotifications => YTHomePages.notifications.toIcon(),

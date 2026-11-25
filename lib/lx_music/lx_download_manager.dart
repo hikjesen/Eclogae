@@ -28,6 +28,7 @@ class LxDownloadManager {
 
   static final inst = LxDownloadManager._();
   static const _downloadUa = 'Mozilla/5.0 (Linux; Android 10; Pixel 3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Mobile Safari/537.36';
+  static const _audioExtensions = ['flac', 'mp3', 'm4a', 'ogg', 'wav', 'ape'];
   static final _invalidFilenameChars = RegExp(r'[\\/:*?"<>|\x00-\x1f]');
   static final _filenameEdges = RegExp(r'^[. ]+|[. ]+$');
   static final _lrcTimestamp = RegExp(r'\[(\d{1,4}):([0-5]\d)(?:[.:](\d{1,3}))?\]');
@@ -35,21 +36,22 @@ class LxDownloadManager {
   final tasksNotifier = ValueNotifier<List<LxDownloadTask>>(const []);
   final settingsNotifier = ValueNotifier<LxDownloadSettings>(const LxDownloadSettings());
   final activeCountNotifier = ValueNotifier<int>(0);
+  final existingFilesVersion = ValueNotifier<int>(0);
 
   final _store = LxUserApiStore();
   final _bridge = LxBridgeService.inst;
   final _useLoadedQuality = <String>{};
   final _taggingSources = <String, LxTrack>{};
+  final _running = <String, _RunningTask>{};
+  final _existingFiles = <String, String>{};
+  final _uncommittedAudioPaths = <String>{};
   late final Future<Directory> _tempDir = getApplicationSupportDirectory().then((dir) => Directory(p.join(dir.path, 'lx_music', 'tmp')));
 
   Future<void>? _loading;
   bool _settingsLoaded = false;
   Future<void> _settingsWrites = Future.value();
-  bool _working = false;
-  String? _runningId;
-  bool _cancelRequested = false;
-  File? _downloadingFile;
-  Future<void>? _stopPending;
+  String? _existingFilesDirectory;
+  Map<String, String>? _existingFilesScan;
 
   Future<void> ensureLoaded() => _loading ??= _loadSettings();
 
@@ -58,6 +60,8 @@ class LxDownloadManager {
       final loaded = await _store.loadSettings();
       _settingsLoaded = true;
       settingsNotifier.value = loaded;
+      await refreshExistingFiles();
+      _startWorkers();
     } catch (_) {
       _loading = null;
       rethrow;
@@ -65,17 +69,45 @@ class LxDownloadManager {
   }
 
   Future<void> updateSettings(LxDownloadSettings next) async {
-    if (!LxDownloadSettings.qualityOptions.contains(next.preferredQuality)) {
-      throw ArgumentError.value(next.preferredQuality, 'preferredQuality', '不支持的下载音质');
+    _validateQuality(next.preferredQuality, 'preferredQuality');
+    final selected = next.lastSelectedQuality;
+    if (selected != null) _validateQuality(selected, 'lastSelectedQuality');
+    if (!LxDownloadSettings.concurrentOptions.contains(next.maxConcurrent)) {
+      throw ArgumentError.value(next.maxConcurrent, 'maxConcurrent', '不支持的并行下载数量');
     }
+    await _writeSettings((_) => next);
+  }
+
+  Future<void> recordSelectedQuality(String quality) async {
+    _validateQuality(quality, 'lastSelectedQuality');
+    await _writeSettings((current) => current.copyWith(lastSelectedQuality: quality));
+  }
+
+  static void _validateQuality(String quality, String field) {
+    if (!LxDownloadSettings.qualityOptions.contains(quality)) {
+      throw ArgumentError.value(quality, field, '不支持的下载音质');
+    }
+  }
+
+  Future<void> _writeSettings(LxDownloadSettings Function(LxDownloadSettings) edit) async {
     final previous = _settingsWrites;
     final done = Completer<void>();
     _settingsWrites = done.future;
     try {
       await previous;
       await ensureLoaded();
+      final current = settingsNotifier.value;
+      final next = edit(current);
       await _store.saveSettings(next);
+      final directoryChanged = next.downloadDir != current.downloadDir;
+      if (directoryChanged) {
+        _existingFilesDirectory = null;
+        _existingFilesScan = null;
+        _existingFiles.clear();
+      }
       settingsNotifier.value = next;
+      if (directoryChanged) await refreshExistingFiles();
+      _startWorkers();
     } finally {
       done.complete();
     }
@@ -92,10 +124,75 @@ class LxDownloadManager {
     return AppDirs.YOUTUBE_DOWNLOADS_DEFAULT;
   }
 
+  Future<void> refreshExistingFiles() async {
+    final directory = p.normalize(p.absolute(resolveEffectiveDownloadDir()));
+    if (directory != _existingFilesDirectory) {
+      _existingFilesDirectory = directory;
+      _existingFiles.clear();
+    }
+    final files = _existingFilesScan = <String, String>{};
+    try {
+      await for (final entry in Directory(directory).list(followLinks: false)) {
+        if (entry is! File || _uncommittedAudioPaths.contains(entry.path)) continue;
+        final extension = p.extension(entry.path).toLowerCase();
+        if (_audioExtensions.any((audioExtension) => extension == '.$audioExtension')) {
+          files.putIfAbsent(p.basenameWithoutExtension(entry.path).toLowerCase(), () => entry.path);
+        }
+      }
+    } on FileSystemException catch (error) {
+      if (error is! PathNotFoundException) _log('warning', '读取下载目录失败：${_reason(error)}');
+    }
+    if (!identical(_existingFilesScan, files)) return;
+    _existingFilesScan = null;
+    _existingFiles
+      ..clear()
+      ..addAll(files);
+    existingFilesVersion.value++;
+  }
+
+  String? cachedExistingAudioPath(LxTrack track) => _existingFiles[baseFilenameFor(track).toLowerCase()];
+
+  String? findExistingAudioPath(LxTrack track) {
+    final directory = p.normalize(p.absolute(resolveEffectiveDownloadDir()));
+    final stem = p.join(directory, baseFilenameFor(track));
+    for (final extension in _audioExtensions) {
+      final path = '$stem.$extension';
+      if (!_uncommittedAudioPaths.contains(path) && File(path).existsSync()) return path;
+    }
+    return null;
+  }
+
+  LxDownloadTask? latestTaskForTrack(LxTrack track) {
+    LxDownloadTask? latest;
+    for (final task in tasksNotifier.value.reversed) {
+      if (task.track.source != track.source || task.track.id != track.id) continue;
+      if (task.isActive) return task;
+      latest ??= task;
+    }
+    return latest;
+  }
+
+  ({List<LxTrack> fresh, List<LxTrack> inQueue, List<LxTrack> onDisk}) classifyDuplicates(Iterable<LxTrack> tracks) {
+    final queuedKeys = {for (final task in tasksNotifier.value) if (task.isActive) task.track.uniqueKey};
+    final fresh = <LxTrack>[];
+    final inQueue = <LxTrack>[];
+    final onDisk = <LxTrack>[];
+    for (final track in tracks) {
+      if (queuedKeys.contains(track.uniqueKey)) {
+        inQueue.add(track);
+      } else if (findExistingAudioPath(track) != null) {
+        onDisk.add(track);
+      } else {
+        fresh.add(track);
+      }
+    }
+    return (fresh: fresh, inQueue: inQueue, onDisk: onDisk);
+  }
+
   LxDownloadTask enqueue(LxTrack track, {String? quality}) => enqueueBatch([track], quality: quality).single;
 
   List<LxDownloadTask> enqueueBatch(Iterable<LxTrack> tracks, {String? quality}) {
-    final requested = quality ?? settingsNotifier.value.preferredQuality;
+    final requested = quality ?? settingsNotifier.value.effectiveQuickQuality;
     final now = DateTime.now();
     final added = [
       for (final track in tracks) LxDownloadTask(id: const Uuid().v4(), track: track, requestedQuality: requested, createdAt: now),
@@ -103,7 +200,7 @@ class LxDownloadManager {
     if (added.isEmpty) return added;
     if (quality == null && !_settingsLoaded) _useLoadedQuality.addAll(added.map((task) => task.id));
     _publish([...tasksNotifier.value, ...added]);
-    _startWorker();
+    _startWorkers();
     return added;
   }
 
@@ -114,10 +211,11 @@ class LxDownloadManager {
       _replace(task.copyWith(stage: LxDownloadStage.canceled));
       return;
     }
-    if (_cancelRequested || _runningId != taskId) return;
-    _cancelRequested = true;
-    final file = _downloadingFile;
-    if (file != null) await (_stopPending = _stopDownload(file));
+    final running = _running[taskId]!;
+    if (running.cancelRequested) return;
+    running.cancelRequested = true;
+    final file = running.downloadingFile;
+    if (file != null) await (running.stopPending = _stopDownload(file));
   }
 
   void retry(String taskId) {
@@ -127,7 +225,7 @@ class LxDownloadManager {
     final reuseAudio = path != null && File(path).existsSync();
     if (!reuseAudio) _taggingSources.remove(task.id);
     _replace(_queuedCopy(task, reuseAudio: reuseAudio));
-    _startWorker();
+    _startWorkers();
   }
 
   void removeTask(String taskId) => _removeFinished((task) => task.id == taskId);
@@ -170,46 +268,32 @@ class LxDownloadManager {
 
   void _replace(LxDownloadTask next) => _publish([for (final task in tasksNotifier.value) task.id == next.id ? next : task]);
 
-  void _startWorker() {
-    if (_working) return;
-    _working = true;
-    unawaited(_drain());
-  }
-
-  Iterable<LxDownloadTask> get _queued => tasksNotifier.value.where((task) => task.stage == LxDownloadStage.queued);
-
-  Future<void> _drain() async {
-    try {
-      await _keepRunning(true);
-      while (true) {
-        final task = _queued.firstOrNull;
-        if (task == null) break;
-        _runningId = task.id;
-        _cancelRequested = false;
-        await _process(task);
-      }
-    } finally {
-      _runningId = null;
-      await _keepRunning(false);
-      _working = false;
-      if (_queued.isNotEmpty) _startWorker();
+  void _startWorkers() {
+    while (_running.length < settingsNotifier.value.maxConcurrent) {
+      final task = tasksNotifier.value.where((task) => task.stage == LxDownloadStage.queued && !_running.containsKey(task.id)).firstOrNull;
+      if (task == null) break;
+      final wasIdle = _running.isEmpty;
+      _running[task.id] = _RunningTask();
+      if (wasIdle) unawaited(_keepRunning(true));
+      unawaited(_process(task));
     }
   }
 
   Future<void> _process(LxDownloadTask task) async {
     final id = task.id;
+    final running = _running[id]!;
     final resumed = task.savedPath != null;
-    _replace(task.copyWith(stage: resumed ? LxDownloadStage.tagging : LxDownloadStage.resolving));
     try {
+      _replace(task.copyWith(stage: resumed ? LxDownloadStage.tagging : LxDownloadStage.resolving));
       await ensureLoaded();
-      _checkCanceled();
+      _checkCanceled(id);
       final options = settingsNotifier.value;
       if (resumed && !await File(task.savedPath!).exists()) {
         _taggingSources.remove(id);
         _replace(_queuedCopy(task, reuseAudio: false).copyWith(stage: LxDownloadStage.resolving));
       }
       if (_useLoadedQuality.remove(id)) {
-        _replace(_find(id)!.copyWith(requestedQuality: options.preferredQuality));
+        _replace(_find(id)!.copyWith(requestedQuality: options.effectiveQuickQuality));
       }
       if (_find(id)!.savedPath == null) await _resolveAndSave(id, options);
       final completed = await _tagAndIndex(_find(id)!, _taggingSources[id]!, options);
@@ -217,25 +301,29 @@ class LxDownloadManager {
       _replace(completed);
     } catch (error) {
       final current = _find(id)!;
-      if (_cancelRequested || error is DownloadCanceledException) {
-        _replace(current.copyWith(stage: LxDownloadStage.canceled));
+      if (running.cancelRequested || error is DownloadCanceledException) {
+        _replace(current.copyWith(stage: LxDownloadStage.canceled, bytesPerSecond: 0));
       } else {
         final message = '[${current.stage.label}] ${_reason(error)}';
         _log('error', message);
-        _replace(current.copyWith(stage: LxDownloadStage.failed, failedStage: current.stage, errorMessage: message));
+        _replace(current.copyWith(stage: LxDownloadStage.failed, bytesPerSecond: 0, failedStage: current.stage, errorMessage: message));
       }
+    } finally {
+      _running.remove(id);
+      if (_running.isEmpty) unawaited(_keepRunning(false));
+      _startWorkers();
     }
   }
 
   Future<void> _resolveAndSave(String id, LxDownloadSettings options) async {
-    _checkCanceled();
+    _checkCanceled(id);
     final task = _find(id)!;
     final resolved = await LxDownloadResolver.resolve(
       track: task.track,
       preferredQuality: task.requestedQuality,
       autoSwitchSource: options.autoSwitchSource,
     );
-    _checkCanceled();
+    _checkCanceled(id);
     _log('info', '[${LxDownloadStage.resolving.label}] ${resolved.detail}');
     _replace(task.copyWith(
       stage: LxDownloadStage.downloading,
@@ -244,53 +332,78 @@ class LxDownloadManager {
       resolveDetail: resolved.detail,
     ));
 
-    final part = File(p.join((await _tempDir).path, '$id.part'));
+    _checkCanceled(id);
+    final probedTotal = await _bridge.probeContentLength(resolved.url, headers: const {'User-Agent': _downloadUa});
+    _checkCanceled(id);
+    if (probedTotal != null) _replace(_find(id)!.copyWith(totalBytes: probedTotal));
+
+    final part = File(p.join((await _tempDir).path, '$id.${const Uuid().v4()}.part'));
     try {
-      await _download(id, resolved.url, part);
-      _checkCanceled();
-      _replace(_find(id)!.copyWith(stage: LxDownloadStage.verifying));
-      _checkCanceled();
+      await _download(id, resolved.url, part, totalBytes: probedTotal ?? 0);
+      _checkCanceled(id);
+      _replace(_find(id)!.copyWith(stage: LxDownloadStage.verifying, bytesPerSecond: 0));
+      _checkCanceled(id);
       final extension = await LxAudioSniffer.verifyAndDetectExtension(part);
       final size = await part.length();
-      final dir = await Directory(_effectiveDownloadDir(options)).create(recursive: true);
-      _checkCanceled();
+      final dir = await Directory(p.normalize(p.absolute(_effectiveDownloadDir(options)))).create(recursive: true);
+      _checkCanceled(id);
       final target = _allocateFile(dir, task.track, extension, exportLrc: options.exportLrc);
       await _commitAudio(id, part, target, size, resolved.track);
     } finally {
       await _deleteTemp(part);
-      if (_cancelRequested) FilesDownloadManager.deleteDownloadFiles(part);
+      if (_running[id]!.cancelRequested) FilesDownloadManager.deleteDownloadFiles(part);
     }
   }
 
-  Future<void> _download(String id, String url, File part) async {
+  Future<void> _download(String id, String url, File part, {required int totalBytes}) async {
     await part.parent.create(recursive: true);
-    if (await part.exists()) await part.delete();
     final downloader = FilesDownloadManager.inst;
     if (!downloader.isInitialized) await downloader.initialize();
-    _checkCanceled();
+    _checkCanceled(id);
 
-    _downloadingFile = part;
+    final running = _running[id]!;
+    running.downloadingFile = part;
+    running.speedSampleStart = DateTime.now();
     try {
       final result = await downloader.download(
         url: Uri.parse(url),
         headers: const {'User-Agent': _downloadUa},
         file: part,
+        totalBytes: totalBytes,
+        threads: 1,
         downloadingStream: (bytes) => _updateProgress(id, bytes),
       );
       if (result != null) throw result;
     } finally {
-      _downloadingFile = null;
-      final stop = _stopPending;
-      _stopPending = null;
+      running.downloadingFile = null;
+      final stop = running.stopPending;
+      running.stopPending = null;
       if (stop != null) await stop;
     }
   }
 
-  void _updateProgress(String id, int bytes) {
+  void _updateProgress(String id, int bytesDelta) {
     final task = _find(id);
-    if (task == null || task.stage != LxDownloadStage.downloading || _cancelRequested) return;
-    final nextBytes = task.receivedBytes + bytes;
-    _replace(task.copyWith(receivedBytes: nextBytes < 0 ? 0 : nextBytes));
+    if (task == null || task.stage != LxDownloadStage.downloading) return;
+    final running = _running[id]!;
+    if (running.cancelRequested) return;
+
+    final received = task.receivedBytes + bytesDelta;
+    final nextBytes = received < 0 ? 0 : received;
+    if (bytesDelta > 0) running.speedSampleBytes += bytesDelta;
+    var bytesPerSecond = task.bytesPerSecond;
+    final now = DateTime.now();
+    final elapsedMs = now.difference(running.speedSampleStart).inMilliseconds;
+    if (elapsedMs >= 500) {
+      bytesPerSecond = running.speedSampleBytes * 1000 ~/ elapsedMs;
+      running.speedSampleBytes = 0;
+      running.speedSampleStart = now;
+    }
+    _replace(task.copyWith(
+      receivedBytes: nextBytes,
+      totalBytes: task.totalBytes > 0 && nextBytes > task.totalBytes ? nextBytes : task.totalBytes,
+      bytesPerSecond: bytesPerSecond,
+    ));
   }
 
   Future<void> _stopDownload(File file) async {
@@ -301,11 +414,11 @@ class LxDownloadManager {
     }
   }
 
-  void _checkCanceled() {
-    if (_cancelRequested) throw const DownloadCanceledException();
+  void _checkCanceled(String id) {
+    if (_running[id]!.cancelRequested) throw const DownloadCanceledException();
   }
 
-  static File _allocateFile(Directory dir, LxTrack track, String extension, {required bool exportLrc}) {
+  static String baseFilenameFor(LxTrack track) {
     final label = track.singer.isEmpty ? track.name : '${track.singer} - ${track.name}';
     final clean = label.replaceAll(_invalidFilenameChars, '_').replaceAll(_filenameEdges, '');
     var nameBytes = 0;
@@ -314,12 +427,20 @@ class LxDownloadManager {
       return nameBytes <= 235;
     });
     final capped = String.fromCharCodes(prefix).replaceAll(_filenameEdges, '');
-    final base = capped.isEmpty ? 'LX Music' : capped;
+    return capped.isEmpty ? '在线曲库' : capped;
+  }
+
+  static File _allocateFile(Directory dir, LxTrack track, String extension, {required bool exportLrc}) {
+    final base = baseFilenameFor(track);
     for (var n = 1; ; n++) {
       final stem = p.join(dir.path, n == 1 ? base : '$base ($n)');
       final path = '$stem.$extension';
       if (FileSystemEntity.typeSync(path, followLinks: false) != FileSystemEntityType.notFound) continue;
-      if (exportLrc && FileSystemEntity.typeSync('$stem.lrc', followLinks: false) != FileSystemEntityType.notFound) continue;
+      if (exportLrc &&
+          (FileSystemEntity.typeSync('$stem.lrc', followLinks: false) != FileSystemEntityType.notFound ||
+              _audioExtensions.any((ext) => ext != extension && FileSystemEntity.typeSync('$stem.$ext', followLinks: false) != FileSystemEntityType.notFound))) {
+        continue;
+      }
       final file = File(path);
       try {
         file.createSync(exclusive: true);
@@ -331,15 +452,27 @@ class LxDownloadManager {
   }
 
   Future<void> _commitAudio(String id, File part, File target, int size, LxTrack source) async {
+    _uncommittedAudioPaths.add(target.path);
     var committed = false;
     try {
       await _move(part, target);
-      _checkCanceled();
+      _checkCanceled(id);
       _taggingSources[id] = source;
-      _replace(_find(id)!.copyWith(stage: LxDownloadStage.tagging, receivedBytes: size, totalBytes: size, savedPath: target.path));
       committed = true;
+      _uncommittedAudioPaths.remove(target.path);
+      final cacheTarget = p.dirname(target.path) == _existingFilesDirectory;
+      if (cacheTarget) {
+        final stem = p.basenameWithoutExtension(target.path).toLowerCase();
+        _existingFiles[stem] = target.path;
+        _existingFilesScan?[stem] = target.path;
+      }
+      _replace(_find(id)!.copyWith(stage: LxDownloadStage.tagging, receivedBytes: size, totalBytes: size, savedPath: target.path));
+      if (cacheTarget) existingFilesVersion.value++;
     } finally {
-      if (!committed) await _deleteTemp(target);
+      if (!committed) {
+        await _deleteTemp(target);
+        _uncommittedAudioPaths.remove(target.path);
+      }
     }
   }
 
@@ -356,7 +489,7 @@ class LxDownloadManager {
     final path = task.savedPath!;
     final cover = options.embedCover ? await _saveCover(task, source) : null;
     try {
-      final lyrics = options.exportLrc ? await _fetchLyrics(source) : null;
+      final lyrics = options.exportLrc ? await _fetchLyrics(source, options) : null;
       if (lyrics != null) {
         final lrc = await _saveLyrics(path, lyrics, task.id);
         if (lrc != null) _replace(task = task.copyWith(lrcPath: lrc));
@@ -402,12 +535,15 @@ class LxDownloadManager {
     }
   }
 
-  Future<String?> _fetchLyrics(LxTrack source) async {
+  Future<String?> _fetchLyrics(LxTrack source, LxDownloadSettings options) async {
     try {
       final result = await _bridge.fetchLyric(track: source);
       final original = result.lyric.trim();
       if (original.isEmpty) return null;
-      return _mergeLyrics(original, [result.tlyric, result.rlyric]);
+      return _mergeLyrics(original, [
+        if (options.includeTranslationLyric) result.tlyric,
+        if (options.includeRomanizationLyric) result.rlyric,
+      ]);
     } catch (error) {
       _tagWarning('歌词获取失败：${_reason(error)}');
       return null;
@@ -501,4 +637,12 @@ class LxDownloadManager {
 
   void _tagWarning(String message) => _log('warning', '[${LxDownloadStage.tagging.label}] $message');
   void _log(String level, String message) => _bridge.logDiagnostic('download', level, message);
+}
+
+class _RunningTask {
+  bool cancelRequested = false;
+  File? downloadingFile;
+  Future<void>? stopPending;
+  int speedSampleBytes = 0;
+  late DateTime speedSampleStart;
 }

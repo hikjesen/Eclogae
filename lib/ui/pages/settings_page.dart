@@ -14,7 +14,7 @@ import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
-import 'package:namida/lx_music/lx_music_page.dart';
+import 'package:namida/lx_music/lx_settings_page.dart';
 import 'package:namida/main_page_wrapper.dart';
 import 'package:namida/ui/pages/party_page.dart';
 import 'package:namida/ui/pages/sync_manager_page.dart';
@@ -63,11 +63,11 @@ class SettingsPage extends StatelessWidget with NamidaRouteWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 12.0),
                         child: CustomCollapsedListTile(
-                          title: _lxMusicTitle,
-                          subtitle: LxMusicPage.subtitle,
-                          icon: Icons.science_outlined,
+                          title: _lxSettingsTitle,
+                          subtitle: LxSettingsPage.subtitle,
+                          icon: Broken.music_square_search,
                           page: null,
-                          rawPage: _lxMusicPage,
+                          rawPage: _lxSettingsPage,
                         ),
                       ),
                       Padding(
@@ -200,11 +200,11 @@ class CollapsedSettingTiles extends StatelessWidget {
           page: () => const AdvancedSettings(),
         ),
         const CustomCollapsedListTile(
-          title: _lxMusicTitle,
-          subtitle: LxMusicPage.subtitle,
-          icon: Icons.science_outlined,
+          title: _lxSettingsTitle,
+          subtitle: LxSettingsPage.subtitle,
+          icon: Broken.music_square_search,
           page: null,
-          rawPage: _lxMusicPage,
+          rawPage: _lxSettingsPage,
         ),
         const AboutPageTileWidget(),
         // const CollapsedSettingTileWidget(),
@@ -214,8 +214,8 @@ class CollapsedSettingTiles extends StatelessWidget {
   }
 }
 
-String _lxMusicTitle() => 'LX Music 音源与下载';
-LxMusicPage _lxMusicPage() => const LxMusicPage(initialTab: 2);
+String _lxSettingsTitle() => LxSettingsPage.title;
+LxSettingsPage _lxSettingsPage() => const LxSettingsPage();
 
 class CustomCollapsedListTile extends StatelessWidget {
   final Color? bgColor;

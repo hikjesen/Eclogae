@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/route.dart';
 import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:namida/core/enums.dart';
 import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/utils.dart';
@@ -16,19 +15,20 @@ class LxMusicAppBarIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Obx((context) {
-    if (NamidaNavigator.inst.currentRouteR?.name == LxMusicPage.title) return const SizedBox.shrink();
+    if (NamidaNavigator.inst.currentRouteR?.route == RouteType.YOUTUBE_HOME) return const SizedBox.shrink();
 
     return ValueListenableBuilder<int>(
       valueListenable: LxDownloadManager.inst.activeCountNotifier,
-      builder: (context, count, _) => NamidaAppBarIcon(
-        icon: Broken.music_square_search,
-        tooltip: () => LxMusicPage.title,
-        onPressed: () => LxMusicPage(initialTab: count > 0 ? 1 : 0).navigate(),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            const NIcon(Broken.music_square_search, color: NColors.secondary),
-            if (count > 0)
+      builder: (context, count, _) {
+        if (count <= 0) return const SizedBox.shrink();
+        return NamidaAppBarIcon(
+          icon: Broken.document_download,
+          tooltip: () => '在线曲库下载中 ($count)',
+          onPressed: () => LxMusicPage.openSection(1),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              const NIcon(Broken.document_download, color: NColors.secondary),
               Positioned(
                 top: -4.0,
                 right: -6.0,
@@ -40,16 +40,17 @@ class LxMusicAppBarIcon extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
                     child: NamidaText(
-                      count.formatDecimal(),
+                      '$count',
                       style: const NText(.small, size: .s10),
                       color: NColors.onSecondaryContainer,
                     ),
                   ),
                 ),
               ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   });
 }
