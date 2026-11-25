@@ -823,6 +823,9 @@ class CustomMPVPlayer implements AVPlayer {
   Future<void> _startPlayback() => _player.play();
 
   @override
+  Future<void> setLoopOne(bool enabled) => _setMpvProperty('loop-file', enabled ? 'inf' : 'no');
+
+  @override
   Future<void> pause() async {
     _playRequested = false;
     await _player.pause();

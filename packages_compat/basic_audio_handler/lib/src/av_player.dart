@@ -70,6 +70,7 @@ abstract interface class AVPlayer {
   Future<void> play();
   Future<void> pause();
   Future<void> seek(Duration? position);
+  Future<void> setLoopOne(bool enabled);
   Future<void> stop();
   Future<void> freePlayer();
   Future<void> dispose();
@@ -93,6 +94,7 @@ class CustomAudioPlayer implements AVPlayer {
   UriSource? _source;
   ConcatenatingSource? _playlist;
   bool _disposed = false;
+  bool _loopOne = false;
 
   @override
   Stream<PlaybackEvent> get playbackEventStream => _player.playbackEventStream;
@@ -160,7 +162,9 @@ class CustomAudioPlayer implements AVPlayer {
   bool get hasVideoOptions => _player.videoOptions != null;
 
   @override
-  Future<Duration?> setSource<T>(ItemPrepareConfig<T, UriSource> config) {
+  Future<Duration?> setSource<T>(ItemPrepareConfig<T, UriSource> config) async {
+    // Reapply native single-track repeat in case ExoPlayer rebuilt its internal player.
+    if (_loopOne) await _player.setLoopMode(LoopMode.one);
     _source = config.source;
     // A playlist can accept a preloaded next audio-only item without reloading this one.
     final playlist = config.videoOptions == null && !config.keepOldVideoSource
@@ -190,6 +194,12 @@ class CustomAudioPlayer implements AVPlayer {
   Future<void> pause() => _player.pause();
   @override
   Future<void> seek(Duration? position) => _player.seek(position);
+  @override
+  Future<void> setLoopOne(bool enabled) async {
+    _loopOne = enabled;
+    await _player.setLoopMode(enabled ? LoopMode.one : LoopMode.off);
+  }
+
   @override
   Future<void> stop() => _player.stop();
   @override

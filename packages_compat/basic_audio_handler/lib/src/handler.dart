@@ -26,6 +26,9 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
   Future<AudioSession>? _session;
   int _sessionGeneration = 0;
   Q? _loadedItem;
+  ItemPrepareConfig<Q, UriSource>? _loadedConfig;
+  bool? _nativeLoopOneApplied;
+  Future<void>? _nativeLoopOneUpdate;
   int _selection = 0;
   int _sourceRequest = 0;
   int _transportRequest = 0;
@@ -54,7 +57,7 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
       ? LoudnessEnhancerExtended(() => currentPlayer, getLoudnessEnhancerEnabledTrackValue)
       : null;
 
-  AVPlayer get currentPlayer => _player ??= _createAndListenToPlayer();
+  AVPlayer get currentPlayer => _player ?? _createAndListenToPlayer();
   bool get rendersSubtitlesInternally => _player?.rendersSubtitlesInternally ?? false;
   int? get androidSessionId => _player?.androidAudioSessionId;
   double get userPlayerVolumeForItem => _userVolume;
@@ -104,6 +107,12 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
   PlayerRepeatMode get playerRepeatMode => _repeatMode;
   PlayerRepeatMode get displayRepeatMode => playerRepeatMode;
 
+  bool get _shouldUseNativeLoopOne =>
+      (playerRepeatMode == PlayerRepeatMode.one || (playerRepeatMode == PlayerRepeatMode.all && currentQueue.value.length == 1)) &&
+      !sleepTimerConfig.value.enableSleepAfterItems &&
+      getCurrentItemStartMS() == null &&
+      getCurrentItemEndMS() == null;
+
   PlayerConfig getDefaultPlayerConfig(Q? item) => const PlayerConfig();
   Future<PlayerConfig?> getPlayerConfigForItem(Q? item, AVPlayer player) async => null;
   FutureOr<void> ensureReplayGainVolumeUpdated(Q? item, {covariant Object? streamsResult}) {}
@@ -142,7 +151,10 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
   }
 
   AVPlayer _createAndListenToPlayer() {
-    final player = createPlayerInstance();
+    final player = _player = createPlayerInstance();
+    _nativeLoopOneApplied = null;
+    _nativeLoopOneUpdate = null;
+    _syncNativeLoopMode();
     _playerSubscriptions.addAll([
       player.playbackEventStream.listen(_onPlayerEvent, onError: _onPlayerError),
       player.positionStream.listen(_onPosition),
@@ -261,7 +273,35 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
   AudioServiceShuffleMode get _mediaShuffleMode =>
     isQueueShuffled ? AudioServiceShuffleMode.all : AudioServiceShuffleMode.none;
 
-  void refreshPlaybackStateModes() => playbackState.add(playbackState.value.copyWith(repeatMode: _mediaRepeatMode, shuffleMode: _mediaShuffleMode));
+  void refreshPlaybackStateModes() {
+    _syncNativeLoopMode();
+    playbackState.add(playbackState.value.copyWith(repeatMode: _mediaRepeatMode, shuffleMode: _mediaShuffleMode));
+  }
+
+  void _syncNativeLoopMode() {
+    final player = _player;
+    if (player == null) return;
+    final enabled = _shouldUseNativeLoopOne;
+    if (_nativeLoopOneApplied != enabled) unawaited(_applyNativeLoopMode(player, enabled).catchError((_) {}));
+  }
+
+  Future<void> _applyNativeLoopMode(AVPlayer player, bool enabled) async {
+    if (_nativeLoopOneApplied == enabled) {
+      await _nativeLoopOneUpdate;
+      return;
+    }
+    _nativeLoopOneApplied = enabled;
+    final update = _nativeLoopOneUpdate = player.setLoopOne(enabled);
+    try {
+      await update;
+    } catch (_) {
+      if (identical(_nativeLoopOneUpdate, update)) {
+        _nativeLoopOneApplied = null;
+        _nativeLoopOneUpdate = null;
+      }
+      rethrow;
+    }
+  }
 
   @override
   Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) async {
@@ -388,6 +428,7 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
     beginEarlyCrossFadeOutIfRequired();
     if (_outgoingFade == null) {
       _loadedItem = null;
+      _loadedConfig = null;
       await player?.pause();
     }
     if (selection != _selection) return;
@@ -510,9 +551,12 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
         await _applyConfig(player, settings);
       }
       if (request != _sourceRequest) return null;
+      await _applyNativeLoopMode(player, _shouldUseNativeLoopOne);
+      if (request != _sourceRequest) return null;
       final duration = await player.setSource(config);
       if (request != _sourceRequest) return null;
       _loadedItem = item;
+      _loadedConfig = config;
       _sourceReady = true;
       _stopped = false;
       loadedDuration.value = duration;
@@ -584,44 +628,44 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
   Future<void> _restartCurrentItem({required bool resume}) async {
     final player = _player;
     final item = currentItem.value;
-    final index = currentIndex.value;
     final selection = _selection;
     if (player == null || item == null) return;
-    if (!_sourceReady) {
-      if (index >= 0 && index < currentQueue.value.length) await _playQueueIndex(index);
-      return;
-    }
 
-    await onPauseRaw();
-    if (selection != _selection || !identical(item, currentItem.value)) return;
-    try {
-      await seekToItemStart().timeout(const Duration(seconds: 5));
-    } catch (_) {
-      if (selection == _selection && identical(item, currentItem.value)) {
-        final reloadIndex = currentIndex.value;
-        if (reloadIndex >= 0 && reloadIndex < currentQueue.value.length) await _playQueueIndex(reloadIndex);
+    if (_sourceReady && player.processingState != ProcessingState.completed) {
+      await seekToItemStart();
+      if (selection != _selection || !identical(item, currentItem.value)) return;
+      if (resume && playWhenReady.value && !player.playing) {
+        await onPlayRaw(attemptFixVolume: false, allowFade: false);
       }
       return;
     }
-    if (selection != _selection || !identical(item, currentItem.value)) return;
 
-    var state = player.processingState;
-    if (state == ProcessingState.completed || state == ProcessingState.buffering) {
-      try {
-        state = await player.processingStateStream
-            .where((s) => s == ProcessingState.ready || s == ProcessingState.idle)
-            .timeout(const Duration(milliseconds: 500))
-            .first;
-      } catch (_) {
-        state = player.processingState;
-      }
-    }
-    if (selection != _selection || !identical(item, currentItem.value)) return;
-    if (state != ProcessingState.ready) {
+    final startPosition = Duration(milliseconds: getCurrentItemStartMS() ?? 0);
+    final loaded = _loadedConfig;
+    final hasVideo = player.hasVideoOptions;
+    final videoOptions = hasVideo ? (player is CustomAudioPlayer ? player._player.videoOptions : loaded?.videoOptions) : null;
+    final videoSource = videoOptions?.source;
+    if (loaded == null ||
+        !identical(_loadedItem, item) ||
+        !loaded.source.uri.isScheme('file') ||
+        (hasVideo && (videoSource is! UriSource || !videoSource.uri.isScheme('file')))) {
       final reloadIndex = currentIndex.value;
       if (reloadIndex >= 0 && reloadIndex < currentQueue.value.length) await _playQueueIndex(reloadIndex);
       return;
     }
+
+    final reloadConfig = ItemPrepareConfig<Q, UriSource>(
+      AudioVideoSource.file(loaded.source.uri.toFilePath()),
+      item: item,
+      index: currentIndex.value,
+      initialPosition: startPosition,
+      audioTrackId: loaded.audioTrackId,
+      videoOptions: videoOptions,
+      itemExists: loaded.itemExists,
+      keepOldVideoSource: videoOptions != null,
+    );
+    await setAudioSource(reloadConfig);
+    if (selection != _selection || !identical(item, currentItem.value)) return;
     if (resume && playWhenReady.value) {
       await onPlayRaw(attemptFixVolume: false, allowFade: false);
     }
@@ -727,12 +771,15 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
   Future<void> _disposePlayer() async {
     final player = _player;
     _player = null;
+    _nativeLoopOneApplied = null;
+    _nativeLoopOneUpdate = null;
     _selection++;
     _sourceRequest++;
     _transportRequest++;
     _queueNavigationRequest++;
     _sessionGeneration++;
     _loadedItem = null;
+    _loadedConfig = null;
     _outgoingFade = null;
     _incomingFadeMilliseconds = 0;
     _sourceReady = false;
@@ -799,6 +846,7 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
     } else {
       _ranges[key] = (start: startMS, end: endMS);
     }
+    _syncNativeLoopMode();
   }
 
   @override
@@ -957,6 +1005,7 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
       isAnchoredToItem: isAnchoredToItem ?? old.isAnchoredToItem,
     );
     sleepTimerConfig.value = config;
+    _syncNativeLoopMode();
     if (enableSleepAfterMins != null || sleepAfterMin != null) {
       _sleepTimer?.cancel();
       if (config.enableSleepAfterMins) _sleepTimer = Timer(Duration(minutes: minutes), () => unawaited(_endSleepTimer()));
@@ -967,6 +1016,7 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
     _sleepTimer?.cancel();
     _sleepTimer = null;
     sleepTimerConfig.value = const SleepTimerConfig();
+    _syncNativeLoopMode();
   }
 
   Future<void> _endSleepTimer() async {
@@ -1028,6 +1078,7 @@ class BasicAudioHandler<Q extends Object> extends BaseAudioHandler with _QueueMa
     if (!identical(_outgoingFade, fade)) return;
     _outgoingFade = null;
     _loadedItem = null;
+    _loadedConfig = null;
     await _player?.pause();
   }
 
