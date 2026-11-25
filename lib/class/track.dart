@@ -1,10 +1,13 @@
 // ignore_for_file: avoid_rx_value_getter_outside_obx
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart' show sha256;
 import 'package:history_manager/history_manager.dart';
 import 'package:playlist_manager/playlist_manager.dart';
 
 import 'package:namida/class/faudiomodel.dart';
+import 'package:namida/class/file_parts.dart';
 import 'package:namida/class/file_matcher.dart';
 import 'package:namida/class/folder.dart';
 import 'package:namida/class/media_chapter.dart';
@@ -22,6 +25,7 @@ import 'package:namida/core/enums.dart';
 import 'package:namida/core/extensions.dart';
 import 'package:namida/core/iso639.dart';
 import 'package:namida/core/translations/language.dart';
+import 'package:namida/lx_music/lx_preview_player.dart';
 import 'package:namida/youtube/class/download_task_base.dart';
 
 part 'album_identifier_wrapper.dart';
@@ -949,6 +953,7 @@ extension TrackExtUtils on TrackExtended {
   }
 
   String get pathToImage {
+    if (LxPreviewPlayer.isPreviewPath(path)) return FileParts.joinPath(AppDirs.APP_CACHE, 'preview_artwork', '$_previewArtworkKey.png');
     final stamp = _imageKeyStamp();
     if (stamp == _pathToImageStamp) return _pathToImageCache!;
     final dirPath = isVideo ? AppDirs.THUMBNAILS : AppDirs.ARTWORKS;
@@ -976,6 +981,7 @@ extension TrackExtUtils on TrackExtended {
   }
 
   String cacheKeyForImage(String parentDirPath) {
+    if (LxPreviewPlayer.isPreviewPath(path)) return _previewArtworkKey;
     if (settings.groupArtworksByAlbum.value) {
       final id = albumsIdentifiersModified.map((e) => e.resolved()).join();
       if (id.isNotEmpty) return id;
@@ -986,6 +992,8 @@ extension TrackExtUtils on TrackExtended {
     }
     return rawCacheKey;
   }
+
+  String get _previewArtworkKey => 'preview_${sha256.convert(utf8.encode(MusicWebServer.baseUrlToId(path)!))}';
 
   List<AlbumIdentifierWrapper> get albumsIdentifiersModified => albumsIdentifiersWrappersModifed(settings.albumIdentifiers.value);
   List<AlbumIdentifierWrapper> getAlbumsIdentifiersModified(List<AlbumIdentifier> identifiers) => albumsIdentifiersWrappersModifed(identifiers);
@@ -1376,7 +1384,8 @@ extension TrackUtils on Track {
   bool hasInfoInLibrary() => Indexer.inst.allTracksMappedByPath.containsKey(path);
   TrackExtended toTrackExt() =>
       toTrackExtOrNull() ?? kDummyExtendedTrack.copyWith(title: path.getFilenameWOExt, path: path, generatePathHash: TagsExtractor.defaultUniqueArtworkHash);
-  TrackExtended? toTrackExtOrNull() => Indexer.inst.allTracksMappedByPath[path] ?? Indexer.inst.externalTracksMappedByPath[path];
+  TrackExtended? toTrackExtOrNull() =>
+      Indexer.inst.allTracksMappedByPath[path] ?? Indexer.inst.externalTracksMappedByPath[path] ?? LxPreviewPlayer.inst.trackExtForPath(path);
   PhysicalMedia? asPhysical() => isPhysical ? PhysicalMedia.fromTrack(this) : null;
   PhysicalMedia? asPhysicalOrError() {
     final p = asPhysical();
@@ -1475,6 +1484,7 @@ extension TrackUtils on Track {
   }
 
   String get pathToImage {
+    if (LxPreviewPlayer.isPreviewPath(path)) return toTrackExt().pathToImage;
     final trExt = toTrackExtOrNull();
     if (trExt != null && trExt.isVideo == (this is Video)) return trExt.pathToImage; // -- to benefit from cache
     final dirPath = this is Video ? AppDirs.THUMBNAILS : AppDirs.ARTWORKS;

@@ -47,6 +47,7 @@ import 'package:namida/core/functions.dart';
 import 'package:namida/core/namida_converter_ext.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/lx_music/lx_preview_player.dart';
 import 'package:namida/ui/widgets/artwork.dart';
 import 'package:namida/ui/widgets/library/track_tile.dart';
 import 'package:namida/ui/widgets/settings/indexer_settings.dart';
@@ -1681,7 +1682,8 @@ class Indexer<T extends Track> {
     int? lastPositionInMs,
     List<PlayableBookmark>? bookmarks,
   }) async {
-    if (ratingString != null || tagsString != null || moodsString != null) {
+    final isPreview = LxPreviewPlayer.isPreviewPath(track.path);
+    if (!isPreview && (ratingString != null || tagsString != null || moodsString != null)) {
       TrackTileManager.rebuildTrackInfo(track);
     }
 
@@ -1707,6 +1709,7 @@ class Indexer<T extends Track> {
       bookmarks: bookmarks,
       modifiedDate: currentTimeMS,
     );
+    if (isPreview) return newStats;
     trackStatsMap[track] = newStats;
     unawaited(_trackStatsDBManager.put(track.path, newStats.toJsonWithoutTrack()));
     return newStats;
@@ -1716,6 +1719,7 @@ class Indexer<T extends Track> {
     Track track, {
     required String? audioTrackId,
   }) async {
+    if (LxPreviewPlayer.isPreviewPath(track.path)) return;
     final stats = track.statsRaw;
     final newStats = TrackStats(
       track: track,

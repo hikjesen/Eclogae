@@ -106,13 +106,44 @@ const binaryLyric = Buffer.concat([
 
 let kugouDownloads = 0
 let qqLyricRequests = 0
+let qqDetailRequests = 0
+let kuwoNodeRequests = 0
+let kuwoDigest5Requests = 0
+let miguDetailRequests = 0
+let miguInfoRequests = 0
+const playlistId = 2858093057
+const cover = 'https://example.com/playlist.jpg'
+const kuwoPlaylistTrack = {
+  id: sampleId, name: 'Smoke &amp; test', artist: 'A&B', duration: '90',
+  N_MINFO: 'level:p,bitrate:128,format:mp3,size:1mb',
+}
 const fixture = createRuntime((url, options) => {
   const { hostname, pathname, searchParams } = new URL(url)
   assert.equal(options.headers.Accept, 'application/json')
   assert.ok(options.headers['User-Agent'])
   switch (hostname) {
+    case 'tips.kuwo.cn':
+      assert.equal(options.method, 'GET')
+      assert.equal(options.headers.Referer, 'http://www.kuwo.cn/')
+      assert.equal(searchParams.get('w'), 'smoke & test')
+      return { statusCode: 200, body: { WORDITEMS: [{ RELWORD: 'smoke' }, { RELWORD: 'smoke test' }] } }
     case 'search.kuwo.cn':
       assert.equal(options.method, 'GET')
+      if (searchParams.get('ft') === 'playlist') {
+        assert.equal(searchParams.get('all'), 'smoke')
+        assert.equal(searchParams.get('pn'), '0')
+        assert.equal(searchParams.get('rn'), '20')
+        return { statusCode: 200, body: JSON.stringify({
+          TOTAL: '42', abslist: [{
+            playlistid: playlistId, playcnt: 13200, nickname: 'A&amp;B',
+            name: 'Smoke &amp; test', songnum: 1, pic: cover, intro: 'Kuwo playlist',
+          }],
+        }) }
+      }
+      if (searchParams.get('stype') === 'albuminfo') {
+        assert.equal(searchParams.get('albumid'), '13')
+        return { statusCode: 200, body: "{'albumid':'13','name':'Smoke Album','songnum':'0','musiclist':[]}" }
+      }
       assert.equal(searchParams.get('pn'), '0')
       assert.equal(searchParams.get('rn'), '30')
       return { statusCode: 200, body: JSON.stringify({
@@ -121,6 +152,21 @@ const fixture = createRuntime((url, options) => {
           DURATION: '90', N_MINFO: 'level:p,bitrate:128,format:mp3,size:1mb',
         }],
       }) }
+    case 'qukudata.kuwo.cn':
+      assert.equal(searchParams.get('node'), '5')
+      if (++kuwoNodeRequests === 1) return { statusCode: 503, body: {} }
+      return { statusCode: 200, body: { child: [{ sourceid: playlistId }] } }
+    case 'nplserver.kuwo.cn':
+      assert.equal(searchParams.get('pid'), String(playlistId))
+      assert.equal(searchParams.get('pn'), '1')
+      assert.equal(searchParams.get('rn'), '1000')
+      if (searchParams.get('encode') === 'utf-8' && ++kuwoDigest5Requests === 1) {
+        return { statusCode: 200, body: { result: 'failed' } }
+      }
+      return { statusCode: 200, body: {
+        result: 'ok', musiclist: [kuwoPlaylistTrack], title: 'Kuwo playlist',
+        pic: cover, info: 'Playlist description', uname: 'Kuwo author', playnum: 900,
+      } }
     case 'mlyric.kuwo.cn':
       assert.equal(options.binary, true)
       assert.equal(searchParams.get('rid'), sampleId)
@@ -142,6 +188,46 @@ const fixture = createRuntime((url, options) => {
       assert.equal(JSON.parse(options.body)['music.search.SearchCgiService'].param.query, 'smoke')
       assert.ok(searchParams.get('sign'))
       return { statusCode: 200, body: { code: 0, req: { code: 0, data: { body: { song: { list: [] } }, meta: { sum: 0 } } } } }
+    case 'c.y.qq.com':
+      assert.equal(options.method, 'GET')
+      if (pathname.endsWith('/client_music_search_songlist')) {
+        assert.equal(searchParams.get('query'), 'smoke')
+        assert.equal(searchParams.get('page_no'), '1')
+        assert.equal(searchParams.get('num_per_page'), '6')
+        return { statusCode: 200, body: { code: 0, data: { sum: '30', list: [{
+          listennum: 15000, dissid: 22, creator: { name: 'QQ author' }, dissname: 'QQ playlist',
+          createtime: '2025-01-02 12:34:56', imgurl: cover, song_count: 1, introduction: 'One&lt;br&gt;Two',
+        }] } } }
+      }
+      assert.equal(pathname, '/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg')
+      assert.equal(searchParams.get('disstid'), '22')
+      if (++qqDetailRequests < 3) return { statusCode: 200, body: { code: 1 } }
+      return { statusCode: 200, body: { code: 0, subcode: 0, cdlist: [{
+        dissname: 'QQ playlist', logo: cover, desc: 'One<br>Two', nickname: 'QQ author', visitnum: 15000,
+        songlist: [{
+          id: 12, mid: 'qq-track', title: 'QQ track', interval: 61,
+          singer: [{ name: 'QQ singer' }], album: { name: 'QQ album', mid: 'qq-album' },
+          file: { media_mid: 'qq-media', size_128mp3: 1024, size_320mp3: 0, size_flac: 0, size_hires: 0 },
+        }],
+      }] } }
+    case 'msearchretry.kugou.com':
+      assert.equal(pathname, '/api/v3/search/special')
+      assert.equal(searchParams.get('keyword'), 'smoke')
+      return { statusCode: 200, body: { errcode: 0, data: { total: '1', info: [{
+        specialid: 44, specialname: 'Kugou playlist', playcount: 25000, nickname: 'Kugou author',
+      }] } } }
+    case 'www2.kugou.kugou.com':
+      assert.equal(pathname, '/yueku/v9/special/single/44-5-9999.html')
+      return { statusCode: 200, body: `global.data = [];\nglobal = { name: "Kugou playlist", pic: "${cover}" };` }
+    case 'interface.music.163.com':
+      assert.equal(pathname, '/eapi/batch')
+      assert.equal(options.method, 'POST')
+      assert.equal(options.headers['Content-Type'], 'application/x-www-form-urlencoded')
+      assert.match(options.body, /^params=[A-F0-9]+$/)
+      return { statusCode: 200, body: { code: 200, result: { playlistCount: '50', playlists: [{
+        id: 33, creator: { nickname: 'NetEase author' }, name: 'NetEase playlist',
+        playCount: 125000000, coverImgUrl: cover, trackCount: 1, description: 'NetEase description',
+      }] } } }
     case 'interface3.music.163.com':
       assert.equal(options.method, 'POST')
       assert.equal(options.headers['Content-Type'], 'application/x-www-form-urlencoded')
@@ -150,11 +236,43 @@ const fixture = createRuntime((url, options) => {
     case 'music.163.com': {
       const form = new URLSearchParams(options.body)
       assert.equal(options.headers['Content-Type'], 'application/x-www-form-urlencoded')
+      if (pathname === '/api/linux/forward') {
+        assert.equal(options.method, 'POST')
+        assert.match(form.get('eparams'), /^[A-F0-9]+$/)
+        return { statusCode: 200, body: { code: 200, playlist: {
+          trackIds: [{ id: 24 }],
+          tracks: [{ id: 24, name: 'NetEase track', ar: [{ name: 'NetEase singer' }], dt: 70000 }],
+          playCount: 125000000, name: 'NetEase playlist', coverImgUrl: cover,
+          creator: { nickname: 'NetEase author' }, description: null,
+        }, privileges: [{ id: 24, maxbr: 128000 }] } }
+      }
       assert.ok(form.get('params'))
       assert.match(form.get('encSecKey'), /^[0-9a-f]{256}$/)
       return { statusCode: 200, body: { code: 200, songs: [{ al: { picUrl: 'https://example.com/album.jpg' } }] } }
     }
+    case 'jadeite.migu.cn':
+      assert.equal(searchParams.get('text'), 'smoke')
+      assert.equal(JSON.parse(searchParams.get('searchSwitch')).songlist, 1)
+      assert.match(options.headers.sign, /^[a-f0-9]{32}$/i)
+      assert.match(options.headers.timestamp, /^\d+$/)
+      assert.ok(options.headers.deviceId)
+      return { statusCode: 200, body: { code: '000000', data: { songListResultData: {
+        totalCount: '1', result: [{ id: '55', name: 'Migu playlist', playNum: '10000' }],
+      } } } }
+    case 'app.c.nf.migu.cn':
+      assert.equal(pathname, '/MIGUM3.0/resource/playlist/song/v2.0')
+      assert.equal(searchParams.get('playlistId'), '55')
+      assert.equal(searchParams.get('pageNo'), '2')
+      miguDetailRequests++
+      return { statusCode: 200, body: { code: '000000', data: { songList: [], totalCount: '45' } } }
     case 'c.musicapp.migu.cn':
+      if (pathname === '/MIGUM3.0/resource/playlist/v2.0') {
+        assert.equal(searchParams.get('playlistId'), '55')
+        if (++miguInfoRequests === 1) return { statusCode: 200, body: { code: 'retry' } }
+        return { statusCode: 200, body: { code: '000000', data: {
+          title: 'Migu playlist', imgItem: { img: cover }, ownerName: 'Migu author', opNumItem: { playNum: 10000 },
+        } } }
+      }
       assert.equal(options.body, 'resourceId=one%20%26%20two')
       return { statusCode: 200, body: { code: '000000', resource: [{
         songId: '12', length: '00:59', albumImgs: [{ img: 'https://example.com/album.jpg' }],
@@ -209,6 +327,83 @@ assert.equal(qqLyricRequests, 4)
 assert.match((await fixture.rpc('search', { source: 'bd', keyword: 'smoke' })).error, /Unsupported source/)
 console.log('Fixtures passed (search, binary and encrypted lyric requests, artwork, timers, RPC errors).')
 
+const tips = resultOf(await fixture.rpc('tipSearch', { keyword: 'smoke & test' }))
+assert.deepEqual(tips, { list: ['smoke', 'smoke test'] })
+assert.match((await fixture.rpc('tipSearch', { keyword: 42 })).error, /tipSearch requires a string keyword/)
+assert.match((await fixture.rpc('searchSonglist', { source: 'kw' })).error, /searchSonglist requires a string keyword/)
+assert.match((await fixture.rpc('searchSonglist', { source: 'bd', keyword: 'smoke' })).error, /Unsupported source/)
+assert.match((await fixture.rpc('getSonglistDetail', { source: 'kw' })).error, /getSonglistDetail requires id/)
+
+const songlistSearches = [
+  ['kw', {}, 42, playlistId, 'Smoke & test', '1.3万'],
+  ['tx', { page: 2, limit: 6 }, 30, '22', 'QQ playlist', '1.5万'],
+  ['wy', {}, 50, '33', 'NetEase playlist', '1.2亿'],
+  ['kg', {}, 1, 'id_44', 'Kugou playlist', '2.5万'],
+  ['mg', {}, 1, '55', 'Migu playlist', '10000'],
+]
+for (const [source, params, total, id, name, playCount] of songlistSearches) {
+  const result = resultOf(await fixture.rpc('searchSonglist', { source, keyword: 'smoke', ...params }))
+  assert.deepEqual({ ...result, list: undefined }, {
+    list: undefined, total, page: params.page ?? 1, limit: params.limit ?? 20, source,
+  })
+  assert.equal(result.list.length, 1)
+  const [item] = result.list
+  assert.deepEqual([item.id, item.name, item.play_count, item.source], [id, name, playCount, source])
+  if (source === 'tx') {
+    assert.equal(item.time, '2025-01-02')
+    assert.equal(item.desc, 'One\nTwo')
+  }
+}
+
+const kuwoDetail = resultOf(await fixture.rpc('getSonglistDetail', { source: 'kw', id: playlistId, page: 2 }))
+assert.deepEqual({ ...kuwoDetail, list: undefined }, {
+  list: undefined, page: 2, limit: 1, total: 1, source: 'kw',
+  info: { name: 'Kuwo playlist', img: cover, desc: 'Playlist description', author: 'Kuwo author', play_count: '900' },
+})
+assert.equal(kuwoDetail.list.length, 1)
+assert.equal(kuwoDetail.list[0].songmid, sampleId)
+assert.equal(kuwoDetail.list[0].name, 'Smoke & test')
+assert.equal(kuwoDetail.list[0].interval, '01:30')
+assert.deepEqual(
+  resultOf(await fixture.rpc('getSonglistDetail', { source: 'kw', id: 'digest-5__5', page: 2 })),
+  kuwoDetail,
+)
+assert.equal(kuwoNodeRequests, 2)
+assert.equal(kuwoDigest5Requests, 2)
+const kuwoAlbum = resultOf(await fixture.rpc('getSonglistDetail', { source: 'kw', id: 'digest-13__13' }))
+assert.deepEqual(kuwoAlbum, {
+  list: [], page: 1, limit: 1000, total: 0, source: 'kw',
+  info: { name: 'Smoke Album', img: '', desc: '', author: '', play_count: '' },
+})
+
+const qqDetail = resultOf(await fixture.rpc('getSonglistDetail', { source: 'tx', id: 22, page: 2 }))
+assert.equal(qqDetailRequests, 3)
+assert.deepEqual({ ...qqDetail, list: undefined }, {
+  list: undefined, page: 1, limit: 2, total: 1, source: 'tx',
+  info: { name: 'QQ playlist', img: cover, desc: 'One\nTwo', author: 'QQ author', play_count: '1.5万' },
+})
+assert.equal(qqDetail.list[0].songmid, 'qq-track')
+assert.equal(qqDetail.list[0]._types['128k'].size, '1.00 KiB')
+
+const neteaseDetail = resultOf(await fixture.rpc('getSonglistDetail', { source: 'wy', id: 33 }))
+assert.deepEqual({ ...neteaseDetail, list: undefined }, {
+  list: undefined, page: 1, limit: 1000, total: 1, source: 'wy',
+  info: { name: 'NetEase playlist', img: cover, desc: '', author: 'NetEase author', play_count: '1.2亿' },
+})
+assert.equal(neteaseDetail.list[0].songmid, 24)
+
+assert.deepEqual(resultOf(await fixture.rpc('getSonglistDetail', { source: 'kg', id: 'id_44' })), {
+  list: [], page: 1, limit: 10000, total: 0, source: 'kg',
+  info: { name: 'Kugou playlist', img: cover, desc: '', author: '', play_count: '' },
+})
+assert.deepEqual(resultOf(await fixture.rpc('getSonglistDetail', { source: 'mg', id: 55, page: 2 })), {
+  list: [], page: 2, limit: 30, total: 45, source: 'mg',
+  info: { name: 'Migu playlist', img: cover, desc: '', author: 'Migu author', play_count: '10000' },
+})
+assert.equal(miguDetailRequests, 1)
+assert.equal(miguInfoRequests, 2)
+console.log('Fixtures passed (keyword suggestions and songlist search and detail on all five sources).')
+
 const live = createRuntime(async (url, { method, headers, body, timeout, binary }, signal) => {
   const response = await fetch(url, {
     method, headers, body, signal: AbortSignal.any([signal, AbortSignal.timeout(timeout)]),
@@ -232,6 +427,25 @@ for (const [method, response] of [['search', liveSearch], ['getLyric', liveLyric
   if (response.ok) {
     if (method === 'search') assert.ok(Array.isArray(response.result.list))
     else assert.ok(response.result.lyric.length)
+  }
+  console.log(`Live ${method} ${JSON.stringify(response.ok ? { callId: response.callId, ok: true } : response)}`)
+}
+const [liveTips, liveSonglistSearch] = await Promise.all([
+  live.rpc('tipSearch', { keyword: '周杰伦' }),
+  live.rpc('searchSonglist', { source, keyword: '周杰伦' }),
+])
+const liveSonglistDetail = await live.rpc('getSonglistDetail', {
+  source, id: liveSonglistSearch.result?.list[0]?.id ?? playlistId,
+})
+for (const [method, response] of [
+  ['tipSearch', liveTips],
+  ['searchSonglist', liveSonglistSearch],
+  ['getSonglistDetail', liveSonglistDetail],
+]) {
+  if (response.ok) {
+    assert.ok(Array.isArray(response.result.list))
+    if (method === 'tipSearch') assert.ok(response.result.list.every(item => typeof item === 'string'))
+    if (method === 'getSonglistDetail') assert.equal(typeof response.result.info.name, 'string')
   }
   console.log(`Live ${method} ${JSON.stringify(response.ok ? { callId: response.callId, ok: true } : response)}`)
 }

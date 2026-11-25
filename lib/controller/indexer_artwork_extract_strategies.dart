@@ -56,13 +56,22 @@ class _NetworkBasedArtworkExtractStrategy extends _ArtworkExtractStrategy {
 
     parent._pendingArtworksFullRes[imagePath] = Completer<void>();
 
+    final isPreview = LxPreviewPlayer.isPreviewPath(track.path);
     try {
-      final resBytes = await MusicWebServer.baseUrlToImage(track.path);
+      final resBytes = isPreview ? await LxPreviewPlayer.inst.fetchArtworkBytes(track.path) : await MusicWebServer.baseUrlToImage(track.path);
       parent._putArtworkBytes(imagePath, resBytes);
       if (resBytes != null && parent.isNetworkArtworkCachingEnabled) {
-        File(imagePath).writeAsBytes(resBytes).ignoreError();
+        final file = File(imagePath);
+        if (isPreview) {
+          await file.parent.create(recursive: true);
+          await file.writeAsBytes(resBytes);
+        } else {
+          file.writeAsBytes(resBytes).ignoreError();
+        }
       }
-    } catch (_) {}
+    } catch (error, stack) {
+      if (isPreview) logger.error('加载试听封面失败', e: error, st: stack);
+    }
 
     parent._pendingArtworksFullRes[imagePath]!.completeIfWasnt();
     parent._pendingArtworksFullRes.remove(imagePath);

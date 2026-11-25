@@ -282,6 +282,28 @@ class LxBridgeService {
         return LxSearchResult.fromJson(result, platform);
       });
 
+  Future<List<String>> tipSearch(String keyword) async {
+    final query = keyword.trim();
+    if (query.isEmpty) return const [];
+    final result = await _rpc('tipSearch', {'keyword': query});
+    return List<String>.unmodifiable((result['list'] as List<dynamic>).map((e) => e.toString()).where((s) => s.isNotEmpty));
+  }
+
+  Future<LxSonglistSearchResult> searchSonglist({required LxPlatform platform, required String keyword, int page = 1, int limit = 20}) =>
+      _runStage(_Engine.musicSdk, '搜索歌单', () async {
+        final query = keyword.trim();
+        if (query.isEmpty) throw ArgumentError('请输入搜索关键词');
+        final result = await _rpc('searchSonglist', {'source': platform.code, 'keyword': query, 'page': page, 'limit': limit});
+        return LxSonglistSearchResult.fromJson(result, platform);
+      });
+
+  Future<LxSonglistDetail> getSonglistDetail({required LxPlatform platform, required String id, int page = 1, LxSonglist? fallbackInfo}) =>
+      _runStage(_Engine.musicSdk, '获取歌单详情', () async {
+        final result = await _rpc('getSonglistDetail', {'source': platform.code, 'id': id, 'page': page});
+        result['info'] = {'id': id, ...result['info'] as Map<String, dynamic>};
+        return LxSonglistDetail.fromJson(result, platform, fallbackInfo: fallbackInfo);
+      });
+
   Future<({String url, String quality, int elapsedMs})> resolveMusicUrl({required LxTrack track, required String quality}) =>
       _runStage(_Engine.userApi, '解析直链', () async {
         _requireAndroid();

@@ -1,4 +1,4 @@
-import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -20,6 +20,20 @@ const licenses = await Promise.all([
 const pakoSource = await readFile(resolve(here, 'node_modules/pako/dist/pako.esm.mjs'), 'utf8')
 const zlibNotice = pakoSource.match(/^\/\/ \(C\) 1995-2013[^\r\n]*(?:\r?\n\/\/[^\r\n]*)*/m)[0].replace(/\r\n/g, '\n')
 const sourceEdits = {
+  // The bridge forwards request headers from options.headers and decodes JSON responses.
+  'musicSdk/kw/tipSearch.js': [["Referer: 'http://www.kuwo.cn/',", "headers: { Referer: 'http://www.kuwo.cn/' },"]],
+  'musicSdk/kw/util.js': [['\nexport const objStr2JSON = str => {', "\nexport const objStr2JSON = str => {\n  if (typeof str !== 'string') return str"]],
+  // Keep the node lookup and playlist fetch retries on their respective endpoints.
+  'musicSdk/kw/songList.js': [
+    ['if (statusCode != 200 || !body.child) return this.getListDetail(id, ++tryNum)', 'if (statusCode != 200 || !body.child?.length) return this.getListDetailDigest5Info(id, ++tryNum)'],
+    ['return body.child.length ? body.child[0].sourceid : null', 'return body.child[0].sourceid'],
+    ['pn=${page - 1}}', 'pn=${page - 1}'],
+    ["// console.log(body)\n      if (body.result !== 'ok') return this.getListDetail(id, page, ++tryNum)", "// console.log(body)\n      if (body.result !== 'ok') return this.getListDetailDigest5Music(id, page, ++tryNum)"],
+  ],
+  // A metadata retry must return metadata and advance its own retry counter.
+  'musicSdk/mg/songList.js': [['return this.getListDetail(id, ++tryNum)', 'return this.getListDetailInfo(id, ++tryNum)']],
+  // An empty Kugou playlist embeds an empty array in its detail page.
+  'musicSdk/kg/songList.js': [[String.raw`listData: /global\.data = (\[.+\]);/`, String.raw`listData: /global\.data = (\[.*\]);/`]],
   // QuickJS omits the legacy RegExp.$1 constructor property.
   'musicSdk/kw/lyric.js': [['let time = RegExp.$1', 'let time = result[1]']],
   'musicSdk/mg/musicInfo.js': [
@@ -60,7 +74,7 @@ const result = await build({
       builder.onLoad({ filter: /[/\\]musicSdk[/\\].*\.js$/ }, async ({ path }) => {
         const edits = sourceEdits[relative(utils, path).split(sep).join('/')]
         if (!edits) return
-        let contents = await readFile(path, 'utf8')
+        let contents = (await readFile(path, 'utf8')).replace(/\r\n/g, '\n')
         for (const [before, after] of edits) {
           if (!contents.includes(before)) throw new Error(`LX Music source changed: ${path} (${before})`)
           contents = contents.replace(before, after)
@@ -90,12 +104,17 @@ const result = await build({
   write: false,
 })
 
-const excluded = /[/\\]musicSdk[/\\](?:(?:bd|xm)[/\\]|.*[/\\](?:leaderboard|songList|comment|hotSearch|tipSearch|album|singer)\.js$|api-source\.js$)/
+const excluded = /[/\\]musicSdk[/\\](?:(?:bd|xm)[/\\]|.*[/\\](?:leaderboard|comment|hotSearch|singer)\.js$|(?!kw[/\\]album\.js$).*[/\\]album\.js$|api-source\.js$)/
 const extra = Object.keys(result.metafile.inputs).filter(path => excluded.test(path))
 if (extra.length) throw new Error(`Unexpected LX Music modules: ${extra.join(', ')}`)
 
 await mkdir(assets, { recursive: true })
-await copyFile(resolve(upstream, 'android/app/src/main/assets/script/user-api-preload.js'), resolve(assets, 'user-api-preload.js'))
+const preloadPath = resolve(assets, 'user-api-preload.js')
+const preload = await readFile(resolve(upstream, 'android/app/src/main/assets/script/user-api-preload.js'))
+const existingPreload = await readFile(preloadPath).catch(error => {
+  if (error.code !== 'ENOENT') throw error
+})
+if (!existingPreload?.equals(preload)) await writeFile(preloadPath, preload)
 const [bundle] = result.outputFiles
 await writeFile(bundle.path, bundle.contents)
 console.log(`Built ${bundle.contents.byteLength} bytes`)

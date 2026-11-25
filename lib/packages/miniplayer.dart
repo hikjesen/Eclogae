@@ -28,6 +28,7 @@ import 'package:namida/controller/navigator_controller.dart';
 import 'package:namida/controller/party/party_controller.dart';
 import 'package:namida/controller/player_controller.dart';
 import 'package:namida/controller/playlist_controller.dart';
+import 'package:namida/controller/selected_tracks_controller.dart';
 import 'package:namida/controller/settings_controller.dart';
 import 'package:namida/controller/video_controller.dart';
 import 'package:namida/controller/waveform_controller.dart';
@@ -41,6 +42,7 @@ import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/themes.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/lx_music/lx_preview_player.dart';
 import 'package:namida/packages/lyrics_lrc_parsed_view.dart';
 import 'package:namida/packages/miniplayer_base.dart';
 import 'package:namida/ui/dialogs/add_to_playlist_dialog.dart';
@@ -204,22 +206,28 @@ class NamidaMiniPlayerMixed extends StatelessWidget {
 class NamidaMiniPlayerTrack extends StatelessWidget {
   const NamidaMiniPlayerTrack({super.key});
 
-  static void openMenu(TrackWithDate? trackWithDate, Track track) => NamidaDialogs.inst.showTrackDialog(
-    track,
-    source: QueueSource.playerQueue,
-    heroTag: TrackTile.obtainHeroTag(trackWithDate, track, -1, true),
-  );
-  static void openInfoMenu(TrackWithDate? trackWithDate, Track track) => showTrackInfoDialog(
-    track,
-    true,
-    heroTag: TrackTile.obtainHeroTag(trackWithDate, track, -1, true),
-  );
+  static void openMenu(TrackWithDate? trackWithDate, Track track) {
+    if (LxPreviewPlayer.isPreviewPath(track.path)) {
+      LxPreviewPlayer.inst.showPreviewTrackMenu(track.path);
+      return;
+    }
+    NamidaDialogs.inst.showTrackDialog(track, source: QueueSource.playerQueue, heroTag: TrackTile.obtainHeroTag(trackWithDate, track, -1, true));
+  }
+
+  static void openInfoMenu(TrackWithDate? trackWithDate, Track track) {
+    if (LxPreviewPlayer.isPreviewPath(track.path)) {
+      LxPreviewPlayer.inst.openPreviewLyrics(track.path);
+      return;
+    }
+    showTrackInfoDialog(track, true, heroTag: TrackTile.obtainHeroTag(trackWithDate, track, -1, true));
+  }
 
   static MiniplayerInfoData<Track, SortEntry<SortType>> textBuilder(Playable playable) {
     String firstLine = '';
     String secondLine = '';
 
     final track = (playable as Selectable).track;
+    final isPreview = LxPreviewPlayer.isPreviewPath(track.path);
     final trExt = track.toTrackExt();
     final title = trExt.title;
     final artist = trExt.displayArtist();
@@ -240,8 +248,21 @@ class NamidaMiniPlayerTrack extends StatelessWidget {
       secondLine: secondLine,
       favouritePlaylist: PlaylistController.inst.favouritesPlaylist,
       itemToLike: track,
-      onLikeTap: (isLiked) async => PlaylistController.inst.favouriteButtonOnPressed(track),
-      onShowAddToPlaylistDialog: () => showAddToPlaylistDialog([track]),
+      onLikeTap: (_) async {
+        if (isPreview) {
+          snackyy(icon: Broken.info_circle, message: '在线试听歌曲下载后即可收藏');
+          return false;
+        }
+        return PlaylistController.inst.favouriteButtonOnPressed(track);
+      },
+      onShowAddToPlaylistDialog: () {
+        if (isPreview) {
+          final lx = LxPreviewPlayer.inst.trackForPath(track.path);
+          if (lx != null) LxPreviewPlayer.inst.triggerDownload(lx);
+        } else {
+          showAddToPlaylistDialog([track]);
+        }
+      },
       onMenuOpen: (_) => openMenu(playable.trackWithDate, track),
       onTextLongTap: () => openInfoMenu(playable.trackWithDate, track),
     );
@@ -251,6 +272,7 @@ class NamidaMiniPlayerTrack extends StatelessWidget {
     return FocusedMenuOptions(
       onSearch: (item) {
         final tr = (item as Selectable).track;
+        if (LxPreviewPlayer.isPreviewPath(tr.path)) return;
         showSetYTLinkCommentDialog(tr, CurrentColor.inst.miniplayerColor, autoOpenSearch: true);
       },
       onPressed: (currentItem) => VideoController.inst.toggleVideoPlayback(),
@@ -494,7 +516,11 @@ class NamidaMiniPlayerTrack extends StatelessWidget {
 
   static String _albumTopText(Playable currentItem) => (currentItem as Selectable).track.originalAlbum;
 
-  static void _onAlbumTap(Playable currentItem) => NamidaOnTaps.inst.onAlbumTap((currentItem as Selectable).track.albumsIdentifiersModified.firstOrNull);
+  static void _onAlbumTap(Playable currentItem) {
+    final track = (currentItem as Selectable).track;
+    if (LxPreviewPlayer.isPreviewPath(track.path)) return;
+    NamidaOnTaps.inst.onAlbumTap(track.albumsIdentifiersModified.firstOrNull);
+  }
 
   static String _kuruTopText(Playable currentItem) {
     final track = (currentItem as Selectable).track;
@@ -504,6 +530,7 @@ class NamidaMiniPlayerTrack extends StatelessWidget {
 
   static void _onKuruTopTextTap(Playable currentItem) {
     final track = (currentItem as Selectable).track;
+    if (LxPreviewPlayer.isPreviewPath(track.path)) return;
     final listens = HistoryController.inst.topTracksMapListens.value[track];
     final firstListen = listens?.firstOrNull;
     if (firstListen == null) return _onAlbumTap(currentItem);
@@ -522,6 +549,43 @@ class NamidaMiniPlayerTrack extends StatelessWidget {
       itemBuilder: (context, i, queue, properties, _, searchResults) {
         final track = queue[i] as Selectable;
         final key = Key("${i}_${track.track.path}");
+        void play() {
+          if (searchResults == null) {
+            Player.inst.playQueueItem(i);
+          } else {
+            searchResults.onResultTap(i);
+          }
+        }
+
+        if (LxPreviewPlayer.isPreviewPath(track.track.path)) {
+          return (
+            ListTile(
+              key: key,
+              dense: true,
+              leading: SizedBox.square(dimension: 40, child: _TrackImage(track: track.track)),
+              title: Text(track.track.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+              subtitle: Text(track.track.originalArtist, maxLines: 1, overflow: TextOverflow.ellipsis),
+              onTap: play,
+              onLongPress: () => openInfoMenu(null, track.track),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  NamidaReordererableListener(index: i, durationMs: 40, child: const Icon(Broken.menu_1)),
+                  MoreIcon(onPressed: () => openMenu(null, track.track)),
+                ],
+              ),
+            ),
+            key,
+          );
+        }
+
+        SelectionRangeOrder? rangeOrder = searchResults;
+        // A mixed queue can have previews between two selected library tracks.
+        bool isPreview(Playable item) => item is Selectable && LxPreviewPlayer.isPreviewPath(item.track.path);
+        if ((settings.mixedQueue.value || Player.inst.partyGate?.forcesMixedQueue == true) && queue.any(isPreview)) {
+          final indices = searchResults?.shownIndices ?? Iterable<int>.generate(queue.length);
+          rangeOrder = FilteredRangeOrder([for (final index in indices) if (!isPreview(queue[index])) index]);
+        }
         return (
           ObxOSelect(
             rx: Player.inst.currentIndex,
@@ -532,16 +596,10 @@ class NamidaMiniPlayerTrack extends StatelessWidget {
               index: i,
               trackOrTwd: track,
               tracks: queue,
-              rangeOrder: searchResults,
+              rangeOrder: rangeOrder,
               cardColorOpacity: 0.5,
               fadeOpacity: isPlayed ? 0.3 : 0.0,
-              onPlaying: () {
-                if (searchResults == null) {
-                  Player.inst.playQueueItem(i);
-                } else {
-                  searchResults.onResultTap(i);
-                }
-              },
+              onPlaying: play,
             ),
           ),
           key,
@@ -935,13 +993,23 @@ class _AnimatingTrackImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget cover = _BackCoverFlip(track: track);
+    if (LxPreviewPlayer.isPreviewPath(track.path)) {
+      final artwork = cover;
+      cover = ObxO(
+        rx: settings.artworkTapAction,
+        builder: (context, tapAction) => GestureDetector(
+          onTap: tapAction == TrackExecuteActions.none ? null : () => LxPreviewPlayer.inst.showPreviewTrackMenu(track.path),
+          onLongPress: () => LxPreviewPlayer.inst.openPreviewLyrics(track.path),
+          child: artwork,
+        ),
+      );
+    }
     return _AnimatingThumnailWidget(
       isLocal: true,
       lyricsMaxSize: lyricsMaxSize,
       showLyricsOverlay: showLyricsOverlay,
-      fallback: _BackCoverFlip(
-        track: track,
-      ),
+      fallback: cover,
     );
   }
 }

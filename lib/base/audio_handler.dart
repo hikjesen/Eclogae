@@ -62,9 +62,11 @@ import 'package:namida/controller/waveform_controller.dart';
 import 'package:namida/core/constants.dart';
 import 'package:namida/core/enums.dart';
 import 'package:namida/core/extensions.dart';
+import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/namida_converter_ext.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/lx_music/lx_preview_player.dart';
 import 'package:namida/main.dart';
 import 'package:namida/ui/dialogs/common_dialogs.dart';
 import 'package:namida/ui/widgets/eggs/eggs.dart';
@@ -295,6 +297,7 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
   }
 
   Future<void> _updateTrackLastPosition(Track track, int lastPositionMS, int? itemEndMS) async {
+    if (LxPreviewPlayer.isPreviewPath(track.path)) return;
     int dur = itemEndMS ?? track.durationMS;
     if (dur <= 0) dur = currentItemDuration.value?.inMilliseconds ?? 0;
 
@@ -687,7 +690,7 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
     ArtworkPrefetcher.inst.prefetchAround(newIndex);
     final gate = partyGate;
     if (gate == null) {
-      settings.extra.lastPlayedIndex.save(newIndex);
+      if (!_isPreviewItem(newItem) && !_isPreviewQueue(currentQueue.value)) settings.extra.lastPlayedIndex.save(newIndex);
     } else {
       gate.onLocalIndexChanged(newIndex);
     }
@@ -701,10 +704,21 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
     );
   }
 
+  bool _wasPreviewQueue = false;
+
+  bool _isPreviewItem(Playable? item) => item is Selectable && LxPreviewPlayer.isPreviewPath(item.track.path);
+  bool _isPreviewQueue(List<Playable> queue) => queue.any(_isPreviewItem);
+
   @override
   Future<void> onQueueChanged() async {
+    final queue = currentQueue.value;
+    final wasPreviewQueue = _wasPreviewQueue;
+    final isPreviewQueue = _isPreviewQueue(queue);
+    if (queue.isNotEmpty) _wasPreviewQueue = isPreviewQueue;
     await super.onQueueChanged();
-    if (currentQueue.value.isEmpty) {
+    if (!identical(queue, currentQueue.value)) return;
+    if (wasPreviewQueue || isPreviewQueue) LxPreviewPlayer.inst.trimTracks();
+    if (queue.isEmpty) {
       CurrentColor.inst.resetCurrentPlayingTrack();
       // -- party clears etc dont snap the player back by themselves
       final miniplayer = MiniPlayerController.inst;
@@ -712,12 +726,14 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
       // await pause();
       await [
         onDispose(),
-        if (partyGate == null) QueueController.inst.emptyLatestQueue(),
+        if (partyGate == null && !_wasPreviewQueue) QueueController.inst.emptyLatestQueue(),
       ].execute();
     } else {
       refreshNotification(currentItem.value);
       // -- a party queue never replaces the user's persisted one
-      if (partyGate == null) await QueueController.inst.updateLatestQueue(currentQueue.value, originalIndices: currentQueue.originalIndices, source: latestQueueSource);
+      if (partyGate == null && !isPreviewQueue) {
+        await QueueController.inst.updateLatestQueue(queue, originalIndices: currentQueue.originalIndices, source: latestQueueSource);
+      }
     }
   }
 
@@ -736,6 +752,7 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
 
     // this is what keeps local & youtube separated. this shall be removed if mixed playback ever got supported.
     final current = currentItem.value;
+    if (_isPreviewItem(newItem) != _isPreviewItem(current)) return false;
     if (newItem is Selectable && current is! Selectable) return false;
     if (newItem is YoutubeID && current is! YoutubeID) return false;
     return true;
@@ -746,6 +763,8 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
     final newItem = items.firstOrNull;
     if (canJoinCurrentQueue(newItem)) return;
 
+    // A preview insertion can also replace the active local queue.
+    if (_isPreviewItem(newItem)) _wasPreviewQueue = true;
     final wasPlayWhenReady = playWhenReady.value;
     await clearQueue();
     await onDispose();
@@ -800,7 +819,8 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
     void Function(QueueSnapshot<Q>? previousQueue)? onRestructuringQueue,
     Id Function(Q currentItem)? duplicateRemover,
   }) async {
-    await beforeQueueAddOrInsert(queue);
+    // Replacing the local queue with previews must not clear the saved queue first.
+    if (!_isPreviewItem(queue.firstOrNull)) await beforeQueueAddOrInsert(queue);
     final wasPlayWhenReady = playWhenReady.value;
     setPlayWhenReady(startPlaying);
     await super.assignNewQueue(
@@ -815,7 +835,9 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
         setPlayWhenReady(wasPlayWhenReady);
         onIndexAndQueueSame?.call();
       },
-      onQueueDifferent: onQueueDifferent,
+      onQueueDifferent: (finalizedQueue, indices) {
+        if (!_isPreviewQueue(finalizedQueue)) onQueueDifferent?.call(finalizedQueue, indices);
+      },
       onQueueEmpty: onQueueEmpty,
       onAssigningCurrentItem: onAssigningCurrentItem,
       onRestructuringQueue: (previousQueue) {
@@ -886,7 +908,7 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
   @override
   String? itemToTotalListenTimeKey(Q? item) {
     return item?.execute(
-      selectable: (_) => LibraryCategory.localTracks,
+      selectable: (finalItem) => LxPreviewPlayer.isPreviewPath(finalItem.track.path) ? null : LibraryCategory.localTracks,
       youtubeID: (_) => LibraryCategory.youtube,
     );
   }
@@ -897,6 +919,7 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
     if (kScreenshotsMode) return;
     await item.execute(
       selectable: (finalItem) async {
+        if (LxPreviewPlayer.isPreviewPath(finalItem.track.path)) return;
         final newTrackWithDate = TrackWithDate(
           dateAdded: currentTimeMS,
           track: finalItem.track,
@@ -989,12 +1012,14 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
       () async {
         return await item.execute(
           selectable: (finalItem) async {
-            final qs = finalItem.trackWithDate?.queueSource;
-            if (qs != null && qs.tracksLatestPlayed) {
-              QueueController.latestPlayedForSourceManager.update(qs, finalItem);
-            }
-            if (QueueSourceEnum.queuePage.supportResuming && QueueSourceBase.resumingEnabled) {
-              QueueController.inst.updateLatestPlayedForCurrentQueue(finalItem, alreadyUpdatedSource: qs);
+            if (!_isPreviewItem(finalItem) && !_isPreviewQueue(currentQueue.value)) {
+              final qs = finalItem.trackWithDate?.queueSource;
+              if (qs != null && qs.tracksLatestPlayed) {
+                QueueController.latestPlayedForSourceManager.update(qs, finalItem);
+              }
+              if (QueueSourceEnum.queuePage.supportResuming && QueueSourceBase.resumingEnabled) {
+                QueueController.inst.updateLatestPlayedForCurrentQueue(finalItem, alreadyUpdatedSource: qs);
+              }
             }
 
             await onItemPlaySelectable(item, finalItem, index, skipItem, preparedItemInfo: preparedItemInfo, requestedStartPosition: requestedStartPosition);
@@ -1053,6 +1078,10 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
   }
 
   void _onTrackPlayError(Track tr, Object e, StackTrace st, Function skipItem) {
+    if (LxPreviewPlayer.isPreviewPath(tr.path)) {
+      _onPreviewTrackPlayError(tr, e, st, skipItem);
+      return;
+    }
     onPauseRaw();
     _startPlayErrorSkipCountdown(() {
       NamidaNavigator.inst.closeDialog();
@@ -1064,6 +1093,26 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
       source: QueueSource.playerQueue,
     );
     logger.error('Error playing file', e: e, st: st);
+  }
+
+  void _onPreviewTrackPlayError(Track tr, Object e, StackTrace st, Function skipItem) {
+    onPauseRaw();
+    final willSkip = currentQueue.value.length > 1;
+    if (willSkip) {
+      _startPlayErrorSkipCountdown(() {
+        if (currentItem.value case Selectable(:final track) when track == tr && currentQueue.value.length > 1) skipItem();
+      });
+    }
+    snackyy(
+      icon: Broken.info_circle,
+      message: '在线试听失败：$e',
+      title: willSkip ? '7 秒后跳到下一首' : '',
+      top: false,
+      isError: true,
+      displayDuration: SnackDisplayDuration.tutorial,
+      button: willSkip ? SnackbarButton(text: lang.cancel, function: cancelPlayErrorSkipTimer) : null,
+    );
+    logger.error('在线试听失败：${tr.path}', e: e, st: st);
   }
 
   ({int loadId, int positionMS})? _ytPlayErrorLastRetry;
@@ -1138,7 +1187,9 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
     final tr = item.track;
     duration ??= Duration(milliseconds: tr.durationMS);
     configToUpdate ??= CurrentVideoConfig();
-    final initialVideo = await VideoController.inst.updateCurrentVideo(tr, returnEarly: true, configToUpdate: configToUpdate);
+    final initialVideo = LxPreviewPlayer.isPreviewPath(tr.path)
+        ? null
+        : await VideoController.inst.updateCurrentVideo(tr, returnEarly: true, configToUpdate: configToUpdate);
     final videoOptions = !settings.enableVideoPlayback.value
         ? null
         : initialVideo == null
@@ -1178,6 +1229,7 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
   }) async {
     if (_shouldSkipExplicit(item)) return _skipExplicitItem(pi, skipItem);
     final tr = item.track;
+    final isPreview = LxPreviewPlayer.isPreviewPath(tr.path);
     videoPlayerInfo.value = null;
     Lyrics.inst.resetLyrics(hide: false);
     WaveformController.inst.resetWaveform();
@@ -1260,7 +1312,13 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
         isVideoFile: true,
       );
 
-      if (dur != null) Indexer.inst.updateTrackDuration(tr, dur);
+      if (dur != null) {
+        if (isPreview) {
+          LxPreviewPlayer.inst.updateDuration(tr.path, dur);
+        } else {
+          Indexer.inst.updateTrackDuration(tr, dur);
+        }
+      }
 
       refreshNotification(currentItem.value);
       return dur;
@@ -1273,6 +1331,10 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
       // -- a load that failed could leave the player idle, position/duration can still be the previous item's
       final reallyError = currentState.value != ProcessingState.ready || !(duration != null && currentPositionMS.value > 0);
       if (reallyError) {
+        if (isPreview) {
+          _onPreviewTrackPlayError(tr, e, st, skipItem);
+          return;
+        }
         printy(e, isError: true);
         // -- playing music from root folders still require `all_file_access`
         // -- this is a fix for not playing some external files reported by some users.
@@ -2544,6 +2606,10 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
   void toggleItemFavourite(Q item) {
     item.execute(
       selectable: (finalItem) {
+        if (LxPreviewPlayer.isPreviewPath(finalItem.track.path)) {
+          snackyy(icon: Broken.info_circle, message: '在线试听歌曲下载后即可收藏');
+          return;
+        }
         final newStat = PlaylistController.inst.favouriteButtonOnPressed(finalItem.track, refreshNotification: false);
         _notificationUpdateItemSelectable(
           item: finalItem,
@@ -3111,6 +3177,13 @@ class NamidaAudioVideoHandler<Q extends Playable> extends BasicAudioHandler<Q> w
       case HomeWidgetController.actionWidgetsDisabled:
         HomeWidgetController.instance?.setHasWidgets(false);
       default:
+        if (_isPreviewItem(currentItem.value)) {
+          if (name == NotificationButton.addToPlaylist.name) {
+            snackyy(icon: Broken.info_circle, message: '在线试听歌曲下载后即可收藏');
+            return;
+          }
+          if (name == NotificationButton.bookmark.name) return;
+        }
         final isNotificationButton = await _onNotificationButtonPressed(name);
         if (!isNotificationButton) return super.customAction(name, extras);
     }
@@ -3530,6 +3603,10 @@ UriSource _buildCacheableAVSource(
 }
 
 Future<UriSource> _buildTrackNetworkAudioSource({required Track tr}) {
+  if (LxPreviewPlayer.isPreviewPath(tr.path)) {
+    return LxPreviewPlayer.inst.buildAudioSource(tr.path);
+  }
+
   bool stillPlaying(String path) {
     final current = Player.inst.currentItem.value;
     return current is Selectable && path == current.track.path;

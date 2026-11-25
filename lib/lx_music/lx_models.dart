@@ -13,6 +13,37 @@ enum LxPlatform {
   final String label;
 }
 
+enum LxSearchMode {
+  songs('歌曲'),
+  songlists('歌单');
+
+  const LxSearchMode(this.label);
+
+  final String label;
+}
+
+enum LxSearchSource {
+  all('聚合'),
+  kw('酷我'),
+  kg('酷狗'),
+  tx('QQ'),
+  wy('网易云'),
+  mg('咪咕');
+
+  const LxSearchSource(this.label);
+
+  final String label;
+
+  LxPlatform? get platform => switch (this) {
+    LxSearchSource.all => null,
+    LxSearchSource.kw => LxPlatform.kw,
+    LxSearchSource.kg => LxPlatform.kg,
+    LxSearchSource.tx => LxPlatform.tx,
+    LxSearchSource.wy => LxPlatform.wy,
+    LxSearchSource.mg => LxPlatform.mg,
+  };
+}
+
 class LxTrack {
   LxTrack.fromMusicInfo(this.source, this.rawMusicInfo)
     : id = (rawMusicInfo['id'] ?? rawMusicInfo['songmid']).toString(),
@@ -34,6 +65,18 @@ class LxTrack {
   final Map<String, dynamic> rawMusicInfo;
 
   String get uniqueKey => '${source.code}:$id';
+
+  int get durationMs {
+    final parts = interval.trim().split(':');
+    if (parts.length < 2 || parts.length > 3) return 0;
+    var seconds = 0;
+    for (var i = 0; i < parts.length; i++) {
+      final part = int.tryParse(parts[i], radix: 10);
+      if (part == null || part < 0 || (i > 0 && part >= 60)) return 0;
+      seconds = seconds * 60 + part;
+    }
+    return seconds * 1000;
+  }
 
   String? get highestQuality => LxDownloadSettings.qualityOptions.where(qualities.contains).firstOrNull ?? qualities.firstOrNull;
 
@@ -63,6 +106,89 @@ class LxSearchResult {
   final int page;
   final int limit;
   final int allPage;
+}
+
+class LxSonglist {
+  const LxSonglist({
+    required this.id,
+    required this.name,
+    required this.source,
+    this.author = '',
+    this.img,
+    this.playCount = '',
+    this.total,
+    this.desc = '',
+    this.time = '',
+  });
+
+  factory LxSonglist.fromJson(Map<String, dynamic> json, LxPlatform platform) => LxSonglist._fromJson(json, platform, null);
+
+  factory LxSonglist._fromJson(Map<String, dynamic> json, LxPlatform platform, LxSonglist? fallback) {
+    String? readText(String key) {
+      return switch (json[key]) {
+        String text when text.trim().isNotEmpty => text,
+        num count => count.toString(),
+        _ => null,
+      };
+    }
+
+    final total = json['total'];
+    return LxSonglist(
+      id: readText('id') ?? fallback?.id ?? '',
+      name: readText('name') ?? fallback?.name ?? '',
+      source: platform,
+      author: readText('author') ?? fallback?.author ?? '',
+      img: readText('img') ?? fallback?.img,
+      playCount: readText('play_count') ?? fallback?.playCount ?? '',
+      total: (total is int ? total : int.tryParse(total is String ? total.trim() : '')) ?? fallback?.total,
+      desc: readText('desc') ?? fallback?.desc ?? '',
+      time: readText('time') ?? fallback?.time ?? '',
+    );
+  }
+
+  final String id;
+  final String name;
+  final String author;
+  final String? img;
+  final String playCount;
+  final int? total;
+  final String desc;
+  final String time;
+  final LxPlatform source;
+
+  String get uniqueKey => '${source.code}:$id';
+}
+
+class LxSonglistSearchResult {
+  LxSonglistSearchResult.fromJson(Map<String, dynamic> json, LxPlatform platform)
+    : list = List.unmodifiable((json['list'] as List<dynamic>).map((item) => LxSonglist.fromJson(item as Map<String, dynamic>, platform))),
+      total = json['total'] as int,
+      page = json['page'] as int,
+      limit = json['limit'] as int;
+
+  final List<LxSonglist> list;
+  final int total;
+  final int page;
+  final int limit;
+
+  bool get hasMore => list.isNotEmpty && page * limit < total;
+}
+
+class LxSonglistDetail {
+  LxSonglistDetail.fromJson(Map<String, dynamic> json, LxPlatform platform, {LxSonglist? fallbackInfo})
+    : info = LxSonglist._fromJson(json['info'] as Map<String, dynamic>? ?? const {}, platform, fallbackInfo),
+      tracks = List.unmodifiable((json['list'] as List<dynamic>).map((item) => LxTrack.fromMusicInfo(platform, item as Map<String, dynamic>))),
+      total = json['total'] as int,
+      page = json['page'] as int,
+      limit = json['limit'] as int;
+
+  final LxSonglist info;
+  final List<LxTrack> tracks;
+  final int total;
+  final int page;
+  final int limit;
+
+  bool get hasMore => tracks.isNotEmpty && (limit > 0 ? page * limit < total : tracks.length < total);
 }
 
 class LxLyricResult {
@@ -164,6 +290,7 @@ class LxDownloadSettings {
   const LxDownloadSettings({
     this.downloadDir,
     this.preferredQuality = 'flac',
+    this.previewQuality = '320k',
     this.autoSwitchSource = true,
     this.exportLrc = true,
     this.embedCover = true,
@@ -180,6 +307,7 @@ class LxDownloadSettings {
 
   final String? downloadDir;
   final String preferredQuality;
+  final String previewQuality;
   final bool autoSwitchSource;
   final bool exportLrc;
   final bool embedCover;
@@ -213,6 +341,7 @@ class LxDownloadSettings {
   LxDownloadSettings copyWith({
     Object? downloadDir = _unchanged,
     String? preferredQuality,
+    String? previewQuality,
     bool? autoSwitchSource,
     bool? exportLrc,
     bool? embedCover,
@@ -224,6 +353,7 @@ class LxDownloadSettings {
   }) => LxDownloadSettings(
     downloadDir: identical(downloadDir, _unchanged) ? this.downloadDir : downloadDir as String?,
     preferredQuality: preferredQuality ?? this.preferredQuality,
+    previewQuality: previewQuality ?? this.previewQuality,
     autoSwitchSource: autoSwitchSource ?? this.autoSwitchSource,
     exportLrc: exportLrc ?? this.exportLrc,
     embedCover: embedCover ?? this.embedCover,
@@ -237,6 +367,7 @@ class LxDownloadSettings {
   factory LxDownloadSettings.fromJson(Map<String, dynamic> json) => LxDownloadSettings(
     downloadDir: json['downloadDir'] as String?,
     preferredQuality: json['preferredQuality'] as String? ?? 'flac',
+    previewQuality: qualityOptions.contains(json['previewQuality']) ? json['previewQuality'] as String : '320k',
     autoSwitchSource: json['autoSwitchSource'] as bool? ?? true,
     exportLrc: json['exportLrc'] as bool? ?? true,
     embedCover: json['embedCover'] as bool? ?? true,
@@ -250,6 +381,7 @@ class LxDownloadSettings {
   Map<String, dynamic> toJson() => {
     'downloadDir': downloadDir,
     'preferredQuality': preferredQuality,
+    'previewQuality': previewQuality,
     'autoSwitchSource': autoSwitchSource,
     'exportLrc': exportLrc,
     'embedCover': embedCover,

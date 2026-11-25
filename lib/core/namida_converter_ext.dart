@@ -1544,6 +1544,9 @@ extension RouteUtils on NamidaRoute {
       case RouteType.YOUTUBE_HOME:
         finalWidget = getTextWidget(LxMusicPage.title);
         break;
+      case RouteType.YOUTUBE_HOME_SECTION:
+        finalWidget = getTextWidget(name ?? LxMusicPage.title);
+        break;
       case RouteType.SEARCH_albumResults:
         finalWidget = ObxO(
           rx: SearchSortController.inst.albumSearchTemp,

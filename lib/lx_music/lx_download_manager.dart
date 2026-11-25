@@ -70,6 +70,7 @@ class LxDownloadManager {
 
   Future<void> updateSettings(LxDownloadSettings next) async {
     _validateQuality(next.preferredQuality, 'preferredQuality');
+    _validateQuality(next.previewQuality, 'previewQuality');
     final selected = next.lastSelectedQuality;
     if (selected != null) _validateQuality(selected, 'lastSelectedQuality');
     if (!LxDownloadSettings.concurrentOptions.contains(next.maxConcurrent)) {
@@ -540,7 +541,7 @@ class LxDownloadManager {
       final result = await _bridge.fetchLyric(track: source);
       final original = result.lyric.trim();
       if (original.isEmpty) return null;
-      return _mergeLyrics(original, [
+      return mergeLyrics(original, [
         if (options.includeTranslationLyric) result.tlyric,
         if (options.includeRomanizationLyric) result.rlyric,
       ]);
@@ -565,7 +566,7 @@ class LxDownloadManager {
     }
   }
 
-  static String _mergeLyrics(String original, List<String?> companions) {
+  static String mergeLyrics(String original, List<String?> companions) {
     final byTime = <int, Set<String>>{};
     for (final companion in companions.nonNulls) {
       for (final line in companion.split('\n')) {

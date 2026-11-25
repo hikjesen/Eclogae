@@ -24,7 +24,7 @@ class LxSettingsPage extends StatefulWidget with NamidaRouteWidget {
   const LxSettingsPage({super.key});
 
   static const title = '在线曲库设置';
-  static const subtitle = '自定义音源、下载目录、默认音质、并发数与诊断日志';
+  static const subtitle = '自定义音源、试听与下载音质、下载目录、并发数与诊断日志';
 
   @override
   RouteType get route => RouteType.SETTINGS_subpage;
@@ -235,43 +235,49 @@ class _LxSettingsPageState extends State<LxSettingsPage> {
     if (picked != null) await _downloads.updateSettings(_downloads.settingsNotifier.value.copyWith(downloadDir: picked.path));
   });
 
-  Future<void> _pickDefaultQuality() => _editDownloads('设置默认音质', () async {
-    final current = _downloads.settingsNotifier.value.preferredQuality;
-    String? chosen;
-    await NamidaNavigator.inst.navigateDialog<void>(
-      dialog: CustomBlurryDialog(
-        title: '默认音质',
-        icon: Broken.sound,
-        normalTitleStyle: true,
-        actions: const [CancelButton()],
-        child: Column(
-          children: [
-            for (final quality in LxDownloadSettings.qualityOptions.reversed)
-              CustomListTile(
-                title: LxDownloadSettings.qualityLabel(quality),
-                extraDense: true,
-                trailingRaw: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    LxQualityBadge(quality: quality),
-                    const SizedBox(width: 6),
-                    SizedBox(
-                      width: 18,
-                      child: quality == current ? const NIcon(Broken.tick_circle, size: 18, color: NColors.primary) : null,
-                    ),
-                  ],
+  Future<void> _pickQuality({required bool preview}) {
+    final title = preview ? '试听默认音质' : '默认音质';
+    return _editDownloads('设置$title', () async {
+      final settings = _downloads.settingsNotifier.value;
+      final current = preview ? settings.previewQuality : settings.preferredQuality;
+      String? chosen;
+      await NamidaNavigator.inst.navigateDialog<void>(
+        dialog: CustomBlurryDialog(
+          title: title,
+          icon: preview ? Broken.headphone : Broken.sound,
+          normalTitleStyle: true,
+          actions: const [CancelButton()],
+          child: Column(
+            children: [
+              for (final quality in LxDownloadSettings.qualityOptions.reversed)
+                CustomListTile(
+                  title: LxDownloadSettings.qualityLabel(quality),
+                  extraDense: true,
+                  trailingRaw: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      LxQualityBadge(quality: quality),
+                      const SizedBox(width: 6),
+                      SizedBox(
+                        width: 18,
+                        child: quality == current ? const NIcon(Broken.tick_circle, size: 18, color: NColors.primary) : null,
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    chosen = quality;
+                    NamidaNavigator.inst.closeDialog();
+                  },
                 ),
-                onTap: () {
-                  chosen = quality;
-                  NamidaNavigator.inst.closeDialog();
-                },
-              ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-    if (chosen != null) await _downloads.updateSettings(_downloads.settingsNotifier.value.copyWith(preferredQuality: chosen));
-  });
+      );
+      if (chosen == null) return;
+      final latest = _downloads.settingsNotifier.value;
+      await _downloads.updateSettings(preview ? latest.copyWith(previewQuality: chosen) : latest.copyWith(preferredQuality: chosen));
+    });
+  }
 
   Widget _buildDownloadPreferences() => ValueListenableBuilder<LxDownloadSettings>(
     valueListenable: _downloads.settingsNotifier,
@@ -314,7 +320,15 @@ class _LxSettingsPageState extends State<LxSettingsPage> {
                   const NIcon(Broken.arrow_right_3, size: 17),
                 ],
               ),
-              onTap: _pickDefaultQuality,
+              onTap: () => _pickQuality(preview: false),
+            ),
+            CustomListTile(
+              title: '试听默认音质',
+              icon: Broken.headphone,
+              subtitle: '${LxDownloadSettings.qualityLabel(options.previewQuality)} · 在线试听优先请求，不可用时自动降级',
+              enabled: canEdit,
+              trailingRaw: const NIcon(Broken.arrow_right_3, size: 17),
+              onTap: () => _pickQuality(preview: true),
             ),
             CustomSwitchListTile(
               title: '默认使用上次选择的音质',

@@ -18,6 +18,7 @@ import 'package:namida/class/http_response_wrapper.dart';
 import 'package:namida/class/lyrics.dart';
 import 'package:namida/class/track.dart';
 import 'package:namida/controller/indexer_controller.dart';
+import 'package:namida/controller/logs_controller.dart';
 import 'package:namida/controller/lyrics_integrations.dart';
 import 'package:namida/controller/lyrics_search_utils/lrc_search_details.dart';
 import 'package:namida/controller/lyrics_search_utils/lrc_search_utils_base.dart';
@@ -35,6 +36,7 @@ import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/lx_music/lx_preview_player.dart';
 import 'package:namida/main.dart';
 import 'package:namida/packages/lyrics_lrc_parsed_view.dart';
 import 'package:namida/ui/widgets/custom_widgets.dart';
@@ -204,6 +206,14 @@ class Lyrics {
     final track = item.track;
     if (!track.isNetwork) return embedded;
     final path = track.path;
+    if (LxPreviewPlayer.isPreviewPath(path)) {
+      try {
+        return await LxPreviewPlayer.inst.fetchLyrics(path) ?? embedded;
+      } catch (error, stack) {
+        logger.error('加载试听歌词失败', e: error, st: stack);
+        return embedded;
+      }
+    }
     if (_serverTracksWithoutLyrics.contains(path)) return embedded;
     final serverLyrics = await MusicWebServer.baseUrlToLyrics(path);
     if (serverLyrics == null) return embedded;
@@ -230,6 +240,9 @@ class Lyrics {
     final embedded = await _getEmbeddedLyrics(item, lrcUtils);
     if (checkInterrupted()) return null;
     if (LrcSearchUtils.isIgnoreMarker(embedded)) return _noLyrics;
+    if (item is Selectable && LxPreviewPlayer.isPreviewPath(item.track.path)) {
+      return embedded.isEmpty ? _unavailableLyrics : _parseLocalLyrics(embedded);
+    }
 
     final local = await pickLocalLyrics(lrcUtils, embedded);
     final embeddedLrc = local.embeddedLrc;
