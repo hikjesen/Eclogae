@@ -2,9 +2,9 @@
 
 > **更新时间**：2026-11-26
 >
-> **当前分支**：`feat/lx-stage5-fixes`（基于已合入 Stage 0~4 的 `main` / Tag `v8.6.7-lx-stage4`）
+> **当前分支**：`main`（已合入 Stage 0 ~ Stage 5 全部提交，里程碑 Tag：`v8.6.7-lx-stage5`）
 >
-> **当前状态**：✅ **Stage 0 ~ Stage 4 已 fast-forward 合并回 `main`（Tag `v8.6.7-lx-stage4`）；Stage 5 五项核心修复与增强（歌单子文件夹归档、递归防重与后缀对齐、封面缓存并入清理、大歌单自动分页下载、外部歌单链接搜索框直达导入）已落地并通过云端 CI 全绿构建** -> 待用户在真机完成 Stage 5 回归验收，验收通过后决定合并回 `main` 及是否启动 Stage 6（Android 悬浮歌词）。
+> **当前状态**：✅ **Stage 0 ~ Stage 5 全部功能与修复均已通过云端 CI 与真机验收并合并回 `main`** -> 下一阶段按需进入 **Stage 6（Android 悬浮歌词）**（启动前须先勘测并与用户确认自定义粒度与交互方式）。
 
 ---
 
@@ -12,7 +12,7 @@
 
 - **项目目标**：在个人 Fork [`hikjesen/namida`](https://github.com/hikjesen/namida) 中无缝融入「在线曲库」（底层基于 LX Music 协议与 SDK），实现多平台聚合/分源歌曲与歌单搜索、关键词联想、用户自导入（本地 / 在线 URL）第三方 `.js` 自定义音源解析、主播放器原生在线试听（含封面/双语歌词/边播边缓/波形条/单曲循环）、多音质并发下载校验、内嵌标签封面与完整 `.lrc` 导出、以及自动入库的一体化体验。
 - **本地工作区**：
-  - 主开发仓库：`d:\namida项目\namida`（当前分支 `feat/lx-stage5-fixes`，基线 `main` = `v8.6.7-lx-stage4`，远端 `origin` = `https://github.com/hikjesen/namida.git`）
+  - 主开发仓库：`d:\namida项目\namida`（当前分支 `main`，最新里程碑 Tag `v8.6.7-lx-stage5`，远端 `origin` = `https://github.com/hikjesen/namida.git`）
   - 只读参考仓库：`d:\namida项目\lx-music-mobile`（分支 `feature/android-download-mvp`，远端 `https://github.com/hikjesen/lx-music-mobile.git`）
 - **开发与验收约束**：
   - 本机无 Flutter / Dart / Java 环境（仅安装有 `git`、`gh`、`node`、`npm`、`codex`），全程依赖 **GitHub Actions 免费构建**（`dart analyze` + ARM64 Release APK），用户下载 Artifact 到真机测试反馈。
@@ -73,7 +73,7 @@
 | **Stage 4 (在线试听与歌单)** | `feat/lx-stage3-polish` (`a2360084`) | [45606440084](https://github.com/hikjesen/namida/actions/runs/45606440084) (`15m+`) | ARM64 APK | ✅ 搜索状态持久化、聚合全源 + 关键词联想、主播放器原生在线试听/稍后播放、五平台歌单搜索网格与整单下载 |
 | **真机反馈打磨 R2** | `feat/lx-stage3-polish` (`d968cf9f`) | [45617854104](https://github.com/hikjesen/namida/actions/runs/45617854104) (`15m+`) | ARM64 APK | ✅ 顶部精简为单行搜索栏、下载管理并入「在线曲库设置」双 Tab、右上角齿轮上下文切换、试听边播边缓存与波形条渲染通过 |
 | **单曲循环根因修复 R3** | `feat/lx-stage3-polish` (`5f449d3d`) -> 已合并 `main` (`v8.6.7-lx-stage4`) | [45629267767](https://github.com/hikjesen/namida/actions/runs/45629267767) (`15m28s`) | `50,772,738 bytes` | ✅ 接入原生 `LoopMode.one` / `loop-file=inf` + 安全 EOF 重载兜底，本地与在线试听单曲循环真机全通过 |
-| **Stage 5（歌单体验与缓存修复）** | `feat/lx-stage5-fixes` (`54613a3c`) | [45757092704](https://github.com/hikjesen/namida/actions/runs/45757092704) (`17m35s`) | `50,781,361 bytes` | ✅ `dart analyze` 零告警 + ARM64 APK 全绿（歌单子文件夹、全目录递归防重、后缀对齐、封面缓存清理、大歌单自动分页下载、外部歌单链接直达导入）-> 待真机回归验收 |
+| **Stage 5（歌单体验与缓存修复）** | `feat/lx-stage5-fixes` (`54613a3c`) -> 已合并 `main` (`v8.6.7-lx-stage5`) | [45757092704](https://github.com/hikjesen/namida/actions/runs/45757092704) (`17m35s`) | `50,781,361 bytes` | ✅ 歌单子文件夹归档、全目录递归防重、音频后缀对齐、封面缓存清理、大歌单自动分页下载、外部歌单链接搜索框直达导入真机验收通过 |
 
 ### 4.2 统一固定签名与 CI（已落地）
 - 已在 `hikjesen/namida` 仓库配置 GitHub Actions Secrets：`LX_ANDROID_KEYSTORE_B64`、`LX_ANDROID_KEY_PROPERTIES_B64`（PKCS12 Keystore，本地私钥生成后已销毁、永不入库）。
@@ -140,11 +140,11 @@
 
 ## 7. 待办收尾与后续演进（Stage 5+）
 
-### 7.1 当前待办
-- [x] **Stage 0~4 合并回 `main`**：已 fast-forward 合并并打 Tag `v8.6.7-lx-stage4`（旧阶段分支暂保留）。
-- [ ] **Stage 5 真机验收与合并 `main`**：用户下载 CI #45757092704 产物完成真机回归测试后，确认是否将 `feat/lx-stage5-fixes` 合并回 `main`。
+### 7.1 已完成收尾
+- [x] **Stage 0~4 合并回 `main`**：已 fast-forward 合并并打 Tag `v8.6.7-lx-stage4`。
+- [x] **Stage 5 合并回 `main`**：真机验收通过后已 fast-forward 合并并打 Tag `v8.6.7-lx-stage5`（旧阶段分支暂保留，可按需清理）。
 
 ### 7.2 后续阶段规划与按需增强
-- [ ] **Stage 6（下一阶段）：Android 悬浮歌词**：复用 Namida `lib/controller/lyrics_integrations.dart` 实时歌词管线 + 轻量 Kotlin `WindowManager`（`TYPE_APPLICATION_OVERLAY`）悬浮窗；启动前需先向用户确认自定义粒度与交互方式。
-- [ ] **Stage 7（暂搁置）：五平台原生评论区查看**。
+- [ ] **Stage 6（下一阶段）：Android 悬浮歌词**：优先复用 Namida 自身后台实时歌词管线 `lib/controller/lyrics_integrations.dart` + Android 原生轻量 Kotlin `WindowManager` 悬浮窗（`TYPE_APPLICATION_OVERLAY`），避免引入第二 Flutter 引擎或重复搬运 JS/Java LRC 定时器；**启动勘测后须先向用户确认自定义选项保留粒度（配色、对齐、字号、透明度、译文显示等）与拖动/锁定交互方式，再定稿切出 Stage 6 分支实现**。
+- [ ] **Stage 7（暂搁置）：五平台原生评论区查看**（复用 `lx-music-mobile` 五平台 `comment.js` 经 `tools/lx_music_sdk/entry.js` 导出 RPC 并以 Namida 原生毛玻璃弹窗呈现）。
 - [ ] **其他按需增强**：Android 息屏大批量下载前台保活 Service、歌单广场 / 排行榜浏览、上游 Namida 版本同步。
