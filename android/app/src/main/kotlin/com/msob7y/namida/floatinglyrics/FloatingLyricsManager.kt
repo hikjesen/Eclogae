@@ -17,7 +17,6 @@ import android.util.Log
 import android.view.Display
 import android.view.Gravity
 import android.view.View.MeasureSpec
-import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams
 import androidx.core.content.ContextCompat
@@ -29,6 +28,7 @@ internal data class FloatingLyricsPosition(val xPercent: Double, val yPercent: D
 internal data class FloatingLyricsStyle(
   val locked: Boolean,
   val fallbackUnlockNotification: Boolean,
+  val suppressed: Boolean,
   val singleLine: Boolean,
   val maxLines: Int,
   val toggleAnimation: Boolean,
@@ -38,12 +38,16 @@ internal data class FloatingLyricsStyle(
   val textGravity: Int,
   val textColorArgb: Int,
   val textOutline: Boolean,
-)
+  val outlineColorArgb: Int,
+) {
+  val needsUnlockNotification: Boolean get() = !suppressed && locked && fallbackUnlockNotification
+}
 
 internal class FloatingLyricsManager(
   private val application: Application,
   private val onAction: (String) -> Unit,
   private val onPositionChanged: (FloatingLyricsPosition) -> Unit,
+  private val onScreenStateChanged: (Boolean) -> Unit,
 ) : ComponentCallbacks, DisplayManager.DisplayListener {
   private companion object {
     const val TAG = "FloatingLyricsManager"
@@ -67,22 +71,48 @@ internal class FloatingLyricsManager(
   private val notification = FloatingLyricsLockNotification(application)
   private val params = LayoutParams(0, LayoutParams.WRAP_CONTENT, windowType, WINDOW_FLAGS, PixelFormat.TRANSLUCENT).apply {
     gravity = Gravity.TOP or Gravity.START
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+      layoutInDisplayCutoutMode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+      } else {
+        LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+      }
+    }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-      setFitInsetsTypes(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
-      setFitInsetsIgnoringVisibility(true)
+      fitInsetsTypes = 0
     }
   }
 
   private var overlay: FloatingLyricsOverlayView? = null
   private var screen = Point()
+  private var screenOn = powerManager.isInteractive
   private var lastPosition = FloatingLyricsPosition(7.0, 12.0)
   private var maxX = 0
   private var maxY = 0
   private val screenReceiver = object : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-      overlay?.setScreenOn(intent.action == Intent.ACTION_SCREEN_ON)
+      screenOn = when (intent.action) {
+        Intent.ACTION_SCREEN_ON -> true
+        Intent.ACTION_SCREEN_OFF -> false
+        else -> return
+      }
+      overlay?.let { view ->
+        if (view.setScreenOn(screenOn)) fitUpdatedLine(view)
+      }
+      onScreenStateChanged(screenOn)
     }
   }
+
+  init {
+    ContextCompat.registerReceiver(
+      application,
+      screenReceiver,
+      IntentFilter(Intent.ACTION_SCREEN_OFF).apply { addAction(Intent.ACTION_SCREEN_ON) },
+      ContextCompat.RECEIVER_NOT_EXPORTED,
+    )
+  }
+
+  fun isScreenInteractive(): Boolean = powerManager.isInteractive
 
   fun show(
     style: FloatingLyricsStyle,
@@ -106,14 +136,14 @@ internal class FloatingLyricsManager(
       windowContext,
       style,
       isPlaying,
-      powerManager.isInteractive,
+      screenOn,
       onAction = ::handleAction,
+      onDragStarted = { overlay?.let { layoutOverlay(it) } },
       onDrag = ::dragBy,
       onDragFinished = ::finishDrag,
       onToolbarChanged = { overlay?.let { layoutOverlay(it) } },
     )
     view.updateLine(primaryText, secondaryText)
-    screen = screenSize()
     layoutOverlay(view, position)
     try {
       windowManager.addView(view, params)
@@ -127,12 +157,6 @@ internal class FloatingLyricsManager(
     overlay = view
     application.registerComponentCallbacks(this)
     displayManager.registerDisplayListener(this, null)
-    ContextCompat.registerReceiver(
-      application,
-      screenReceiver,
-      IntentFilter(Intent.ACTION_SCREEN_OFF).apply { addAction(Intent.ACTION_SCREEN_ON) },
-      ContextCompat.RECEIVER_NOT_EXPORTED,
-    )
     syncNotification(style)
     return true
   }
@@ -143,22 +167,26 @@ internal class FloatingLyricsManager(
     overlay = null
     application.unregisterComponentCallbacks(this)
     displayManager.unregisterDisplayListener(this)
-    application.unregisterReceiver(screenReceiver)
     windowManager.removeViewImmediate(view)
   }
 
   fun updateStyle(style: FloatingLyricsStyle, position: FloatingLyricsPosition?) {
     val view = overlay ?: return
+    applyStyle(view, style, position)
+  }
+
+  private fun applyStyle(view: FloatingLyricsOverlayView, style: FloatingLyricsStyle, position: FloatingLyricsPosition? = null) {
     if (position != null) lastPosition = position
-    val wasNotifying = view.style.locked && view.style.fallbackUnlockNotification
+    val previousStyle = view.style
     view.applyStyle(style)
-    layoutOverlay(view, position)
-    if (wasNotifying != (style.locked && style.fallbackUnlockNotification)) syncNotification(style)
+    val restoring = previousStyle.suppressed && !style.suppressed
+    layoutOverlay(view, if (restoring) lastPosition else position)
+    if (previousStyle.needsUnlockNotification != style.needsUnlockNotification) syncNotification(style)
   }
 
   fun updateLine(primaryText: String, secondaryText: String?) {
     val view = overlay ?: return
-    if (view.updateLine(primaryText, secondaryText)) layoutOverlay(view)
+    if (view.updateLine(primaryText, secondaryText)) fitUpdatedLine(view)
   }
 
   fun setPlaying(isPlaying: Boolean) {
@@ -173,11 +201,17 @@ internal class FloatingLyricsManager(
     syncNotification(style)
   }
 
+  fun setSuppressed(suppressed: Boolean, fallbackUnlockNotification: Boolean) {
+    val view = overlay ?: return
+    val style = view.style.copy(suppressed = suppressed, fallbackUnlockNotification = fallbackUnlockNotification)
+    applyStyle(view, style)
+  }
+
   fun handleNotificationAction(action: String) {
     val view = overlay
     if (view == null) {
       notification.cancel()
-    } else if (view.style.locked && view.style.fallbackUnlockNotification) {
+    } else if (view.style.needsUnlockNotification) {
       handleAction(action)
     }
   }
@@ -197,25 +231,34 @@ internal class FloatingLyricsManager(
   }
 
   private fun syncNotification(style: FloatingLyricsStyle) {
-    if (style.locked && style.fallbackUnlockNotification) notification.show() else notification.cancel()
+    if (style.needsUnlockNotification) notification.show() else notification.cancel()
   }
 
   private fun layoutOverlay(view: FloatingLyricsOverlayView, position: FloatingLyricsPosition? = null) {
+    screen = screenSize()
     val style = view.style
-    val width = (screen.x * style.widthPercent / 100f).toInt()
-    view.measure(
-      MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-      MeasureSpec.makeMeasureSpec(screen.y, MeasureSpec.AT_MOST),
-    )
-    maxX = (screen.x - width).coerceAtLeast(0)
-    maxY = (screen.y - view.measuredHeight).coerceAtLeast(0)
-    val x = (position?.let { (screen.x * it.xPercent / 100.0).roundToInt() } ?: params.x).coerceIn(0, maxX)
-    val y = (position?.let { (screen.y * it.yPercent / 100.0).roundToInt() } ?: params.y).coerceIn(0, maxY)
-    val flags = if (style.locked) WINDOW_FLAGS or LayoutParams.FLAG_NOT_TOUCHABLE else WINDOW_FLAGS
-    val alpha = if (style.locked) minOf(style.opacity, maxTouchOpacity()) else 1f
-    if (params.width == width && params.x == x && params.y == y && params.flags == flags && params.alpha == alpha) return
+    val width = if (style.suppressed) 1 else (screen.x * style.widthPercent / 100f).toInt()
+    val height = if (style.suppressed) 1 else LayoutParams.WRAP_CONTENT
+    val flags = if (style.locked || style.suppressed) WINDOW_FLAGS or LayoutParams.FLAG_NOT_TOUCHABLE else WINDOW_FLAGS
+    val alpha = when {
+      style.suppressed -> 0f
+      style.locked -> minOf(style.opacity, maxTouchOpacity())
+      else -> 1f
+    }
+    var x = params.x
+    var y = params.y
+    if (!style.suppressed) {
+      maxX = (screen.x - width).coerceAtLeast(0)
+      maxY = measureMaxY(view, width)
+      x = (position?.let { (screen.x * it.xPercent / 100.0).roundToInt() } ?: x).coerceIn(0, maxX)
+      y = (position?.let { (screen.y * it.yPercent / 100.0).roundToInt() } ?: y).coerceIn(0, maxY)
+    }
+    if (params.width == width && params.height == height && params.x == x && params.y == y &&
+      params.flags == flags && params.alpha == alpha
+    ) return
 
     params.width = width
+    params.height = height
     params.x = x
     params.y = y
     params.flags = flags
@@ -223,14 +266,27 @@ internal class FloatingLyricsManager(
     if (overlay === view) windowManager.updateViewLayout(view, params)
   }
 
+  private fun fitUpdatedLine(view: FloatingLyricsOverlayView) {
+    val previousMaxY = maxY
+    maxY = measureMaxY(view, params.width)
+    if (params.y > maxY || (maxY != previousMaxY && params.y == previousMaxY)) layoutOverlay(view)
+  }
+
+  private fun measureMaxY(view: FloatingLyricsOverlayView, width: Int): Int {
+    view.measure(
+      MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+      MeasureSpec.makeMeasureSpec(screen.y, MeasureSpec.AT_MOST),
+    )
+    return (screen.y - view.measuredHeight).coerceAtLeast(0)
+  }
+
   @Suppress("DEPRECATION")
   private fun screenSize(): Point {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-      return Point().also { windowManager.defaultDisplay.getSize(it) }
+      return Point().also { windowManager.defaultDisplay.getRealSize(it) }
     }
-    val metrics = windowManager.maximumWindowMetrics
-    val insets = metrics.windowInsets.getInsetsIgnoringVisibility(params.fitInsetsTypes)
-    return Point(metrics.bounds.width() - insets.left - insets.right, metrics.bounds.height() - insets.top - insets.bottom)
+    val bounds = windowManager.maximumWindowMetrics.bounds
+    return Point(bounds.width(), bounds.height())
   }
 
   private fun maxTouchOpacity(): Float = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -251,13 +307,13 @@ internal class FloatingLyricsManager(
   }
 
   private fun finishDrag() {
+    if (screen.x <= 0 || screen.y <= 0) return
     lastPosition = FloatingLyricsPosition(params.x * 100.0 / screen.x, params.y * 100.0 / screen.y)
     onPositionChanged(lastPosition)
   }
 
   override fun onConfigurationChanged(newConfig: Configuration) {
     val view = overlay ?: return
-    screen = screenSize()
     view.applyStyle(view.style)
     layoutOverlay(view, lastPosition)
   }
@@ -265,9 +321,7 @@ internal class FloatingLyricsManager(
   override fun onDisplayChanged(displayId: Int) {
     val view = overlay ?: return
     if (displayId != Display.DEFAULT_DISPLAY) return
-    val size = screenSize()
-    if (screen == size) return
-    screen = size
+    if (screen == screenSize()) return
     layoutOverlay(view, lastPosition)
   }
 

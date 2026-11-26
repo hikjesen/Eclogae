@@ -55,6 +55,20 @@ class Romanizer {
     return _engine.romanize(text, plain: true);
   }
 
+  /// Returns true if [candidate] is a Latin romanization of [source].
+  bool isRomanizationMatch(String source, String candidate, {required bool chinese}) {
+    if (!RomanizerEngine.needsRomanization(source) || RomanizerEngine.needsRomanization(candidate)) return false;
+    final normalizedCandidate = _RomanizationMatcher.normalize(candidate, scriptsAsWildcards: false);
+    if (normalizedCandidate.isEmpty) return false;
+    _ensureLoaded();
+    final candidates = [normalizedCandidate];
+    final romanized = _engine.romanize(source, chinese: chinese);
+    if (_RomanizationMatcher.matchesAny(romanized, candidates)) return true;
+    final withoutLatin = source.replaceAll(_latinLettersRegex, '');
+    if (withoutLatin.length == source.length) return false;
+    return _RomanizationMatcher.matchesAny(_engine.romanize(withoutLatin, chinese: chinese), candidates);
+  }
+
   String Function(int index, String text)? lyricsRomanizer(Lrc lrc) {
     if (!settings.romanizeLyrics.value) return null;
     final lines = lrc.lyrics;

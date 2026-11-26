@@ -39,7 +39,7 @@ internal class FloatingLyricsBridge private constructor(private val application:
     }
   }
 
-  internal val manager by lazy { FloatingLyricsManager(application, ::emitAction, ::emitPosition) }
+  internal val manager = FloatingLyricsManager(application, ::emitAction, ::emitPosition, ::emitScreenState)
 
   init {
     application.registerActivityLifecycleCallbacks(this)
@@ -75,6 +75,7 @@ internal class FloatingLyricsBridge private constructor(private val application:
       "hasPermission" -> result.success(hasPermission())
       "requestPermission" -> result.success(requestPermission())
       "getAppForegroundState" -> result.success(startedActivityCount > 0)
+      "getScreenInteractiveState" -> result.success(manager.isScreenInteractive())
       "show" -> {
         if (!hasPermission()) {
           result.success(false)
@@ -109,6 +110,11 @@ internal class FloatingLyricsBridge private constructor(private val application:
         manager.setLocked(args.boolean("locked"), args.boolean("fallbackUnlockNotification"))
         result.success(null)
       }
+      "setSuppressed" -> {
+        val args = Arguments(call)
+        manager.setSuppressed(args.boolean("suppressed"), args.boolean("fallbackUnlockNotification"))
+        result.success(null)
+      }
       else -> result.notImplemented()
     }
   }
@@ -119,6 +125,10 @@ internal class FloatingLyricsBridge private constructor(private val application:
 
   private fun emitPosition(position: FloatingLyricsPosition) {
     channel?.invokeMethod("onPositionChanged", mapOf("xPercent" to position.xPercent, "yPercent" to position.yPercent))
+  }
+
+  private fun emitScreenState(screenOn: Boolean) {
+    channel?.invokeMethod("onScreenStateChanged", screenOn)
   }
 
   override fun onActivityStarted(activity: Activity) {
@@ -147,10 +157,11 @@ internal class FloatingLyricsBridge private constructor(private val application:
     fun style() = FloatingLyricsStyle(
       locked = boolean("locked"),
       fallbackUnlockNotification = boolean("fallbackUnlockNotification"),
+      suppressed = if ("suppressed" in values) boolean("suppressed") else false,
       singleLine = boolean("singleLine"),
-      maxLines = required<Int>("maxLines").coerceIn(2, 6),
+      maxLines = required<Int>("maxLines").coerceIn(2, 8),
       toggleAnimation = boolean("toggleAnimation"),
-      fontSizeSp = decimal("fontSizeSp", 12.0, 34.0).toFloat(),
+      fontSizeSp = decimal("fontSizeSp", 8.0, 34.0).toFloat(),
       opacity = decimal("opacity", 0.2, 1.0).toFloat(),
       widthPercent = decimal("widthPercent", 40.0, 100.0).toFloat(),
       textGravity = when (required<String>("textAlign")) {
@@ -161,6 +172,7 @@ internal class FloatingLyricsBridge private constructor(private val application:
       },
       textColorArgb = requireNotNull((values["textColorArgb"] as? Number)?.toInt()) { "Invalid textColorArgb" },
       textOutline = boolean("textOutline"),
+      outlineColorArgb = (values["outlineColorArgb"] as? Number)?.toInt() ?: 0xFF121212.toInt(),
     )
 
     private fun decimal(key: String, min: Double, max: Double): Double {

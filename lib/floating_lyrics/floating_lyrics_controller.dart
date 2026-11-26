@@ -11,6 +11,7 @@ import 'package:namida/controller/lyrics_controller.dart';
 import 'package:namida/controller/navigator_controller.dart';
 import 'package:namida/controller/player_controller.dart';
 import 'package:namida/controller/romanizer/romanizer.dart';
+import 'package:namida/controller/romanizer/romanizer_engine.dart';
 import 'package:namida/controller/settings_controller.dart';
 import 'package:namida/core/extensions.dart';
 import 'package:namida/core/icon_fonts/broken_icons.dart';
@@ -22,6 +23,24 @@ import 'floating_lyrics_settings_page.dart';
 import 'floating_lyrics_store.dart';
 
 typedef _OverlayLine = ({String primary, String? secondary});
+
+class _ShownOverlay {
+  _ShownOverlay({
+    required this.line,
+    required this.playing,
+    required this.locked,
+    required this.fallbackUnlockNotification,
+    required this.colorArgb,
+    required this.suppressed,
+  });
+
+  _OverlayLine line;
+  bool playing;
+  bool locked;
+  bool fallbackUnlockNotification;
+  int colorArgb;
+  bool suppressed;
+}
 
 class FloatingLyricsController {
   static final inst = FloatingLyricsController._();
@@ -41,16 +60,25 @@ class FloatingLyricsController {
   Future<void>? _initialization;
   bool _initialized = false;
   bool _isAppForeground = true;
+  bool _isScreenOn = true;
   bool _inSettingsPreview = false;
   bool _pendingEnableAfterPermission = false;
   int _enableRequest = 0;
 
   Listenable? _accentColorListenable;
   Color Function()? _readAccentColor;
+  int? _textColorPreviewArgb;
+  int? _outlineColorPreviewArgb;
 
+  static final _hasLatinRegex = RegExp(r'\p{Script=Latin}', unicode: true);
+  static const _OverlayLine _emptyLine = (primary: '', secondary: null);
   List<LrcLine> _lines = const <LrcLine>[];
   Map<Duration, List<int>> _highlightTimestampsMap = const {};
   LrcLineResolver _lineResolver = LrcLineResolver.empty;
+  bool _lrcUsesChinese = true;
+  String Function(int index, String text)? _generatedRomanizer;
+  Map<num, int> _sourceIndices = const {};
+  int _lastResolvedIndex = -2;
   bool _linesDirty = true;
 
   bool get _hasSyncedLyrics => Player.inst.currentItem.value != null && _lines.isNotEmpty;
@@ -59,7 +87,7 @@ class FloatingLyricsController {
   bool _overlayDirty = false;
   bool _styleDirty = false;
   bool _applyPosition = false;
-  ({_OverlayLine line, bool playing, bool locked, bool fallbackUnlockNotification, int colorArgb})? _shown;
+  _ShownOverlay? _shown;
 
   Future<void> init() => _initialization ??= _initialize();
 
@@ -72,9 +100,12 @@ class FloatingLyricsController {
       onPositionChanged: _savePosition,
       onAction: _onAction,
       onForegroundChanged: _onForegroundChanged,
+      onScreenStateChanged: _onScreenStateChanged,
     );
+    _isScreenOn = await _channel.getScreenInteractiveState();
 
     Lyrics.inst.currentLyricsLRC.addListener(_onLyricsChanged);
+    Lyrics.inst.isResolvingLyrics.addListener(_onOverlayInputChanged);
     settings.visualDelayMS.addListener(_onLyricsChanged);
     settings.romanizeLyrics.addListener(_onLyricsChanged);
     settings.stretchLyricsDuration.addListener(_onLyricsChanged);
@@ -147,6 +178,8 @@ class FloatingLyricsController {
   Future<void> updateSettings(FloatingLyricsSettings next, {bool applyPosition = false, bool persist = true}) async {
     if (!isSupported) return;
     if (!_initialized) await init();
+    if (next.showRomanization != settingsNotifier.value.showRomanization) _linesDirty = true;
+    _lastResolvedIndex = -2;
     _styleDirty = true;
     _applyPosition = _applyPosition || applyPosition;
     settingsNotifier.value = next;
@@ -160,6 +193,7 @@ class FloatingLyricsController {
   }
 
   Future<void> _saveSettings(FloatingLyricsSettings next) {
+    _lastResolvedIndex = -2;
     settingsNotifier.value = next;
     return _store.save(next);
   }
@@ -221,9 +255,18 @@ class FloatingLyricsController {
     }
   }
 
+  Future<void> _onScreenStateChanged(bool isScreenOn) async {
+    _isScreenOn = isScreenOn;
+    if (isScreenOn) {
+      _lastResolvedIndex = -2;
+      await _refreshOverlay();
+    }
+  }
+
   void setSettingsPreview(bool active) {
     if (_inSettingsPreview == active) return;
     _inSettingsPreview = active;
+    _lastResolvedIndex = -2;
     _onOverlayInputChanged();
   }
 
@@ -238,6 +281,21 @@ class FloatingLyricsController {
     _accentColorListenable?.removeListener(_onOverlayInputChanged);
     _accentColorListenable = listenable..addListener(_onOverlayInputChanged);
     _readAccentColor = readColor;
+    _onOverlayInputChanged();
+  }
+
+  Color textColorFor(FloatingLyricsSettings s, {FloatingLyricsColorPreset? preset}) => switch (preset ?? s.colorPreset) {
+    FloatingLyricsColorPreset.followAlbum => (_readAccentColor?.call() ?? CurrentColor.inst.miniplayerColorValue).withValues(alpha: 1.0),
+    FloatingLyricsColorPreset.custom => Color(s.customTextColorArgb),
+    final fixed => Color(fixed.argb!),
+  };
+
+  void setColorPreview({int? textColorArgb, int? outlineColorArgb}) {
+    if (_textColorPreviewArgb == textColorArgb && _outlineColorPreviewArgb == outlineColorArgb) return;
+    if (_outlineColorPreviewArgb != outlineColorArgb) _styleDirty = true;
+    _textColorPreviewArgb = textColorArgb;
+    _outlineColorPreviewArgb = outlineColorArgb;
+    _lastResolvedIndex = -2;
     _onOverlayInputChanged();
   }
 
@@ -264,6 +322,9 @@ class FloatingLyricsController {
   }
 
   void _loadLines() {
+    _lastResolvedIndex = -2;
+    _generatedRomanizer = null;
+    _sourceIndices = const {};
     final lrc = Lyrics.inst.currentLyricsLRC.value;
     if (lrc == null) {
       _lines = const <LrcLine>[];
@@ -275,41 +336,91 @@ class FloatingLyricsController {
       Lyrics.inst.getStretchMultiplier(lrc),
       durationDifferenceToInsertEmptyLine: const Duration(seconds: 1),
       extraOffsetDuration: Duration(milliseconds: settings.visualDelayMS.value),
-      romanizer: Romanizer.inst.lyricsRomanizer(lrc),
     );
     _lines = info.uiLyricsLines;
     _highlightTimestampsMap = info.highlightTimestampsMap;
     _lineResolver = info.lineResolver;
+
+    var scripts = 0;
+    for (final line in lrc.lyrics) {
+      scripts |= RomanizerEngine.scriptsOf(line.readableText);
+    }
+    _lrcUsesChinese = !RomanizerEngine.scriptsHaveKana(scripts);
+    if (settingsNotifier.value.showRomanization) {
+      _generatedRomanizer = Romanizer.inst.lyricsRomanizer(lrc);
+      if (_generatedRomanizer != null) {
+        // Display indices can shift when forUiDisplay inserts a gap line.
+        _sourceIndices = {for (final (index, line) in lrc.lyrics.indexed) line.originalIndex: index};
+      }
+    }
   }
 
   _OverlayLine _resolveLine(FloatingLyricsSettings s, bool hasSyncedLyrics) {
     final index = hasSyncedLyrics ? _lineResolver.indexAt(Player.inst.nowPlayingPosition.value) : -1;
-    final line = index < 0 ? null : _lines[index];
-    final primary = line?.readableText ?? '';
-    final showSecondary = s.showSecondaryLine && !s.singleLine;
-    if (_inSettingsPreview && primary.isEmpty) {
-      return (primary: '这是一条悬浮歌词预览效果', secondary: showSecondary ? 'Floating lyrics preview subtitle' : null);
+    _lastResolvedIndex = index;
+    var line = index < 0 ? null : _lines[index];
+    if (line != null && line.isBGLyrics) {
+      for (final siblingIndex in _highlightTimestampsMap[line.timestamp]!) {
+        final sibling = _lines[siblingIndex];
+        if (sibling.isBGLyrics) continue;
+        line = sibling;
+        break;
+      }
     }
-    return (primary: primary, secondary: showSecondary && line != null ? _secondaryTextOf(line) : null);
+    final primary = line?.readableText ?? '';
+    if (_inSettingsPreview && primary.isEmpty) {
+      final secondary = [
+        if (!s.singleLine && s.showTranslation) 'Floating lyrics translation preview',
+        if (!s.singleLine && s.showRomanization) 'zhe shi yi tiao xuan fu ge ci yu lan',
+      ];
+      return (primary: '这是一条悬浮歌词预览效果', secondary: secondary.isEmpty ? null : secondary.join('\n'));
+    }
+    if (!hasSyncedLyrics && Lyrics.inst.isResolvingLyrics.value) return _shown?.line ?? _emptyLine;
+    final showSecondary = !s.singleLine && (s.showTranslation || s.showRomanization);
+    return (primary: primary, secondary: showSecondary && line != null && primary.isNotEmpty ? _secondaryTextOf(line, s) : null);
   }
 
-  String? _secondaryTextOf(LrcLine line) {
-    final indices = _highlightTimestampsMap[line.timestamp];
-    if (indices == null || indices.length < 2) return null;
-    final secondary = <String>[];
-    for (final index in indices) {
+  String? _secondaryTextOf(LrcLine line, FloatingLyricsSettings s) {
+    final primary = line.readableText;
+    final canRomanize = RomanizerEngine.needsRomanization(primary);
+    final siblings = <String>[];
+    for (final index in _highlightTimestampsMap[line.timestamp]!) {
       final other = _lines[index];
       if (identical(other, line) || other.isBGLyrics || other.readableText.isEmpty) continue;
-      secondary.add(other.readableText);
-      if (secondary.length == 2) break;
+      siblings.add(other.readableText);
     }
-    return secondary.isEmpty ? null : secondary.join('\n');
+    final hasNonLatinSibling = canRomanize && siblings.length >= 2 && siblings.any(RomanizerEngine.needsRomanization);
+    final secondary = <String>[];
+    final romanizations = <String>[];
+    for (final text in siblings) {
+      final isRomanization =
+          canRomanize &&
+          _hasLatinRegex.hasMatch(text) &&
+          !RomanizerEngine.needsRomanization(text) &&
+          (hasNonLatinSibling || Romanizer.inst.isRomanizationMatch(primary, text, chinese: _lrcUsesChinese));
+      if (isRomanization) {
+        if (s.showRomanization) romanizations.add(text);
+      } else if (s.showTranslation) {
+        secondary.add(text);
+      }
+    }
+    final generate = _generatedRomanizer;
+    if (canRomanize && s.showRomanization && romanizations.isEmpty && generate != null) {
+      final generated = generate(_sourceIndices[line.originalIndex]!, primary);
+      if (generated.isNotEmpty && generated != primary) romanizations.add(generated);
+    }
+    secondary.addAll(romanizations);
+    return secondary.isEmpty ? null : secondary.take(3).join('\n');
   }
 
   void _onOverlayInputChanged() => unawaited(_refreshOverlay());
 
   void _onPlaybackPositionChanged() {
-    if (_shown != null || _overlayRefresh != null) _onOverlayInputChanged();
+    final shown = _shown;
+    if (!_isScreenOn || shown == null || shown.suppressed || _lines.isEmpty) return;
+    final index = _lineResolver.indexAt(Player.inst.nowPlayingPosition.value);
+    if (index == _lastResolvedIndex) return;
+    _onOverlayInputChanged();
   }
 
   Future<void> _refreshOverlay() {
@@ -319,11 +430,7 @@ class FloatingLyricsController {
       try {
         while (_overlayDirty) {
           _overlayDirty = false;
-          final styleDirty = _styleDirty;
-          final applyPosition = _applyPosition;
-          _styleDirty = false;
-          _applyPosition = false;
-          await _syncOverlay(styleDirty: styleDirty, applyPosition: applyPosition);
+          await _syncOverlay();
         }
       } finally {
         _overlayRefresh = null;
@@ -331,52 +438,99 @@ class FloatingLyricsController {
     });
   }
 
-  Future<void> _syncOverlay({required bool styleDirty, required bool applyPosition}) async {
+  Future<void> _syncOverlay() async {
     final s = settingsNotifier.value;
-    final canShow = s.enabled && hasPermissionNotifier.value;
-    if (canShow && _linesDirty) {
-      _loadLines();
-      _linesDirty = false;
-    }
-    final hasSyncedLyrics = _hasSyncedLyrics;
-    final shouldShow = canShow && (_inSettingsPreview || (hasSyncedLyrics && (s.showInApp || !_isAppForeground)));
+    final shouldAttach = s.enabled && hasPermissionNotifier.value;
     final shown = _shown;
-    if (!shouldShow) {
+    if (!shouldAttach) {
       if (shown != null) {
         await _channel.hide();
         _shown = null;
       }
       return;
     }
+    if (_linesDirty) {
+      _loadLines();
+      _linesDirty = false;
+    }
 
-    final line = _resolveLine(s, hasSyncedLyrics);
-    final playing = Player.inst.playWhenReady.value;
+    final hasSyncedLyrics = _hasSyncedLyrics;
+    final hasDisplayableLyrics = hasSyncedLyrics || Lyrics.inst.isResolvingLyrics.value;
+    final suppressed = !(_inSettingsPreview || (hasDisplayableLyrics && (s.showInApp || !_isAppForeground)));
     final fallbackUnlockNotification = !(hasLockNotificationButton?.call() ?? false);
-    final colorArgb = s.colorPreset.argb ?? (_readAccentColor?.call() ?? CurrentColor.inst.miniplayerColorValue).withValues(alpha: 1.0).toARGB32();
+    final colorArgb = _textColorPreviewArgb ?? textColorFor(s).toARGB32();
+    final outlinePreview = _outlineColorPreviewArgb;
+    final style = outlinePreview == null ? s : s.copyWith(outlineColorArgb: outlinePreview);
     if (shown == null) {
-      final visible = await _channel.show(
+      final line = !suppressed && _isScreenOn ? _resolveLine(s, hasSyncedLyrics) : _emptyLine;
+      final playing = Player.inst.playWhenReady.value;
+      _styleDirty = false;
+      _applyPosition = false;
+      final attached = await _channel.show(
         primaryText: line.primary,
         secondaryText: line.secondary,
         isPlaying: playing,
-        settings: s,
+        settings: style,
         textColorArgb: colorArgb,
         fallbackUnlockNotification: fallbackUnlockNotification,
+        suppressed: suppressed,
       );
-      if (!visible) return;
-    } else {
-      if (styleDirty || applyPosition || shown.colorArgb != colorArgb) {
-        await _channel.updateStyle(
-          settings: s,
-          textColorArgb: colorArgb,
+      if (attached) {
+        _shown = _ShownOverlay(
+          line: line,
+          playing: playing,
+          locked: s.locked,
           fallbackUnlockNotification: fallbackUnlockNotification,
-          applyPosition: applyPosition,
+          colorArgb: colorArgb,
+          suppressed: suppressed,
         );
-      } else if (shown.locked != s.locked || shown.fallbackUnlockNotification != fallbackUnlockNotification) {
-        await _channel.setLocked(locked: s.locked, fallbackUnlockNotification: fallbackUnlockNotification);
+        if (!suppressed && _isScreenOn && hasSyncedLyrics) {
+          // Playback may have advanced while show was awaiting the native window.
+          _onPlaybackPositionChanged();
+        }
       }
-      if (shown.line != line) await _channel.updateLine(primaryText: line.primary, secondaryText: line.secondary);
-      if (shown.playing != playing) await _channel.setPlaying(playing);
+      return;
     }
-    _shown = (line: line, playing: playing, locked: s.locked, fallbackUnlockNotification: fallbackUnlockNotification, colorArgb: colorArgb);
+
+    final suppressionChanged = shown.suppressed != suppressed;
+    final styleChanged = _styleDirty || shown.colorArgb != colorArgb;
+    if (styleChanged && (suppressionChanged || (!suppressed && _isScreenOn))) {
+      final applyPosition = _applyPosition;
+      _styleDirty = false;
+      _applyPosition = false;
+      await _channel.updateStyle(
+        settings: style,
+        textColorArgb: colorArgb,
+        fallbackUnlockNotification: fallbackUnlockNotification,
+        suppressed: suppressed,
+        applyPosition: applyPosition,
+      );
+      shown.colorArgb = colorArgb;
+      shown.locked = s.locked;
+      shown.suppressed = suppressed;
+      shown.fallbackUnlockNotification = fallbackUnlockNotification;
+    } else if (suppressionChanged) {
+      await _channel.setSuppressed(suppressed: suppressed, fallbackUnlockNotification: fallbackUnlockNotification);
+      shown.suppressed = suppressed;
+      shown.fallbackUnlockNotification = fallbackUnlockNotification;
+    }
+
+    if (suppressed || !_isScreenOn) return;
+    if (shown.locked != s.locked || shown.fallbackUnlockNotification != fallbackUnlockNotification) {
+      await _channel.setLocked(locked: s.locked, fallbackUnlockNotification: fallbackUnlockNotification);
+      shown.locked = s.locked;
+      shown.fallbackUnlockNotification = fallbackUnlockNotification;
+    }
+    if (!_isScreenOn) return;
+    final line = _resolveLine(s, hasSyncedLyrics);
+    if (shown.line != line) {
+      await _channel.updateLine(primaryText: line.primary, secondaryText: line.secondary);
+      shown.line = line;
+    }
+    final playing = Player.inst.playWhenReady.value;
+    if (_isScreenOn && shown.playing != playing) {
+      await _channel.setPlaying(playing);
+      shown.playing = playing;
+    }
   }
 }

@@ -15,6 +15,8 @@ class FloatingLyricsChannel {
 
   Future<bool> getAppForegroundState() => _invokeBool('getAppForegroundState');
 
+  Future<bool> getScreenInteractiveState() => _invokeBool('getScreenInteractiveState');
+
   Future<bool> show({
     required String primaryText,
     required String? secondaryText,
@@ -22,22 +24,27 @@ class FloatingLyricsChannel {
     required FloatingLyricsSettings settings,
     required int textColorArgb,
     required bool fallbackUnlockNotification,
+    required bool suppressed,
   }) => _invokeBool('show', {
     'primaryText': primaryText,
     'secondaryText': secondaryText,
     'isPlaying': isPlaying,
-    ..._styleArguments(settings, textColorArgb, fallbackUnlockNotification),
+    ..._styleArguments(settings, textColorArgb, fallbackUnlockNotification, suppressed),
   });
 
   Future<void> hide() => _invokeVoid('hide');
+
+  Future<void> setSuppressed({required bool suppressed, required bool fallbackUnlockNotification}) =>
+      _invokeVoid('setSuppressed', {'suppressed': suppressed, 'fallbackUnlockNotification': fallbackUnlockNotification});
 
   Future<void> updateStyle({
     required FloatingLyricsSettings settings,
     required int textColorArgb,
     required bool fallbackUnlockNotification,
+    required bool suppressed,
     required bool applyPosition,
   }) => _invokeVoid('updateStyle', {
-    ..._styleArguments(settings, textColorArgb, fallbackUnlockNotification),
+    ..._styleArguments(settings, textColorArgb, fallbackUnlockNotification, suppressed),
     'applyPosition': applyPosition,
   });
 
@@ -53,6 +60,7 @@ class FloatingLyricsChannel {
     required Future<void> Function(double xPercent, double yPercent) onPositionChanged,
     required Future<void> Function(String action) onAction,
     required Future<void> Function(bool isForeground) onForegroundChanged,
+    required Future<void> Function(bool isScreenOn) onScreenStateChanged,
   }) {
     if (!Platform.isAndroid) return;
     _channel.setMethodCallHandler((call) async {
@@ -67,6 +75,8 @@ class FloatingLyricsChannel {
           await onAction(call.arguments as String);
         case 'onForegroundChanged':
           await onForegroundChanged(call.arguments as bool);
+        case 'onScreenStateChanged':
+          await onScreenStateChanged(call.arguments as bool);
         default:
           throw MissingPluginException('Unknown floating lyrics callback: ${call.method}');
       }
@@ -82,7 +92,7 @@ class FloatingLyricsChannel {
     if (Platform.isAndroid) await _channel.invokeMethod<void>(method, args);
   }
 
-  Map<String, Object> _styleArguments(FloatingLyricsSettings settings, int textColorArgb, bool fallbackUnlockNotification) => {
+  Map<String, Object> _styleArguments(FloatingLyricsSettings settings, int textColorArgb, bool fallbackUnlockNotification, bool suppressed) => {
     'locked': settings.locked,
     'fallbackUnlockNotification': fallbackUnlockNotification,
     'singleLine': settings.singleLine,
@@ -94,6 +104,8 @@ class FloatingLyricsChannel {
     'textAlign': settings.textAlign.name,
     'textColorArgb': textColorArgb,
     'textOutline': settings.textOutline,
+    'outlineColorArgb': settings.outlineColorArgb,
+    'suppressed': suppressed,
     'xPercent': settings.xPercent,
     'yPercent': settings.yPercent,
   };

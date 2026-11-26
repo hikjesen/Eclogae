@@ -15,22 +15,35 @@ enum FloatingLyricsColorPreset {
   amber('暖金黄', 0xFFFFD54F),
   coral('珊瑚粉', 0xFFFF6B8A),
   violet('紫罗兰', 0xFFC084FC),
-  black('深墨黑', 0xFF141414);
+  black('深墨黑', 0xFF141414),
+  custom('自定义', null);
 
   const FloatingLyricsColorPreset(this.label, this.argb);
   final String label;
   final int? argb;
 }
 
+const floatingLyricsOutlinePresets = [
+  (label: '黑', argb: FloatingLyricsSettings.defaultOutlineColorArgb),
+  (label: '白', argb: 0xFFFFFFFF),
+  (label: '深蓝', argb: 0xFF0F2942),
+  (label: '酒红', argb: 0xFF4A1020),
+  (label: '墨绿', argb: 0xFF0D3B2A),
+  (label: '暗紫', argb: 0xFF2E1047),
+  (label: '焦糖棕', argb: 0xFF432312),
+];
+
 class FloatingLyricsSettings {
   static const defaultXPercent = 7.0;
   static const defaultYPercent = 12.0;
   static const defaultPosition = (xPercent: defaultXPercent, yPercent: defaultYPercent);
+  static const defaultOutlineColorArgb = 0xFF121212;
 
   final bool enabled;
   final bool locked;
   final bool showInApp;
-  final bool showSecondaryLine;
+  final bool showTranslation;
+  final bool showRomanization;
   final bool singleLine;
   final int maxLines;
   final bool toggleAnimation;
@@ -39,7 +52,9 @@ class FloatingLyricsSettings {
   final double widthPercent;
   final FloatingLyricsAlign textAlign;
   final FloatingLyricsColorPreset colorPreset;
+  final int customTextColorArgb;
   final bool textOutline;
+  final int outlineColorArgb;
   final double xPercent;
   final double yPercent;
 
@@ -47,7 +62,8 @@ class FloatingLyricsSettings {
     this.enabled = false,
     this.locked = false,
     this.showInApp = false,
-    this.showSecondaryLine = true,
+    this.showTranslation = true,
+    this.showRomanization = true,
     this.singleLine = false,
     int maxLines = 2,
     this.toggleAnimation = true,
@@ -56,11 +72,13 @@ class FloatingLyricsSettings {
     double widthPercent = 86.0,
     this.textAlign = FloatingLyricsAlign.center,
     this.colorPreset = FloatingLyricsColorPreset.followAlbum,
+    this.customTextColorArgb = 0xFFFFFFFF,
     this.textOutline = true,
+    this.outlineColorArgb = defaultOutlineColorArgb,
     double xPercent = defaultXPercent,
     double yPercent = defaultYPercent,
-  }) : maxLines = maxLines < 2 ? 2 : (maxLines > 6 ? 6 : maxLines),
-       fontSizeSp = fontSizeSp >= 12.0 ? (fontSizeSp > 34.0 ? 34.0 : fontSizeSp) : 12.0,
+  }) : maxLines = maxLines < 2 ? 2 : (maxLines > 8 ? 8 : maxLines),
+       fontSizeSp = fontSizeSp >= 8.0 ? (fontSizeSp > 34.0 ? 34.0 : fontSizeSp) : 8.0,
        opacity = opacity >= 0.2 ? (opacity > 1.0 ? 1.0 : opacity) : 0.2,
        widthPercent = widthPercent >= 40.0 ? (widthPercent > 100.0 ? 100.0 : widthPercent) : 40.0,
        xPercent = xPercent >= 0.0 ? (xPercent > 100.0 ? 100.0 : xPercent) : 0.0,
@@ -70,7 +88,8 @@ class FloatingLyricsSettings {
     bool? enabled,
     bool? locked,
     bool? showInApp,
-    bool? showSecondaryLine,
+    bool? showTranslation,
+    bool? showRomanization,
     bool? singleLine,
     int? maxLines,
     bool? toggleAnimation,
@@ -79,14 +98,17 @@ class FloatingLyricsSettings {
     double? widthPercent,
     FloatingLyricsAlign? textAlign,
     FloatingLyricsColorPreset? colorPreset,
+    int? customTextColorArgb,
     bool? textOutline,
+    int? outlineColorArgb,
     double? xPercent,
     double? yPercent,
   }) => FloatingLyricsSettings(
     enabled: enabled ?? this.enabled,
     locked: locked ?? this.locked,
     showInApp: showInApp ?? this.showInApp,
-    showSecondaryLine: showSecondaryLine ?? this.showSecondaryLine,
+    showTranslation: showTranslation ?? this.showTranslation,
+    showRomanization: showRomanization ?? this.showRomanization,
     singleLine: singleLine ?? this.singleLine,
     maxLines: maxLines ?? this.maxLines,
     toggleAnimation: toggleAnimation ?? this.toggleAnimation,
@@ -95,7 +117,9 @@ class FloatingLyricsSettings {
     widthPercent: widthPercent ?? this.widthPercent,
     textAlign: textAlign ?? this.textAlign,
     colorPreset: colorPreset ?? this.colorPreset,
+    customTextColorArgb: customTextColorArgb ?? this.customTextColorArgb,
     textOutline: textOutline ?? this.textOutline,
+    outlineColorArgb: outlineColorArgb ?? this.outlineColorArgb,
     xPercent: xPercent ?? this.xPercent,
     yPercent: yPercent ?? this.yPercent,
   );
@@ -106,11 +130,13 @@ class FloatingLyricsSettings {
       return value is T ? value : null;
     }
 
+    final legacyShowSecondaryLine = read<bool>('showSecondaryLine') ?? true;
     return const FloatingLyricsSettings().copyWith(
       enabled: read<bool>('enabled'),
       locked: read<bool>('locked'),
       showInApp: read<bool>('showInApp'),
-      showSecondaryLine: read<bool>('showSecondaryLine'),
+      showTranslation: read<bool>('showTranslation') ?? legacyShowSecondaryLine,
+      showRomanization: read<bool>('showRomanization') ?? legacyShowSecondaryLine,
       singleLine: read<bool>('singleLine'),
       maxLines: read<num>('maxLines')?.toInt(),
       toggleAnimation: read<bool>('toggleAnimation'),
@@ -119,7 +145,9 @@ class FloatingLyricsSettings {
       widthPercent: read<num>('widthPercent')?.toDouble(),
       textAlign: FloatingLyricsAlign.values.asNameMap()[json['textAlign']],
       colorPreset: FloatingLyricsColorPreset.values.asNameMap()[json['colorPreset']],
+      customTextColorArgb: read<int>('customTextColorArgb'),
       textOutline: read<bool>('textOutline'),
+      outlineColorArgb: read<int>('outlineColorArgb'),
       xPercent: read<num>('xPercent')?.toDouble(),
       yPercent: read<num>('yPercent')?.toDouble(),
     );
@@ -129,7 +157,8 @@ class FloatingLyricsSettings {
     'enabled': enabled,
     'locked': locked,
     'showInApp': showInApp,
-    'showSecondaryLine': showSecondaryLine,
+    'showTranslation': showTranslation,
+    'showRomanization': showRomanization,
     'singleLine': singleLine,
     'maxLines': maxLines,
     'toggleAnimation': toggleAnimation,
@@ -138,7 +167,9 @@ class FloatingLyricsSettings {
     'widthPercent': widthPercent,
     'textAlign': textAlign.name,
     'colorPreset': colorPreset.name,
+    'customTextColorArgb': customTextColorArgb,
     'textOutline': textOutline,
+    'outlineColorArgb': outlineColorArgb,
     'xPercent': xPercent,
     'yPercent': yPercent,
   };

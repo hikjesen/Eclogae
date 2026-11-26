@@ -33,8 +33,9 @@ internal class FloatingLyricsOverlayView(
   context: Context,
   initialStyle: FloatingLyricsStyle,
   private var isPlaying: Boolean,
-  screenOn: Boolean,
+  private var screenOn: Boolean,
   private val onAction: (String) -> Unit,
+  private val onDragStarted: () -> Unit,
   private val onDrag: (Int, Int) -> Unit,
   private val onDragFinished: () -> Unit,
   private val onToolbarChanged: () -> Unit,
@@ -57,6 +58,7 @@ internal class FloatingLyricsOverlayView(
   private var dragY = 0f
   private var primaryText = ""
   private var secondaryText: String? = null
+  private var lineDirty = false
   private val lyricAlpha: Float get() = (if (style.locked) 1f else style.opacity) * (if (isPlaying) 1f else 0.6f)
   private val isToolbarVisible: Boolean get() = toolbar.visibility == VISIBLE
 
@@ -72,20 +74,20 @@ internal class FloatingLyricsOverlayView(
     addToolbarButton("设置", "openSettings").setImageDrawable(SettingsIcon(dp(24)))
     addToolbarButton("关闭", "close").setImageResource(R.drawable.stop)
     updatePlayButton()
-    lyrics.setScreenOn(screenOn)
     applyStyle(initialStyle)
     lyrics.alpha = lyricAlpha
   }
 
   fun applyStyle(updatedStyle: FloatingLyricsStyle) {
     val oldAlpha = lyricAlpha
-    val modeChanged = style.singleLine != updatedStyle.singleLine
+    if (style.singleLine != updatedStyle.singleLine) lineDirty = true
     style = updatedStyle
     lyrics.applyStyle(style)
-    if (modeChanged) renderLine()
-    if (oldAlpha != lyricAlpha || !style.toggleAnimation) resetLineAnimation()
-    isClickable = !style.locked
-    if (style.locked) {
+    setSuppressed(style.suppressed)
+    renderPendingLine()
+    if (oldAlpha != lyricAlpha || !style.toggleAnimation || style.suppressed) resetLineAnimation()
+    isClickable = !style.locked && !style.suppressed
+    if (!isClickable) {
       isDragging = false
       setToolbarVisible(false, notifyLayout = false)
     }
@@ -98,7 +100,8 @@ internal class FloatingLyricsOverlayView(
     this.primaryText = primaryText
     this.secondaryText = secondaryText
     if (!primaryChanged && style.singleLine) return false
-    renderLine()
+    lineDirty = true
+    if (!renderPendingLine()) return false
     if (primaryChanged && style.toggleAnimation && isAttachedToWindow) {
       lyrics.animate().cancel()
       lyrics.alpha = lyricAlpha * 0.7f
@@ -112,15 +115,31 @@ internal class FloatingLyricsOverlayView(
   fun setPlaying(playing: Boolean) {
     if (isPlaying == playing) return
     isPlaying = playing
+    updateMarqueeState()
     updatePlayButton()
     resetLineAnimation()
   }
 
-  fun setScreenOn(screenOn: Boolean) {
-    lyrics.setScreenOn(screenOn)
+  fun setScreenOn(screenOn: Boolean): Boolean {
+    this.screenOn = screenOn
+    if (!screenOn) resetLineAnimation()
+    val rendered = renderPendingLine()
+    updateMarqueeState()
+    return rendered
   }
 
-  private fun renderLine() {
+  private fun setSuppressed(suppressed: Boolean) {
+    lyrics.visibility = if (suppressed) INVISIBLE else VISIBLE
+    updateMarqueeState()
+  }
+
+  private fun updateMarqueeState() {
+    lyrics.setMarqueeEnabled(isPlaying && screenOn && !style.suppressed)
+  }
+
+  private fun renderPendingLine(): Boolean {
+    if (!lineDirty || !screenOn || style.suppressed) return false
+    lineDirty = false
     val secondary = secondaryText
     lyrics.text = if (!style.singleLine && !secondary.isNullOrEmpty()) {
       SpannableStringBuilder(primaryText).append('\n').apply {
@@ -133,6 +152,7 @@ internal class FloatingLyricsOverlayView(
       primaryText
     }
     lyrics.resetMarquee()
+    return true
   }
 
   private fun resetLineAnimation() {
@@ -186,7 +206,7 @@ internal class FloatingLyricsOverlayView(
   }
 
   override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-    if (style.locked) return false
+    if (!isClickable) return false
     when (event.actionMasked) {
       MotionEvent.ACTION_DOWN -> {
         dragX = event.rawX
@@ -203,7 +223,7 @@ internal class FloatingLyricsOverlayView(
   }
 
   override fun onTouchEvent(event: MotionEvent): Boolean {
-    if (style.locked) return false
+    if (!isClickable) return false
     when (event.actionMasked) {
       MotionEvent.ACTION_MOVE -> if (isDragging || pastTouchSlop(event)) moveDrag(event)
       MotionEvent.ACTION_UP -> {
@@ -222,7 +242,7 @@ internal class FloatingLyricsOverlayView(
 
   override fun performClick(): Boolean {
     super.performClick()
-    if (style.locked) return false
+    if (!isClickable) return false
     setToolbarVisible(!isToolbarVisible)
     return true
   }
@@ -236,8 +256,9 @@ internal class FloatingLyricsOverlayView(
   private fun moveDrag(event: MotionEvent) {
     if (!isDragging) {
       isDragging = true
-      setToolbarVisible(false)
+      setToolbarVisible(false, notifyLayout = false)
       updateBackground()
+      onDragStarted()
     }
     val dx = (event.rawX - dragX).roundToInt()
     val dy = (event.rawY - dragY).roundToInt()
@@ -275,18 +296,18 @@ private class LyricTextView(context: Context) : TextView(context) {
   private var singleLineMode = false
   private var horizontalGravity = Gravity.LEFT
   private var textOutline = false
+  private var outlineColor = 0
   private var strokeWidth = 0f
-  private var marqueeStartedAt = 0L
-  private var marqueePausedAt: Long? = null
+  private var marqueeEnabled = false
+  private var marqueeStartedAt: Long? = null
+  private var marqueeElapsed = 0L
   private val marqueeFrame = Runnable { invalidate() }
 
   fun applyStyle(style: FloatingLyricsStyle) {
-    val marqueeStyleChanged = singleLineMode != style.singleLine || horizontalGravity != style.textGravity
     if (singleLineMode != style.singleLine) {
       singleLineMode = style.singleLine
       setSingleLine(singleLineMode)
     }
-    val oldTextSize = textSize
     horizontalGravity = style.textGravity
     gravity = Gravity.TOP or (if (singleLineMode) Gravity.LEFT else horizontalGravity)
     maxLines = if (singleLineMode) 1 else style.maxLines
@@ -294,46 +315,41 @@ private class LyricTextView(context: Context) : TextView(context) {
     textSize = style.fontSizeSp
     setTextColor(style.textColorArgb)
     textOutline = style.textOutline
+    outlineColor = style.outlineColorArgb
     val density = resources.displayMetrics.density
     strokeWidth = 2f * density
-    setShadowLayer(2f * density, 0f, density, 0xBB000000.toInt())
+    if (textOutline) {
+      setShadowLayer(0f, 0f, 0f, Color.TRANSPARENT)
+    } else {
+      setShadowLayer(1.8f * density, 0f, density, 0xAA000000.toInt())
+    }
     val horizontalPadding = (10f * density).roundToInt()
     val verticalPadding = (5f * density).roundToInt()
     setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
-    if (marqueeStyleChanged || oldTextSize != textSize) resetMarquee()
   }
 
-  fun setScreenOn(screenOn: Boolean) {
-    val pausedAt = marqueePausedAt
-    if (screenOn && pausedAt != null) {
-      marqueeStartedAt += SystemClock.uptimeMillis() - pausedAt
-      marqueePausedAt = null
+  fun setMarqueeEnabled(enabled: Boolean) {
+    if (marqueeEnabled == enabled) return
+    marqueeEnabled = enabled
+    if (enabled) {
       invalidate()
-    } else if (!screenOn && pausedAt == null) {
-      marqueePausedAt = SystemClock.uptimeMillis()
+    } else {
+      marqueeStartedAt?.let { marqueeElapsed += SystemClock.uptimeMillis() - it }
+      marqueeStartedAt = null
       removeCallbacks(marqueeFrame)
     }
   }
 
   fun resetMarquee() {
-    marqueeStartedAt = marqueePausedAt ?: SystemClock.uptimeMillis()
+    marqueeStartedAt = null
+    marqueeElapsed = 0L
     removeCallbacks(marqueeFrame)
     invalidate()
-  }
-
-  override fun onAttachedToWindow() {
-    super.onAttachedToWindow()
-    resetMarquee()
   }
 
   override fun onDetachedFromWindow() {
     removeCallbacks(marqueeFrame)
     super.onDetachedFromWindow()
-  }
-
-  override fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
-    super.onSizeChanged(width, height, oldWidth, oldHeight)
-    if (width != oldWidth) resetMarquee()
   }
 
   override fun onDraw(canvas: Canvas) {
@@ -350,6 +366,7 @@ private class LyricTextView(context: Context) : TextView(context) {
 
   private fun drawMarquee(canvas: Canvas, textLayout: Layout) {
     val viewport = width - compoundPaddingLeft - compoundPaddingRight
+    if (viewport <= 0) return
     val textWidth = textLayout.getLineWidth(0)
     val lineLeft = textLayout.getLineLeft(0)
     val freeSpace = viewport - textWidth
@@ -365,22 +382,18 @@ private class LyricTextView(context: Context) : TextView(context) {
 
     canvas.clipRect(0f, -extendedPaddingTop.toFloat(), viewport.toFloat(), (height - extendedPaddingTop).toFloat())
     val density = resources.displayMetrics.density
-    val cycle = textWidth + 24f * density
-    val elapsed = (marqueePausedAt ?: SystemClock.uptimeMillis()) - marqueeStartedAt
-    val offset = ((elapsed - MARQUEE_DELAY_MS).coerceAtLeast(0L) * 0.032f * density) % cycle
+    val targetOffset = textWidth - viewport + 4f * density
+    val now = SystemClock.uptimeMillis()
+    if (marqueeEnabled && marqueeStartedAt == null) marqueeStartedAt = now
+    val elapsed = marqueeElapsed + (now - (marqueeStartedAt ?: now))
+    val offset = ((elapsed - MARQUEE_DELAY_MS).coerceAtLeast(0L) * 0.032f * density).coerceAtMost(targetOffset)
     val rtl = textLayout.getParagraphDirection(0) == Layout.DIR_RIGHT_TO_LEFT
     val origin = if (rtl) freeSpace + offset else -offset
     drawText(canvas, textLayout, origin - lineLeft)
-    if (offset + viewport > cycle) {
-      drawText(canvas, textLayout, origin - lineLeft + if (rtl) -cycle else cycle)
-    }
-    if (marqueePausedAt == null && isAttachedToWindow) {
-      removeCallbacks(marqueeFrame)
-      if (elapsed < MARQUEE_DELAY_MS) {
-        postDelayed(marqueeFrame, MARQUEE_DELAY_MS - elapsed)
-      } else {
-        postOnAnimation(marqueeFrame)
-      }
+    removeCallbacks(marqueeFrame)
+    if (marqueeEnabled && isAttachedToWindow && offset < targetOffset) {
+      val delay = if (elapsed < MARQUEE_DELAY_MS) MARQUEE_DELAY_MS - elapsed else 33L
+      postDelayed(marqueeFrame, delay)
     }
   }
 
@@ -389,7 +402,9 @@ private class LyricTextView(context: Context) : TextView(context) {
     canvas.translate(offset, 0f)
     val textPaint = textLayout.paint
     if (textOutline) {
-      textPaint.color = Color.argb(Color.alpha(currentTextColor), 18, 18, 18)
+      textPaint.color = Color.argb(
+        Color.alpha(currentTextColor), Color.red(outlineColor), Color.green(outlineColor), Color.blue(outlineColor),
+      )
       textPaint.style = Paint.Style.STROKE
       textPaint.strokeWidth = strokeWidth
       textPaint.strokeJoin = Paint.Join.ROUND
