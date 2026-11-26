@@ -4,22 +4,22 @@ import 'package:flutter/scheduler.dart';
 
 import 'package:youtipie/class/search_filters.dart';
 
-import 'package:namida/class/count_per_row.dart';
-import 'package:namida/controller/clipboard_controller.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/miniplayer_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/search_sort_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/packages/searchbar_animation.dart';
-import 'package:namida/ui/pages/main_page.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/youtube/pages/yt_search_results_page.dart';
+import 'package:eclogae/class/count_per_row.dart';
+import 'package:eclogae/controller/clipboard_controller.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/miniplayer_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/search_sort_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/packages/searchbar_animation.dart';
+import 'package:eclogae/ui/pages/main_page.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/youtube/pages/yt_search_results_page.dart';
 
 class ScrollSearchController {
   static ScrollSearchController get inst => _instance;

@@ -6,15 +6,15 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/file_browser.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/platform/namida_storage/namida_storage.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/lx_music/lx_preview_player.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/file_browser.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/platform/namida_storage/namida_storage.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/lx_music/lx_preview_player.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 class FloatingLyricsEyedropperDialog extends StatefulWidget {
   const FloatingLyricsEyedropperDialog._({required this.title, required this.initialColor, required this.onPicked});

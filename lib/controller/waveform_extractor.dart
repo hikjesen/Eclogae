@@ -5,10 +5,10 @@ import 'dart:typed_data';
 
 import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
 import 'package:namida_waveform/namida_waveform.dart';
 
 /// Extracted amplitudes, cached as a flat `Float32` blob so reading one back is

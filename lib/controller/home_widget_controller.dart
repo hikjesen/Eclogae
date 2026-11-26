@@ -1,5 +1,5 @@
-import 'package:namida/controller/platform/home_widgets/home_widgets.dart';
-import 'package:namida/controller/player_controller.dart';
+import 'package:eclogae/controller/platform/home_widgets/home_widgets.dart';
+import 'package:eclogae/controller/player_controller.dart';
 
 class HomeWidgetController {
   static final instance = HomeWidgets.platform();

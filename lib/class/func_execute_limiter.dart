@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/extensions.dart';
 
 /// Controls function that may execute rapidly, mainly to improve performance.
 class FunctionExecuteLimiter<T> {

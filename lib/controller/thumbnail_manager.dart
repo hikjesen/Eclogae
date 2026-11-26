@@ -10,14 +10,14 @@ import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 import 'package:rhttp/rhttp.dart';
 import 'package:youtipie/class/thumbnail.dart';
 
-import 'package:namida/class/http_manager.dart';
-import 'package:namida/controller/ffmpeg_controller.dart';
-import 'package:namida/controller/network_proxy_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/youtube/class/download_task_base.dart';
-import 'package:namida/youtube/controller/youtube_history_controller.dart';
-import 'package:namida/youtube/widgets/yt_thumbnail.dart';
+import 'package:eclogae/class/http_manager.dart';
+import 'package:eclogae/controller/ffmpeg_controller.dart';
+import 'package:eclogae/controller/network_proxy_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/youtube/class/download_task_base.dart';
+import 'package:eclogae/youtube/controller/youtube_history_controller.dart';
+import 'package:eclogae/youtube/widgets/yt_thumbnail.dart';
 
 class ThumbnailManager {
   static final ThumbnailManager inst = ThumbnailManager._internal();

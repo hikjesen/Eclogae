@@ -4,28 +4,28 @@ import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/base/pull_to_refresh.dart';
-import 'package:namida/class/missing_track_matcher.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/class/video.dart';
-import 'package:namida/controller/edit_delete_controller.dart';
-import 'package:namida/controller/file_browser.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/packages/three_arched_circle.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/expandable_box.dart';
+import 'package:eclogae/base/pull_to_refresh.dart';
+import 'package:eclogae/class/missing_track_matcher.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/controller/edit_delete_controller.dart';
+import 'package:eclogae/controller/file_browser.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/packages/three_arched_circle.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/expandable_box.dart';
 
 enum _LoadingProgress {
   initializing('Initializing'),

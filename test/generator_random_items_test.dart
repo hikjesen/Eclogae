@@ -1,7 +1,7 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/base/generator_base.dart';
+import 'package:eclogae/base/generator_base.dart';
 
 void main() {
   /// every count the default `max * 2 ~/ 3` to `length ~/ 8` range can give, a count of 0 means the whole list.

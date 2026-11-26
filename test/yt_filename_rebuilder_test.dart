@@ -8,10 +8,10 @@ import 'package:youtipie/class/youtipie_feed/channel_info_item.dart';
 import 'package:youtipie/class/youtipie_feed/playlist_basic_info.dart';
 import 'package:youtipie/core/url_utils.dart';
 
-import 'package:namida/controller/ffmpeg_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/youtube/controller/youtube_controller.dart';
-import 'package:namida/youtube/yt_utils.dart';
+import 'package:eclogae/controller/ffmpeg_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/youtube/controller/youtube_controller.dart';
+import 'package:eclogae/youtube/yt_utils.dart';
 
 void main() {
   late Directory dir;

@@ -3,9 +3,9 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/controller/platform/namida_channel/windows_data_protection.dart';
-import 'package:namida/core/constants.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/controller/platform/namida_channel/windows_data_protection.dart';
+import 'package:eclogae/core/constants.dart';
 
 typedef SensitiveDataKeyResult = ({String key, bool isNew});
 

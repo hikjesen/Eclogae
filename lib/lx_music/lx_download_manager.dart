@@ -8,14 +8,14 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/controller/directory_index.dart';
-import 'package:namida/controller/files_download_manager.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/tagger_controller.dart';
-import 'package:namida/core/constants.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/controller/directory_index.dart';
+import 'package:eclogae/controller/files_download_manager.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/tagger_controller.dart';
+import 'package:eclogae/core/constants.dart';
 
 import 'lx_audio_sniffer.dart';
 import 'lx_bridge_service.dart';

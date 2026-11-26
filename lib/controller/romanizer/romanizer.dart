@@ -4,17 +4,17 @@ import 'dart:typed_data';
 import 'package:lrc/lrc.dart';
 import 'package:rhttp/rhttp.dart';
 
-import 'package:namida/class/http_response_wrapper.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/lyrics_controller.dart';
-import 'package:namida/controller/network_proxy_controller.dart';
-import 'package:namida/controller/platform/zip_manager/zip_manager.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/romanizer/romanizer_engine.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/sort_key.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/class/http_response_wrapper.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/lyrics_controller.dart';
+import 'package:eclogae/controller/network_proxy_controller.dart';
+import 'package:eclogae/controller/platform/zip_manager/zip_manager.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/romanizer/romanizer_engine.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/sort_key.dart';
+import 'package:eclogae/core/utils.dart';
 
 // by claude
 class Romanizer {

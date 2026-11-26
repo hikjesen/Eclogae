@@ -1,26 +1,26 @@
 // logic rewritten by claude, new one finds every cached file of tracks and youtube videos in one isolate pass, temp files in a later one, and cleans the cache maps on delete
 import 'dart:io';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/subtitle_track.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/class/video.dart';
-import 'package:namida/controller/audio_cache_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/lyrics_search_utils/lrc_search_utils_selectable.dart';
-import 'package:namida/controller/lyrics_search_utils/lrc_search_utils_youtubeid.dart';
-import 'package:namida/controller/music_web_server/music_web_server_base.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/spectrum_controller.dart';
-import 'package:namida/controller/thumbnail_manager.dart';
-import 'package:namida/controller/video_controller.dart';
-import 'package:namida/controller/waveform_extractor.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/widgets/yt_thumbnail.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/subtitle_track.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/controller/audio_cache_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/lyrics_search_utils/lrc_search_utils_selectable.dart';
+import 'package:eclogae/controller/lyrics_search_utils/lrc_search_utils_youtubeid.dart';
+import 'package:eclogae/controller/music_web_server/music_web_server_base.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/spectrum_controller.dart';
+import 'package:eclogae/controller/thumbnail_manager.dart';
+import 'package:eclogae/controller/video_controller.dart';
+import 'package:eclogae/controller/waveform_extractor.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/widgets/yt_thumbnail.dart';
 
 class ItemsCache {
   final bool _isSingle;

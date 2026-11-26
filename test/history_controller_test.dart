@@ -4,11 +4,11 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
 
 void main() {
   late Directory dir;

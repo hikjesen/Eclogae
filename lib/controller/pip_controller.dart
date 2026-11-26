@@ -1,16 +1,16 @@
 import 'dart:ui' as ui;
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/lyrics_controller.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/thumbnail_manager.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/widgets/yt_thumbnail.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/lyrics_controller.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/thumbnail_manager.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/widgets/yt_thumbnail.dart';
 
 // by claude
 /// decides what pip shows and pushes its aspect ratio ahead of time, android can't wait for dart while the app is leaving.

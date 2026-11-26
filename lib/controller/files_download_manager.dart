@@ -7,12 +7,12 @@ import 'package:flutter/foundation.dart';
 import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 import 'package:rhttp/rhttp.dart';
 
-import 'package:namida/class/download_wrapper.dart';
-import 'package:namida/class/http_response_wrapper.dart';
-import 'package:namida/controller/network_proxy_controller.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/download_wrapper.dart';
+import 'package:eclogae/class/http_response_wrapper.dart';
+import 'package:eclogae/controller/network_proxy_controller.dart';
+import 'package:eclogae/core/extensions.dart';
 
-export 'package:namida/class/download_wrapper.dart' show DownloadCanceledException;
+export 'package:eclogae/class/download_wrapper.dart' show DownloadCanceledException;
 
 /// Resumable downloads running in a shared isolate.
 class FilesDownloadManager with PortsProvider<(SendPort, ClientSettings?)>, NetworkProxyPortsProvider<(SendPort, ClientSettings?)> {

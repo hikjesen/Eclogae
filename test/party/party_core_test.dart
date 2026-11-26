@@ -1,9 +1,9 @@
 import 'package:basic_audio_handler/basic_audio_handler.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/controller/party/party_host.dart';
-import 'package:namida/controller/party/party_protocol.dart';
-import 'package:namida/controller/party/party_state.dart';
+import 'package:eclogae/controller/party/party_host.dart';
+import 'package:eclogae/controller/party/party_protocol.dart';
+import 'package:eclogae/controller/party/party_state.dart';
 
 /// in-memory room: every message goes through encode/decode like on the wire.
 class _Room implements PartyHostDelegate {

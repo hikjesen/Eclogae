@@ -5,24 +5,24 @@ import 'dart:io';
 
 import 'package:playlist_manager/playlist_manager.dart';
 
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/class/video.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/queue_controller.dart';
-import 'package:namida/controller/search_sort_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/artwork.dart';
-import 'package:namida/youtube/class/download_task_base.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_history_controller.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/queue_controller.dart';
+import 'package:eclogae/controller/search_sort_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/artwork.dart';
+import 'package:eclogae/youtube/class/download_task_base.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_history_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 typedef YoutubePlaylist = GeneralPlaylist<YoutubeID, SortEntry<YTSortType>>;
 

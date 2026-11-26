@@ -7,18 +7,18 @@ import 'package:history_manager/history_manager.dart';
 import 'package:lrc/lrc.dart';
 import 'package:nampack/extensions/extensions.dart';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/fuzzy_matcher.dart';
-import 'package:namida/class/split_config.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/class/video.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/lyrics_search_utils/lrc_search_utils_base.dart';
-import 'package:namida/controller/lyrics_search_utils/lrc_search_utils_selectable.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/fuzzy_matcher.dart';
+import 'package:eclogae/class/split_config.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/lyrics_search_utils/lrc_search_utils_base.dart';
+import 'package:eclogae/controller/lyrics_search_utils/lrc_search_utils_selectable.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
 
 part 'keys_search_wrapper.dart';
 

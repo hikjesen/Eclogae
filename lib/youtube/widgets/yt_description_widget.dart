@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 
 import 'package:youtipie/class/youtipie_description/youtipie_description.dart';
 
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/vibrator_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/pages/yt_channel_subpage.dart';
-import 'package:namida/youtube/pages/yt_hashtag_subpage.dart';
-import 'package:namida/youtube/pages/yt_playlist_subpage.dart';
-import 'package:namida/youtube/widgets/yt_thumbnail.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/vibrator_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/pages/yt_channel_subpage.dart';
+import 'package:eclogae/youtube/pages/yt_hashtag_subpage.dart';
+import 'package:eclogae/youtube/pages/yt_playlist_subpage.dart';
+import 'package:eclogae/youtube/widgets/yt_thumbnail.dart';
 
 class YoutubeDescriptionWidget extends StatefulWidget {
   final String? videoId;

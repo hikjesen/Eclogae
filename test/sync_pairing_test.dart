@@ -8,16 +8,16 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/base/settings_file_writer.dart';
-import 'package:namida/class/lang.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/sync_manager/sync_manager.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/themes.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/base/settings_file_writer.dart';
+import 'package:eclogae/class/lang.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/sync_manager/sync_manager.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/themes.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

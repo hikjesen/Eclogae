@@ -1,5 +1,5 @@
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class TrackItem {
   TrackTileItem row1Item1;

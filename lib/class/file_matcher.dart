@@ -1,6 +1,6 @@
 import 'package:dart_extensions/dart_extensions.dart';
 
-import 'package:namida/core/constants.dart';
+import 'package:eclogae/core/constants.dart';
 
 class FileMatcher {
   final Set<String> allAudioFiles;

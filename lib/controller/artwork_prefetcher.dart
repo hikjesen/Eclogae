@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/painting.dart';
 
-import 'package:namida/base/audio_handler.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/thumbnail_manager.dart';
-import 'package:namida/ui/widgets/artwork.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/widgets/yt_thumbnail.dart';
+import 'package:eclogae/base/audio_handler.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/thumbnail_manager.dart';
+import 'package:eclogae/ui/widgets/artwork.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/widgets/yt_thumbnail.dart';
 
 /// The player paints its artwork uncompressed, so switching to an item that has nothing
 /// decoded re-reads and re-decodes the file while it is already on screen.

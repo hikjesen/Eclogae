@@ -3,10 +3,10 @@ import 'dart:typed_data';
 
 import 'package:history_manager/history_manager.dart';
 
-import 'package:namida/class/past_time_zone_offsets.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/namida_converter_ext.dart';
+import 'package:eclogae/class/past_time_zone_offsets.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
 
 abstract class NamidaGeneratorBase<T extends ItemWithDate, E> {
   final HistoryManager<T, E> historyController;

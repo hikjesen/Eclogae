@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/base/setting_subpage_provider.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/pages/settings_page.dart';
-import 'package:namida/ui/widgets/settings/advanced_settings.dart';
-import 'package:namida/ui/widgets/settings/backup_restore_settings.dart';
-import 'package:namida/ui/widgets/settings/customization_settings.dart';
-import 'package:namida/ui/widgets/settings/extra_settings.dart';
-import 'package:namida/ui/widgets/settings/indexer_settings.dart';
-import 'package:namida/ui/widgets/settings/playback_settings.dart';
-import 'package:namida/ui/widgets/settings/theme_settings.dart';
-import 'package:namida/ui/widgets/settings/youtube_settings.dart';
+import 'package:eclogae/base/setting_subpage_provider.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/pages/settings_page.dart';
+import 'package:eclogae/ui/widgets/settings/advanced_settings.dart';
+import 'package:eclogae/ui/widgets/settings/backup_restore_settings.dart';
+import 'package:eclogae/ui/widgets/settings/customization_settings.dart';
+import 'package:eclogae/ui/widgets/settings/extra_settings.dart';
+import 'package:eclogae/ui/widgets/settings/indexer_settings.dart';
+import 'package:eclogae/ui/widgets/settings/playback_settings.dart';
+import 'package:eclogae/ui/widgets/settings/theme_settings.dart';
+import 'package:eclogae/ui/widgets/settings/youtube_settings.dart';
 
 extension _SettSearcherUtils on SettingSubpageEnum {
   CustomCollapsedListTile? toSettingSubPageDetails({SettingEntry? initialItem}) {

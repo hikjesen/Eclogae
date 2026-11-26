@@ -8,9 +8,9 @@ import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 import 'package:namico_login_manager/namico_login_manager.dart';
 import 'package:rhttp/rhttp.dart';
 
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/extensions.dart';
 
 /// the proxy every network client uses: the proxy url flag, else the env or system proxy.
 /// with none, nothing is installed anywhere and every client runs exactly as without this controller.

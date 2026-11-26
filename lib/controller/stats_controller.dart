@@ -1,15 +1,15 @@
 import 'package:history_manager/history_manager.dart';
 
-import 'package:namida/class/history_stats.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/listen_time_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/youtube/controller/youtube_history_controller.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/class/history_stats.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/listen_time_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/youtube/controller/youtube_history_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 // by claude
 class StatsController {

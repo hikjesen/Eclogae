@@ -2,11 +2,11 @@
 
 import 'dart:io';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/directory_index.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/directory_index.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/core/extensions.dart';
 
 final _pathSeparator = Platform.pathSeparator;
 

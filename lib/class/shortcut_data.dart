@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/platform/shortcuts_manager/shortcuts_manager.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/platform/shortcuts_manager/shortcuts_manager.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class ShortcutKeyData {
   final LogicalKeyboardKey? key;

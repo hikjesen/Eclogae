@@ -9,23 +9,23 @@ import 'package:basic_audio_handler/basic_audio_handler.dart';
 import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 import 'package:namida_waveform/namida_rhythm.dart';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/taglib_res.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/audio_cache_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/tagger_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/main.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/taglib_res.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/audio_cache_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/tagger_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/main.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
 
 // by claude
 /// Tempo, beat grid and key of the library and of cached youtube audio, analyzed in the background while beat matching is on.

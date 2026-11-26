@@ -1,6 +1,6 @@
-import 'package:namida/class/folder.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/folder.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/core/extensions.dart';
 
 /// used for stats.
 class YoutubeVideoHistory {

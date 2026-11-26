@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class SponsorBlockSettings {
   final defaultServerAddress = 'https://sponsor.ajay.app';

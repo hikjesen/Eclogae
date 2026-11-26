@@ -4,11 +4,11 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/lang.dart';
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/controller/smart_playlists/smart_playlists_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/translations/language.dart';
+import 'package:eclogae/class/lang.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/controller/smart_playlists/smart_playlists_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/translations/language.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

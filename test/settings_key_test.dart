@@ -8,16 +8,16 @@ import 'package:flutter_scrollbar_modified/flutter_scrollbar_modified.dart';
 import 'package:history_manager/history_manager.dart';
 import 'package:nampack/nampack.dart';
 
-import 'package:namida/base/settings_file_writer.dart';
-import 'package:namida/class/count_per_row.dart';
-import 'package:namida/class/player_config_preset.dart';
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/class/named_presets.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/sync_manager/sync_manager.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/base/settings_file_writer.dart';
+import 'package:eclogae/class/count_per_row.dart';
+import 'package:eclogae/class/player_config_preset.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/class/named_presets.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/sync_manager/sync_manager.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
 
 void main() {
   late Directory dir;

@@ -1,9 +1,9 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/controller/search_sort_controller.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/controller/search_sort_controller.dart';
+import 'package:eclogae/core/enums.dart';
 
 void main() {
   group('genres page name sort', () {

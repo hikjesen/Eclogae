@@ -2,19 +2,19 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/pip_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/themes.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/artwork.dart';
-import 'package:namida/ui/widgets/simple_lyrics_line.dart';
-import 'package:namida/ui/widgets/video_widget.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/widgets/yt_thumbnail.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/pip_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/themes.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/artwork.dart';
+import 'package:eclogae/ui/widgets/simple_lyrics_line.dart';
+import 'package:eclogae/ui/widgets/video_widget.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/widgets/yt_thumbnail.dart';
 
 // by claude
 class NamidaPipView extends StatelessWidget {

@@ -12,16 +12,16 @@ import 'package:youtipie/core/enum.dart';
 import 'package:youtipie/managers/account_manager.dart';
 import 'package:youtipie/youtipie.dart' hide logger;
 
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/connectivity.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/sensitive_data_key.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/pages/user/youtube_account_manage_page.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/connectivity.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/sensitive_data_key.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/pages/user/youtube_account_manage_page.dart';
 
 class YoutubeAccountController {
   const YoutubeAccountController._();

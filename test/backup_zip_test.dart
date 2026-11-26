@@ -7,12 +7,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:namida/class/lang.dart';
-import 'package:namida/controller/backup_controller.dart';
-import 'package:namida/controller/platform/zip_manager/zip_manager.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/translations/language.dart';
+import 'package:eclogae/class/lang.dart';
+import 'package:eclogae/controller/backup_controller.dart';
+import 'package:eclogae/controller/platform/zip_manager/zip_manager.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/translations/language.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

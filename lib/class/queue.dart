@@ -1,7 +1,7 @@
-import 'package:namida/class/track.dart';
-import 'package:namida/class/video.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class Queue {
   String getKey() => date.toString();

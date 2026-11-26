@@ -6,22 +6,22 @@ import 'package:just_audio/just_audio.dart' show TextTrack;
 import 'package:lrc/lrc.dart';
 import 'package:youtipie/class/streams/video_streams_result.dart';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/subtitle_cue.dart';
-import 'package:namida/class/subtitle_track.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/video_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/subtitle_cue.dart';
+import 'package:eclogae/class/subtitle_track.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/video_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 /// who draws the current subtitle.
 enum SubtitleRenderMode {

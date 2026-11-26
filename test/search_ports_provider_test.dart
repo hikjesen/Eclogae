@@ -6,8 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 
-import 'package:namida/controller/search_ports_provider.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/controller/search_ports_provider.dart';
+import 'package:eclogae/core/enums.dart';
 
 void main() {
   const tempAbc = (text: 'abc', temp: true, isVideo: null);

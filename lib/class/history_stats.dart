@@ -4,9 +4,9 @@ import 'dart:typed_data';
 
 import 'package:history_manager/history_manager.dart';
 
-import 'package:namida/class/past_time_zone_offsets.dart';
-import 'package:namida/controller/listen_time_controller.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/class/past_time_zone_offsets.dart';
+import 'package:eclogae/controller/listen_time_controller.dart';
+import 'package:eclogae/core/enums.dart';
 
 abstract class HistoryStatsResolver<E> {
   const HistoryStatsResolver();

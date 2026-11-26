@@ -7,7 +7,7 @@ import 'floating_lyrics_models.dart';
 class FloatingLyricsChannel {
   const FloatingLyricsChannel();
 
-  static const _channel = MethodChannel('namida/floating_lyrics');
+  static const _channel = MethodChannel('eclogae/floating_lyrics');
 
   Future<bool> hasPermission() => _invokeBool('hasPermission');
 

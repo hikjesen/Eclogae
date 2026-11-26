@@ -3,8 +3,8 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/controller/miniplayer_controller.dart';
-import 'package:namida/core/ui_scale.dart';
+import 'package:eclogae/controller/miniplayer_controller.dart';
+import 'package:eclogae/core/ui_scale.dart';
 
 class MiniplayerRaw extends StatelessWidget {
   final Widget child;

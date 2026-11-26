@@ -5,17 +5,17 @@ import 'package:flutter/material.dart';
 
 import 'package:lrc/lrc.dart';
 
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/lyrics_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/romanizer/romanizer.dart';
-import 'package:namida/controller/romanizer/romanizer_engine.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/lyrics_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/romanizer/romanizer.dart';
+import 'package:eclogae/controller/romanizer/romanizer_engine.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 import 'floating_lyrics_channel.dart';
 import 'floating_lyrics_models.dart';
@@ -208,7 +208,7 @@ class FloatingLyricsController {
   Future<void> _showPermissionDialog() => NamidaNavigator.inst.navigateDialog<void>(
     dialog: CustomBlurryDialog(
       title: '需要悬浮窗权限',
-      bodyText: '请在系统设置中允许 Namida 显示在其他应用上层，以启用悬浮歌词。',
+      bodyText: '请在系统设置中允许 Eclogae 显示在其他应用上层，以启用悬浮歌词。',
       icon: Broken.layer,
       normalTitleStyle: true,
       actions: [

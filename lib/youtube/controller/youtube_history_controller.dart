@@ -6,14 +6,14 @@ import 'package:flutter/widgets.dart';
 
 import 'package:history_manager/history_manager.dart';
 
-import 'package:namida/class/video.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
 
 class YoutubeHistoryController with HistoryManager<YoutubeID, String> {
   static YoutubeHistoryController get inst => _instance;

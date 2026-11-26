@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:just_audio/just_audio.dart' show TextTrack;
 import 'package:youtipie/class/streams/caption.dart';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/http_response_wrapper.dart';
-import 'package:namida/class/lang.dart';
-import 'package:namida/controller/network_proxy_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/youtube/class/download_task_base.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/http_response_wrapper.dart';
+import 'package:eclogae/class/lang.dart';
+import 'package:eclogae/controller/network_proxy_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/youtube/class/download_task_base.dart';
 
 sealed class SubtitleTrack {
   const SubtitleTrack();

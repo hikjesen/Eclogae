@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
 
 class CountPerRow {
   static const _autoSmall = _CountPerRowAuto(86.0);

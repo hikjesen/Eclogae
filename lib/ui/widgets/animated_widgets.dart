@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/ntheme.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/ntheme.dart';
 
 class AnimatedDecoration extends ImplicitlyAnimatedWidget {
   final Widget? child;

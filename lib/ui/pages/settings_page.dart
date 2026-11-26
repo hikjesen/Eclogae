@@ -1,34 +1,33 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/base/setting_subpage_provider.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/lx_music/lx_settings_page.dart';
-import 'package:namida/main_page_wrapper.dart';
-import 'package:namida/ui/pages/party_page.dart';
-import 'package:namida/ui/pages/sync_manager_page.dart';
-import 'package:namida/ui/widgets/circular_percentages.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/mascots/mascots.dart';
-import 'package:namida/ui/widgets/settings/advanced_settings.dart';
-import 'package:namida/ui/widgets/settings/backup_restore_settings.dart';
-import 'package:namida/ui/widgets/settings/customization_settings.dart';
-import 'package:namida/ui/widgets/settings/extra_settings.dart';
-import 'package:namida/ui/widgets/settings/indexer_settings.dart';
-import 'package:namida/ui/widgets/settings/playback_settings.dart';
-import 'package:namida/ui/widgets/settings/theme_settings.dart';
-import 'package:namida/ui/widgets/settings/youtube_settings.dart';
+import 'package:eclogae/base/setting_subpage_provider.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/lx_music/lx_settings_page.dart';
+import 'package:eclogae/main_page_wrapper.dart';
+import 'package:eclogae/ui/pages/sync_manager_page.dart';
+import 'package:eclogae/ui/widgets/circular_percentages.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/mascots/mascots.dart';
+import 'package:eclogae/ui/widgets/settings/advanced_settings.dart';
+import 'package:eclogae/ui/widgets/settings/backup_restore_settings.dart';
+import 'package:eclogae/ui/widgets/settings/customization_settings.dart';
+import 'package:eclogae/ui/widgets/settings/extra_settings.dart';
+import 'package:eclogae/ui/widgets/settings/indexer_settings.dart';
+import 'package:eclogae/ui/widgets/settings/playback_settings.dart';
+import 'package:eclogae/ui/widgets/settings/theme_settings.dart';
+import 'package:eclogae/ui/widgets/settings/youtube_settings.dart';
 
 class SettingsPage extends StatelessWidget with NamidaRouteWidget {
   @override
@@ -280,7 +279,7 @@ class _QuickSuggestionsForSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const indexer = IndexerSettings();
-    // -- both rows cap their leading tile at the same width, so the two end up identical
+    // -- cap the add-folder tile so the other quick actions fit beside it
     final maxLeadingWidth = (context.width * 0.6).withMinimum(48.0);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
@@ -341,25 +340,6 @@ class _QuickSuggestionsForSettings extends StatelessWidget {
             const SizedBox(height: 8.0),
             Row(
               children: [
-                Flexible(
-                  child: Align(
-                    widthFactor: 1,
-                    alignment: AlignmentDirectional.centerStart,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: maxLeadingWidth),
-                      child: _QuickSuggestionsTile(
-                        fullWidth: true,
-                        icon: Broken.people,
-                        title: lang.partyListeningParty,
-                        subtitle: lang.partyListeningPartySubtitle,
-                        onTap: () {
-                          const NamidaPartyPage().navigate();
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8.0),
                 const _SleepTimerQuickTile(),
                 const SizedBox(width: 8.0),
                 _QuickSuggestionsTile(

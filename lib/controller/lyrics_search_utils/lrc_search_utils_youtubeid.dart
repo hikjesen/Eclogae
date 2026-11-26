@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
-import 'package:namida/controller/lyrics_search_utils/lrc_search_details.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/controller/lyrics_search_utils/lrc_search_details.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 import 'lrc_search_utils_base.dart';
 

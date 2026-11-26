@@ -2,12 +2,12 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:namida/class/taglib_res.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/class/taglib_res.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
 
 class BackCoverController {
   static final inst = BackCoverController._();

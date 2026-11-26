@@ -1,18 +1,18 @@
 // by claude, no mistakes.
 import 'package:flutter/widgets.dart';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/split_config.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/smart_playlists/smart_playlists_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/iso639.dart';
-import 'package:namida/core/namida_converter_ext.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/split_config.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/smart_playlists/smart_playlists_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/iso639.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
 
 class TextSuggestionsProvider {
   /// lyrics & titles of the track being edited, the languages written in their scripts are suggested first.

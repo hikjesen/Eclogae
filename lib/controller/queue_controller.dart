@@ -8,26 +8,26 @@ import 'package:flutter/foundation.dart' show listEquals, visibleForTesting;
 
 import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/func_execute_limiter.dart';
-import 'package:namida/class/queue.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/class/video.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/search_sort_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/sync_manager/sync_manager.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/download_task_base.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_playlist_controller.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/func_execute_limiter.dart';
+import 'package:eclogae/class/queue.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/search_sort_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/sync_manager/sync_manager.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/download_task_base.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_playlist_controller.dart';
 
 class QueueController {
   static final QueueController inst = QueueController._internal();

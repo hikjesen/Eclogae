@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/thumbnail_square_cover.dart';
+import 'package:eclogae/class/thumbnail_square_cover.dart';
 
 void main() {
   /// [width]x[height] filled with [barColor], with a busy pattern inside the content box.

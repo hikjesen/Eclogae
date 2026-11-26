@@ -4,10 +4,10 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/platform/base.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/platform/base.dart';
+import 'package:eclogae/core/utils.dart';
 
 class BenchmarkExecutionTime {
   final currentOperation = ''.obs;

@@ -1,19 +1,19 @@
 // ignore_for_file: avoid_rx_value_getter_outside_obx
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/count_per_row.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/party/party_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/youtube_miniplayer.dart';
+import 'package:eclogae/class/count_per_row.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/party/party_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/youtube_miniplayer.dart';
 
 class Dimensions {
   static Dimensions get inst => _instance;

@@ -4,18 +4,18 @@ import 'dart:convert';
 import 'package:audio_service/audio_service.dart';
 import 'package:lrc/lrc.dart';
 
-import 'package:namida/base/audio_handler.dart';
-import 'package:namida/controller/home_widget_controller.dart';
-import 'package:namida/controller/lyrics_controller.dart';
-import 'package:namida/controller/now_playing_broadcaster.dart';
-import 'package:namida/controller/platform/home_widgets/home_widgets.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/smtc_controller.dart';
-import 'package:namida/controller/tray_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/base/audio_handler.dart';
+import 'package:eclogae/controller/home_widget_controller.dart';
+import 'package:eclogae/controller/lyrics_controller.dart';
+import 'package:eclogae/controller/now_playing_broadcaster.dart';
+import 'package:eclogae/controller/platform/home_widgets/home_widgets.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/smtc_controller.dart';
+import 'package:eclogae/controller/tray_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
 
 /// pushes the playing lyrics to the system surfaces the user enabled. `lyricInfo` rides the media metadata once per track,
 /// SuperLyric & the flyme ticker get one call per line. an instance only exists while at least one is on.

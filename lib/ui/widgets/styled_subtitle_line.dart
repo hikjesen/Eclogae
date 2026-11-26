@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/subtitle_cue.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/subtitles_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/class/subtitle_cue.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/subtitles_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
 
 /// Draws youtube's styled captions, whose colors carry the karaoke highlight.
 class StyledSubtitleLineWidget extends StatefulWidget {

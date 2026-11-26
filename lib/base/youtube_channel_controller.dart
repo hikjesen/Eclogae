@@ -5,12 +5,12 @@ import 'package:youtipie/class/channels/channel_tab_result.dart';
 import 'package:youtipie/class/execute_details.dart';
 import 'package:youtipie/class/stream_info_item/stream_info_item.dart';
 
-import 'package:namida/base/youtube_streams_manager.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/youtube/class/youtube_subscription.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
-import 'package:namida/youtube/controller/youtube_subscriptions_controller.dart';
+import 'package:eclogae/base/youtube_streams_manager.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/youtube/class/youtube_subscription.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_subscriptions_controller.dart';
 
 abstract class YoutubeChannelController<T extends StatefulWidget> extends State<T> with YoutubeStreamsManager<YoutiPieChannelTabResult> {
   /// Mainly used for initial fetching of cached info.

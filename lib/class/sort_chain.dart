@@ -1,7 +1,7 @@
 // by claude
 import 'package:flutter/foundation.dart';
 
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/extensions.dart';
 
 /// a [SortChain] resolved into comparables, what the precomputed sorts take.
 class SortChainComparables<E> {

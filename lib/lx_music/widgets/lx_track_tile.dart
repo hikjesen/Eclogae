@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 import '../lx_models.dart';
 import 'lx_cover_thumb.dart';

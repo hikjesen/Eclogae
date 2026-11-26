@@ -1,12 +1,12 @@
 // by claude
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/media_chapter.dart';
-import 'package:namida/controller/chapters_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/class/media_chapter.dart';
+import 'package:eclogae/controller/chapters_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/utils.dart';
 
 /// cuts a thin gap into [child] where each chapter of the current item starts.
 class ChapterGapsClip extends StatelessWidget {

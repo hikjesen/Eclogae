@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/lyrics_search_utils/lrc_search_utils_selectable.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/lyrics_search_utils/lrc_search_utils_selectable.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
 
 const _kLyrics = '[00:01.00]line one\n[00:02.00]line two';
 const _kJsonLyrics = '[{"text":[{"text":"line","part":false,"timestamp":1000,"endtime":2000}],"background":false,"timestamp":1000,"endtime":2000}]';

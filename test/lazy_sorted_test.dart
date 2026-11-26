@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/extensions.dart';
 
 void main() {
   List<(int, int)> expectedOrder(List<(int, int)> items, {required bool reverse}) {

@@ -1,0 +1,87 @@
+name: Build Eclogae for Android
+
+on:
+  push:
+    branches: [main, 'feat/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build_android_arm64:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Initialize required submodules
+        run: git submodule update --init --remote --depth 1 external/party_relay
+
+      - name: Free disk space
+        continue-on-error: true
+        run: |
+          sudo apt clean
+          docker image prune -af
+          df -h
+
+      - name: Remove unused SDKs
+        continue-on-error: true
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/share/vcpkg
+          sudo rm -rf /usr/local/share/miniconda
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /opt/hostedtoolcache/Swift
+          df -h
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: pubspec.yaml
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
+      - name: Analyze Dart
+        run: dart analyze --no-fatal-warnings lib packages_compat
+
+      - name: Configure fixed Android signing
+        env:
+          KEYSTORE_B64: ${{ secrets.LX_ANDROID_KEYSTORE_B64 }}
+          KEY_PROPERTIES_B64: ${{ secrets.LX_ANDROID_KEY_PROPERTIES_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ] && [ -n "$KEY_PROPERTIES_B64" ]; then
+            printf '%s' "$KEYSTORE_B64" | base64 -d > android/app/keystore.jks
+            printf '%s' "$KEY_PROPERTIES_B64" | base64 -d > android/key.properties
+            echo "Fixed Android signing configured from Actions Secrets."
+          else
+            echo "::warning::LX_ANDROID_KEYSTORE_B64 or LX_ANDROID_KEY_PROPERTIES_B64 not set; falling back to ephemeral debug signing."
+          fi
+
+      - name: Build ARM64 release APK
+        env:
+          ORG_GRADLE_PROJECT_eclogaeArm64: 'true'
+        run: flutter build apk --target-platform android-arm64 --release
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: eclogae-arm64-apk
+          path: build/app/outputs/flutter-apk/*.apk
+          if-no-files-found: error
+          retention-days: 14

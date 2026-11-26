@@ -3,16 +3,16 @@ import 'dart:isolate';
 
 import 'package:path/path.dart' as p;
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/directory_index.dart';
-import 'package:namida/controller/lyrics_search_utils/lrc_search_details.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/iso639.dart';
-import 'package:namida/youtube/class/download_task_base.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/directory_index.dart';
+import 'package:eclogae/controller/lyrics_search_utils/lrc_search_details.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/iso639.dart';
+import 'package:eclogae/youtube/class/download_task_base.dart';
 
 import 'lrc_search_utils_base.dart';
 

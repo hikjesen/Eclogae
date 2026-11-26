@@ -19,7 +19,7 @@ class _SubsonicWebServer extends MusicWebServer {
         );
       },
       baseUrl: authDetails.dir.sourceRaw,
-      clientId: 'com.msob7y.namida',
+      clientId: 'com.wander.eclogae',
       version: VersionWrapper.current?.name ?? '1.0.0',
       auth: authDetails.auth.toSubsonicAuthModel(),
     );

@@ -3,13 +3,13 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/youtube/class/download_task_base.dart';
-import 'package:namida/youtube/class/youtube_item_download_config.dart';
-import 'package:namida/youtube/controller/youtube_controller.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/youtube/class/download_task_base.dart';
+import 'package:eclogae/youtube/class/youtube_item_download_config.dart';
+import 'package:eclogae/youtube/controller/youtube_controller.dart';
 
 void main() {
   late Directory dir;

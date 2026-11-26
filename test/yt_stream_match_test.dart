@@ -5,7 +5,7 @@ import 'package:youtipie/class/streams/audio_track.dart';
 import 'package:youtipie/class/streams/codec_info.dart';
 import 'package:youtipie/class/streams/video_stream.dart';
 
-import 'package:namida/youtube/controller/youtube_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_controller.dart';
 
 void main() {
   AudioTrack track(String id, {bool? isDefault}) {

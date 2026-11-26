@@ -5,9 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:history_manager/history_manager.dart';
 
-import 'package:namida/base/tracks_search_wrapper.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/base/tracks_search_wrapper.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/core/enums.dart';
 
 void main() {
   final tracks = [

@@ -1,5 +1,5 @@
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class VersionWrapper {
   final String name;

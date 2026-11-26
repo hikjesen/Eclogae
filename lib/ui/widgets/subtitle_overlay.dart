@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/controller/subtitles_controller.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/simple_lyrics_line.dart';
-import 'package:namida/ui/widgets/styled_subtitle_line.dart';
+import 'package:eclogae/controller/subtitles_controller.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/simple_lyrics_line.dart';
+import 'package:eclogae/ui/widgets/styled_subtitle_line.dart';
 
 class SubtitleOverlay extends StatelessWidget {
   final TextStyle? style;

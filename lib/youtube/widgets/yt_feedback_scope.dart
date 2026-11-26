@@ -6,13 +6,13 @@ import 'package:youtipie/class/feedback_menu_action.dart';
 import 'package:youtipie/class/map_serializable.dart';
 import 'package:youtipie/class/result_wrapper/feedback_holder.dart';
 
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 /// Lets cards of a home feed offer youtube's `Not interested` & co under a `More` entry of their menu.
 /// [builder] is rebuilt after an item is dropped or put back.

@@ -1,7 +1,7 @@
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/enums.dart';
 
 class WakelockController {
   static final WakelockController inst = WakelockController._internal();

@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/extensions.dart';
 
 /// Signature for when a tooltip is triggered.
 typedef TooltipTriggeredCallback = void Function();

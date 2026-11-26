@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/controller/wakelock_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/animated_widgets.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/controller/wakelock_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/animated_widgets.dart';
 
 /// Used to retain state for cases like navigating after pip mode.
 bool _wasExpanded = false;

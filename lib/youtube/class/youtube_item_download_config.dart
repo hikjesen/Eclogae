@@ -7,11 +7,11 @@ import 'package:youtipie/class/streams/audio_stream.dart';
 import 'package:youtipie/class/streams/video_stream.dart';
 import 'package:youtipie/class/youtipie_feed/playlist_basic_info.dart';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/media_chapter.dart';
-import 'package:namida/controller/ffmpeg_controller.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/download_task_base.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/media_chapter.dart';
+import 'package:eclogae/controller/ffmpeg_controller.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/download_task_base.dart';
 
 class YoutubeItemDownloadConfig {
   DownloadTaskFilename get filename => _filename.value;

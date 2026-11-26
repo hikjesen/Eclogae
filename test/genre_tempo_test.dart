@@ -1,7 +1,7 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/controller/rhythm_controller.dart';
+import 'package:eclogae/controller/rhythm_controller.dart';
 
 void main() {
   group('folds into the genre convention', () {

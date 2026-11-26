@@ -2,8 +2,8 @@ import 'package:flutter/services.dart';
 
 import 'package:vibration/vibration.dart';
 
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/enums.dart';
 
 class VibratorController {
   const VibratorController._();

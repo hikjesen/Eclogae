@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/shortcut_data.dart';
-import 'package:namida/controller/platform/shortcuts_manager/shortcuts_manager.dart';
+import 'package:eclogae/class/shortcut_data.dart';
+import 'package:eclogae/controller/platform/shortcuts_manager/shortcuts_manager.dart';
 
 void main() {
   ShortcutKeyActivator activator(LogicalKeyboardKey key, {bool control = false, bool alt = false, bool shift = false}) {

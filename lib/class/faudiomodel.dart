@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:namida/class/media_chapter.dart';
-import 'package:namida/class/media_info.dart';
-import 'package:namida/class/replay_gain_data.dart';
-import 'package:namida/class/split_config.dart';
-import 'package:namida/class/tag_rating.dart';
-import 'package:namida/class/taglib_res.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/media_chapter.dart';
+import 'package:eclogae/class/media_info.dart';
+import 'package:eclogae/class/replay_gain_data.dart';
+import 'package:eclogae/class/split_config.dart';
+import 'package:eclogae/class/tag_rating.dart';
+import 'package:eclogae/class/taglib_res.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class FArtwork {
   /// if specified directory to save in.

@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/core/constants.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/core/constants.dart';
 
 void main() {
   late Directory dir;

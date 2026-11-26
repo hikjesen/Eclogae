@@ -1,7 +1,7 @@
 // by claude
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
 
 /// saved named values, a null [activeIndex] means the default value is used.
 class NamedPresets<T> {

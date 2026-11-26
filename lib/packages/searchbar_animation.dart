@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 class SearchBarAnimation extends StatefulWidget {
   /// This gives the width to the searchbar by default it will take the size of whole screen.

@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
 
-import 'package:namida/controller/platform/namida_storage/namida_storage.dart';
+import 'package:eclogae/controller/platform/namida_storage/namida_storage.dart';
 
 void main() {
   const oldRoot = '/var/mobile/Containers/Data/Application/11111111-1111-1111-1111-111111111111';

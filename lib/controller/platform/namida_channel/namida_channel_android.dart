@@ -12,7 +12,7 @@ class _NamidaChannelAndroid extends NamidaChannel {
   Future<void>? openFileInExplorer(String filePath, {bool isDirectory = false}) => null;
 
   _NamidaChannelAndroid._init() {
-    _channel = const MethodChannel('namida');
+    _channel = const MethodChannel('eclogae');
 
     _initLiseners();
   }

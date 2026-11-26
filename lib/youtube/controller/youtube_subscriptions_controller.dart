@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/youtube_subscription.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/youtube_subscription.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 class YoutubeSubscriptionsController {
   static final YoutubeSubscriptionsController inst = YoutubeSubscriptionsController._internal();

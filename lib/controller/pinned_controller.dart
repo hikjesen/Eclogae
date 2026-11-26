@@ -1,8 +1,8 @@
 // by claude
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/controller/smart_playlists/smart_playlists_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/controller/smart_playlists/smart_playlists_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
 
 /// pinned items of every type in one list, a new pinnable type adds a [PinnedItemType], a [PinnedItem] and its loop here.
 class PinnedController {

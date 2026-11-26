@@ -8,17 +8,17 @@ import 'package:youtipie/class/youtipie_feed/yt_feed_base.dart';
 import 'package:youtipie/core/enum.dart';
 import 'package:youtipie/youtipie.dart';
 
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/youtube/pages/youtube_main_page_fetcher_acc_base.dart';
-import 'package:namida/youtube/widgets/yt_feedback_scope.dart';
-import 'package:namida/youtube/widgets/yt_history_video_card.dart';
-import 'package:namida/youtube/widgets/yt_playlist_card.dart';
-import 'package:namida/youtube/widgets/yt_video_card.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/youtube/pages/youtube_main_page_fetcher_acc_base.dart';
+import 'package:eclogae/youtube/widgets/yt_feedback_scope.dart';
+import 'package:eclogae/youtube/widgets/yt_history_video_card.dart';
+import 'package:eclogae/youtube/widgets/yt_playlist_card.dart';
+import 'package:eclogae/youtube/widgets/yt_video_card.dart';
 
 class YoutubeHomeFeedPage extends StatelessWidget {
   const YoutubeHomeFeedPage({super.key});

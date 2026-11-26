@@ -3,15 +3,15 @@ import 'dart:io';
 
 import 'package:playlist_manager/playlist_manager.dart';
 
-import 'package:namida/class/video.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/class/youtube_subscription.dart';
-import 'package:namida/youtube/controller/youtube_playlist_controller.dart';
-import 'package:namida/youtube/controller/youtube_subscriptions_controller.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/class/youtube_subscription.dart';
+import 'package:eclogae/youtube/controller/youtube_playlist_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_subscriptions_controller.dart';
 
 enum _YTPlaylistVisibility { public, unlisted, private, unknown }
 

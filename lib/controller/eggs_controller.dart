@@ -4,18 +4,18 @@ import 'dart:math' as math;
 
 import 'package:namico_subscription_manager/core/enum.dart';
 
-import 'package:namida/class/eggs_data.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/effects/effects.dart';
-import 'package:namida/youtube/controller/youtube_account_controller.dart';
+import 'package:eclogae/class/eggs_data.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/effects/effects.dart';
+import 'package:eclogae/youtube/controller/youtube_account_controller.dart';
 
 /// eggs earned by listening are only looked for in [collectPending], when the eggs are about to be shown.
 class EggsController {

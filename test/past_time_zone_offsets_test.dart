@@ -1,7 +1,7 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/past_time_zone_offsets.dart';
+import 'package:eclogae/class/past_time_zone_offsets.dart';
 
 void main() {
   test('matches the system offset for every 10 minutes over 3 years, switch days included', () {

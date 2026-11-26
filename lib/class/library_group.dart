@@ -1,11 +1,11 @@
-import 'package:namida/class/folder.dart';
-import 'package:namida/class/library_item_map.dart';
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/class/video.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/class/folder.dart';
+import 'package:eclogae/class/library_item_map.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
 
 class LibraryGroup<T extends Track> {
   bool didFill = false;

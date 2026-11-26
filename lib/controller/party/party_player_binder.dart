@@ -4,16 +4,16 @@ import 'package:flutter/foundation.dart';
 
 import 'package:basic_audio_handler/basic_audio_handler.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/party/party_player_gate.dart';
-import 'package:namida/controller/party/party_protocol.dart';
-import 'package:namida/controller/party/party_state.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/sync_manager/sync_manager.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/party/party_player_gate.dart';
+import 'package:eclogae/controller/party/party_protocol.dart';
+import 'package:eclogae/controller/party/party_state.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/sync_manager/sync_manager.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 abstract class PartyBinderDelegate {
   int nowMS();

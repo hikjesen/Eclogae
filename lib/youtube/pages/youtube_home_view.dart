@@ -1,27 +1,27 @@
 // rewritten by claude, new one keeps local/youtube per section (picked from the selected tab), custom sections header with an expanding label that names the source, sections can be pinned as library tabs, account pages show a sign in placeholder
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/pages/home_page.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/youtube/controller/youtube_account_controller.dart';
-import 'package:namida/youtube/pages/youtube_feed_page.dart';
-import 'package:namida/youtube/pages/youtube_main_page_fetcher_acc_base.dart';
-import 'package:namida/youtube/pages/youtube_notifications_page.dart';
-import 'package:namida/youtube/pages/youtube_user_playlists_page.dart';
-import 'package:namida/youtube/pages/yt_channels_page.dart';
-import 'package:namida/youtube/pages/yt_downloads_page.dart';
-import 'package:namida/youtube/pages/yt_music_page.dart';
-import 'package:namida/youtube/youtube_playlists_view.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/pages/home_page.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/youtube/controller/youtube_account_controller.dart';
+import 'package:eclogae/youtube/pages/youtube_feed_page.dart';
+import 'package:eclogae/youtube/pages/youtube_main_page_fetcher_acc_base.dart';
+import 'package:eclogae/youtube/pages/youtube_notifications_page.dart';
+import 'package:eclogae/youtube/pages/youtube_user_playlists_page.dart';
+import 'package:eclogae/youtube/pages/yt_channels_page.dart';
+import 'package:eclogae/youtube/pages/yt_downloads_page.dart';
+import 'package:eclogae/youtube/pages/yt_music_page.dart';
+import 'package:eclogae/youtube/youtube_playlists_view.dart';
 
 class YouTubeHomeView extends StatefulWidget with NamidaRouteWidget {
   @override

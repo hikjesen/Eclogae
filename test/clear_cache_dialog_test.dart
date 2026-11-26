@@ -4,14 +4,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/lang.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/themes.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/dialogs/clear_cache_dialog.dart';
+import 'package:eclogae/class/lang.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/themes.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/dialogs/clear_cache_dialog.dart';
 
 void main() {
   late Directory root;

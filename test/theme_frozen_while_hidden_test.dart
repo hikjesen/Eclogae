@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/ui/widgets/animated_widgets.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/ui/widgets/animated_widgets.dart';
 
 void main() {
   testWidgets('hidden subtree keeps its theme until visible again', (tester) async {

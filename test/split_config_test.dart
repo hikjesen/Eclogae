@@ -1,8 +1,8 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/split_config.dart';
-import 'package:namida/controller/indexer_controller.dart';
+import 'package:eclogae/class/split_config.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
 
 void main() {
   const artistSeparators = ['&', ',', ';', '//', ' ft. ', ' x '];

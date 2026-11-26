@@ -9,22 +9,22 @@ import 'package:youtipie/class/youtipie_feed/playlist_info_item_user.dart';
 import 'package:youtipie/core/enum.dart';
 import 'package:youtipie/youtipie.dart';
 
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/connectivity.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/packages/three_arched_circle.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
-import 'package:namida/youtube/functions/yt_playlist_utils.dart';
-import 'package:namida/youtube/pages/yt_playlist_subpage.dart';
-import 'package:namida/youtube/widgets/yt_card.dart';
-import 'package:namida/youtube/widgets/yt_feedback_scope.dart';
-import 'package:namida/youtube/widgets/yt_thumbnail.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/connectivity.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/packages/three_arched_circle.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/youtube/functions/yt_playlist_utils.dart';
+import 'package:eclogae/youtube/pages/yt_playlist_subpage.dart';
+import 'package:eclogae/youtube/widgets/yt_card.dart';
+import 'package:eclogae/youtube/widgets/yt_feedback_scope.dart';
+import 'package:eclogae/youtube/widgets/yt_thumbnail.dart';
 
 /// Playlist info is fetched automatically after 3 seconds of being displayed, or after attempting an action.
 class YoutubePlaylistCard extends StatefulWidget {

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'package:super_sliver_list/super_sliver_list.dart';
 
-import 'package:namida/base/setting_subpage_provider.dart';
-import 'package:namida/controller/settings_search_controller.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/base/setting_subpage_provider.dart';
+import 'package:eclogae/controller/settings_search_controller.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 class SettingsSearchPage extends StatelessWidget {
   const SettingsSearchPage({super.key});

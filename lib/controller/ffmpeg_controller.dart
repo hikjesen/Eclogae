@@ -5,18 +5,18 @@ import 'dart:typed_data';
 
 import 'package:path/path.dart' as p;
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/media_info.dart';
-import 'package:namida/class/tag_rating.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/main.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/media_info.dart';
+import 'package:eclogae/class/tag_rating.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/main.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 import 'platform/ffmpeg_executer/ffmpeg_executer.dart';
 

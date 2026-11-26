@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/core/utils.dart';
 
 class ClipboardController {
   static ClipboardController get inst => _instance;

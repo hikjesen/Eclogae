@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:rhttp/rhttp.dart';
 
-import 'package:namida/controller/network_proxy_controller.dart';
+import 'package:eclogae/controller/network_proxy_controller.dart';
 
 class LxHttpProxy {
   LxHttpProxy() {

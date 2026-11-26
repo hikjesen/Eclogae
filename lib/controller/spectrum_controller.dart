@@ -5,11 +5,11 @@ import 'dart:typed_data';
 
 import 'package:namida_waveform/namida_spectrum.dart';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class SpectrumController {
   static final inst = SpectrumController._();

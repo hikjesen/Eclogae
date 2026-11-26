@@ -1,23 +1,23 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/directory_index.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/lyrics_search_utils/lrc_search_utils_selectable.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/platform/tags_extractor/tags_extractor.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/controller/queue_controller.dart';
-import 'package:namida/controller/selected_tracks_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/main.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/directory_index.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/lyrics_search_utils/lrc_search_utils_selectable.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/platform/tags_extractor/tags_extractor.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/controller/queue_controller.dart';
+import 'package:eclogae/controller/selected_tracks_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/main.dart';
 
 class EditDeleteController {
   static EditDeleteController get inst => _instance;

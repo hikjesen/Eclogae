@@ -3,25 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_scrollbar_modified/flutter_scrollbar_modified.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
-import 'package:namida/class/count_per_row.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/controller/search_sort_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/dialogs/common_dialogs.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/expandable_box.dart';
-import 'package:namida/ui/widgets/library/multi_artwork_card.dart';
-import 'package:namida/ui/widgets/sliver_cross_axis_extent_builder.dart';
-import 'package:namida/ui/widgets/sort_by_button.dart';
+import 'package:eclogae/class/count_per_row.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/controller/search_sort_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/dialogs/common_dialogs.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/expandable_box.dart';
+import 'package:eclogae/ui/widgets/library/multi_artwork_card.dart';
+import 'package:eclogae/ui/widgets/sliver_cross_axis_extent_builder.dart';
+import 'package:eclogae/ui/widgets/sort_by_button.dart';
 
 class LanguagesPage extends StatelessWidget with NamidaRouteWidget {
   @override

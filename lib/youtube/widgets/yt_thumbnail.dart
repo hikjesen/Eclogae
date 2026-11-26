@@ -4,20 +4,20 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:namida/base/loading_items_delay.dart';
-import 'package:namida/class/color_m.dart';
-import 'package:namida/controller/connectivity.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/thumbnail_manager.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/artwork.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/base/loading_items_delay.dart';
+import 'package:eclogae/class/color_m.dart';
+import 'package:eclogae/controller/connectivity.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/thumbnail_manager.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/artwork.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 enum ThumbnailType {
   video(Broken.video),

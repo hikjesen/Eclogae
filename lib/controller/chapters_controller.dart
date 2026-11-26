@@ -1,15 +1,15 @@
 // by claude
 import 'package:youtipie/class/streams/stream_segments.dart';
 
-import 'package:namida/base/audio_handler.dart';
-import 'package:namida/class/media_chapter.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/vibrator_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/base/audio_handler.dart';
+import 'package:eclogae/class/media_chapter.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/vibrator_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 class ChaptersController {
   static final inst = ChaptersController._();

@@ -2,21 +2,21 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/smart_playlists/smart_playlists_controller.dart';
-import 'package:namida/controller/text_suggestions_provider.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/dialogs/edit_tags_dialog.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/text_suggestions.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/smart_playlists/smart_playlists_controller.dart';
+import 'package:eclogae/controller/text_suggestions_provider.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/dialogs/edit_tags_dialog.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/text_suggestions.dart';
 
 class CreateSmartPlaylistDialog extends StatefulWidget {
   final SmartPlaylistWrapper? initialSmartPlaylistWrapper;

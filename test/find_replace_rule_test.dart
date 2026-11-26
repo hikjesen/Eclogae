@@ -1,8 +1,8 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/controller/smart_playlists/smart_playlists_controller.dart';
-import 'package:namida/ui/dialogs/edit_tags_dialog.dart';
+import 'package:eclogae/controller/smart_playlists/smart_playlists_controller.dart';
+import 'package:eclogae/ui/dialogs/edit_tags_dialog.dart';
 
 void main() {
   String apply(String value, SmartPlaylistRuleFilterText filter, String find, String replaceWith, {bool matchCase = false}) => debugApplyFindReplace(

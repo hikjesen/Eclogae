@@ -22,28 +22,28 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:youtipie/class/youtipie_feed/user_channel_info.dart';
 import 'package:youtipie/youtipie.dart' show YoutiPie;
 
-import 'package:namida/base/settings_file_writer.dart';
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/class/version_wrapper.dart';
-import 'package:namida/controller/clipboard_controller.dart';
-import 'package:namida/controller/connectivity.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/platform/base.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/platform/zip_manager/zip_manager.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/ui/pages/offline_docs_page.dart';
-import 'package:namida/youtube/controller/youtube_account_controller.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
-import 'package:namida/youtube/pages/yt_playlist_subpage.dart';
+import 'package:eclogae/base/settings_file_writer.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/class/version_wrapper.dart';
+import 'package:eclogae/controller/clipboard_controller.dart';
+import 'package:eclogae/controller/connectivity.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/platform/base.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/platform/zip_manager/zip_manager.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/ui/pages/offline_docs_page.dart';
+import 'package:eclogae/youtube/controller/youtube_account_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/youtube/pages/yt_playlist_subpage.dart';
 
 final isDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
@@ -888,14 +888,14 @@ class AppPaths {
     final format = DateFormat('yyyy-MM-dd HH.mm.ss');
     final dateText = format.format(DateTime.now());
     final tempDir = await pp.getTemporaryDirectory();
-    final tmpDirParent = await tempDir.createTemp('namida_logs_');
+    final tmpDirParent = await tempDir.createTemp('eclogae_logs_');
     final tmpDirParentPath = tmpDirParent.path;
     final tmpDirContentsPath = FileParts.joinPath(tmpDirParentPath, 'contents');
     final tmpDirContents = await Directory(tmpDirContentsPath).create(recursive: true);
     await _copyAllExistingLogAndSettingsTo(tmpDirPath: tmpDirContentsPath);
     final zipper = ZipManager.platform();
     final zipDirectoryPath = outputDirectory ?? tmpDirParentPath;
-    final zipFile = FileParts.join(zipDirectoryPath, 'namida_logs_$dateText.zip');
+    final zipFile = FileParts.join(zipDirectoryPath, 'eclogae_logs_$dateText.zip');
     await zipper.createZipFromDirectory(
       sourceDir: tmpDirContents,
       zipFile: zipFile,
@@ -1382,16 +1382,13 @@ class AppDirs {
 }
 
 class AppSocial {
-  static const DONATE_KOFI = 'https://ko-fi.com/namidaco';
   static const DONATE_BUY_ME_A_COFFEE = 'https://www.buymeacoffee.com/namidaco';
   static const DONATE_PATREON = 'https://www.patreon.com/namidaco';
   static const PATREON_BENEFITS_POST = 'https://www.patreon.com/namidaco/posts/namida-yt-112913142';
   static const GITHUB = 'https://github.com/namidaco/namida';
   static const GITHUB_SNAPSHOTS = 'https://github.com/namidaco/namida-snapshots';
-  static const GITHUB_ISSUES = '$GITHUB/issues';
   static const GITHUB_RELEASES = '$GITHUB/releases/';
   static const GITHUB_RELEASES_BETA = '$GITHUB_SNAPSHOTS/releases/';
-  static const EMAIL = 'namida.coo@gmail.com';
   static const TRANSLATION_REPO = 'https://github.com/namidaco/namida-translations';
 
   static const YOUTUBE_TAKEOUT = 'https://takeout.google.com/takeout/custom/youtube';

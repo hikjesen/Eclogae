@@ -5,7 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/core/utils.dart';
 
 /// A global DPI override.
 ///

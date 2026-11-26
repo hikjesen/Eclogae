@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/queue_controller.dart';
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/library/queue_tile.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/queue_controller.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/library/queue_tile.dart';
 
 class QueuesPage extends StatelessWidget with NamidaRouteWidget {
   @override

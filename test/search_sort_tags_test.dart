@@ -3,10 +3,10 @@ import 'dart:isolate';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/base/tracks_search_wrapper.dart';
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/split_config.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/base/tracks_search_wrapper.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/split_config.dart';
+import 'package:eclogae/core/enums.dart';
 
 void main() {
   final receivePort = ReceivePort();

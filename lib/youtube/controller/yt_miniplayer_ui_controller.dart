@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:youtipie/core/enum.dart';
 
-import 'package:namida/controller/miniplayer_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/youtube_miniplayer.dart';
+import 'package:eclogae/controller/miniplayer_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/youtube_miniplayer.dart';
 
 class YoutubeMiniplayerUiController {
   static final inst = YoutubeMiniplayerUiController._();

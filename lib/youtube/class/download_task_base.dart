@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class DownloadTaskFilename {
   static final int _fullPathLimit = Platform.isWindows

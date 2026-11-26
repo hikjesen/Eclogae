@@ -4,24 +4,24 @@ import 'package:history_manager/history_manager.dart';
 import 'package:playlist_manager/module/playlist_id.dart';
 import 'package:youtipie/class/youtipie_feed/playlist_basic_info.dart';
 
-import 'package:namida/base/history_days_rebuilder.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/history_days_sliver.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_history_controller.dart';
-import 'package:namida/youtube/widgets/yt_history_video_card.dart';
-import 'package:namida/youtube/yt_utils.dart';
+import 'package:eclogae/base/history_days_rebuilder.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/history_days_sliver.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_history_controller.dart';
+import 'package:eclogae/youtube/widgets/yt_history_video_card.dart';
+import 'package:eclogae/youtube/yt_utils.dart';
 
 class YoutubeHistoryPage extends StatefulWidget with NamidaRouteWidget {
   @override

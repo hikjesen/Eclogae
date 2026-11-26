@@ -21,89 +21,88 @@ import 'package:rhttp/rhttp.dart';
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/backup_controller.dart';
-import 'package:namida/controller/bookmarks_controller.dart';
-import 'package:namida/controller/chapters_controller.dart';
-import 'package:namida/controller/connectivity.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/directory_index.dart';
-import 'package:namida/controller/eggs_controller.dart';
-import 'package:namida/controller/ffmpeg_controller.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/home_widget_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/lyrics_integrations.dart';
-import 'package:namida/controller/music_web_server/music_web_server_base.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/network_proxy_controller.dart';
-import 'package:namida/controller/notification_controller.dart';
-import 'package:namida/controller/now_playing_broadcaster.dart';
-import 'package:namida/controller/party/party_controller.dart';
-import 'package:namida/controller/pip_controller.dart';
-import 'package:namida/controller/platform/app_single_instance/app_single_instance.dart';
-import 'package:namida/controller/platform/base.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/platform/namida_storage/namida_storage.dart';
-import 'package:namida/controller/platform/permission_manager/permission_manager.dart';
-import 'package:namida/controller/platform/window_manager/window_manager.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/controller/queue_controller.dart';
-import 'package:namida/controller/rhythm_controller.dart';
-import 'package:namida/controller/screenshots_driver.dart';
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/controller/search_sort_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/shortcuts_controller.dart';
-import 'package:namida/controller/smtc_controller.dart';
-import 'package:namida/controller/storage_cache_manager.dart';
-import 'package:namida/controller/subtitles_controller.dart';
-import 'package:namida/controller/sync_manager/sync_manager.dart';
-import 'package:namida/controller/tagger_controller.dart';
-import 'package:namida/controller/tray_controller.dart';
-import 'package:namida/controller/version_controller.dart';
-import 'package:namida/controller/video_controller.dart';
-import 'package:namida/controller/waveform_controller.dart';
-import 'package:namida/controller/window_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/themes.dart';
-import 'package:namida/core/translations/arb/app_localizations.dart';
-import 'package:namida/core/translations/fallback_delegates.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/ui_scale.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/floating_lyrics/floating_lyrics_controller.dart';
-import 'package:namida/main_page_wrapper.dart';
-import 'package:namida/packages/scroll_physics_modified.dart';
-import 'package:namida/ui/dialogs/common_dialogs.dart';
-import 'package:namida/ui/dialogs/general_popup_dialog.dart';
-import 'package:namida/ui/pages/onboarding.dart';
-import 'package:namida/ui/pages/party_page.dart';
-import 'package:namida/ui/widgets/animated_widgets.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/effects/effects.dart';
-import 'package:namida/ui/widgets/library/track_tile.dart';
-import 'package:namida/ui/widgets/mascots/mascots.dart';
-import 'package:namida/ui/widgets/mini_lyrics_window.dart';
-import 'package:namida/ui/widgets/pip_view.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_account_controller.dart';
-import 'package:namida/youtube/controller/youtube_controller.dart';
-import 'package:namida/youtube/controller/youtube_history_controller.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
-import 'package:namida/youtube/controller/youtube_playlist_controller.dart';
-import 'package:namida/youtube/controller/youtube_subscriptions_controller.dart';
-import 'package:namida/youtube/controller/yt_miniplayer_ui_controller.dart';
-import 'package:namida/youtube/pages/yt_playlist_subpage.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/backup_controller.dart';
+import 'package:eclogae/controller/bookmarks_controller.dart';
+import 'package:eclogae/controller/chapters_controller.dart';
+import 'package:eclogae/controller/connectivity.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/directory_index.dart';
+import 'package:eclogae/controller/eggs_controller.dart';
+import 'package:eclogae/controller/ffmpeg_controller.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/home_widget_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/lyrics_integrations.dart';
+import 'package:eclogae/controller/music_web_server/music_web_server_base.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/network_proxy_controller.dart';
+import 'package:eclogae/controller/notification_controller.dart';
+import 'package:eclogae/controller/now_playing_broadcaster.dart';
+import 'package:eclogae/controller/party/party_controller.dart';
+import 'package:eclogae/controller/pip_controller.dart';
+import 'package:eclogae/controller/platform/app_single_instance/app_single_instance.dart';
+import 'package:eclogae/controller/platform/base.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/platform/namida_storage/namida_storage.dart';
+import 'package:eclogae/controller/platform/permission_manager/permission_manager.dart';
+import 'package:eclogae/controller/platform/window_manager/window_manager.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/controller/queue_controller.dart';
+import 'package:eclogae/controller/rhythm_controller.dart';
+import 'package:eclogae/controller/screenshots_driver.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/controller/search_sort_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/shortcuts_controller.dart';
+import 'package:eclogae/controller/smtc_controller.dart';
+import 'package:eclogae/controller/storage_cache_manager.dart';
+import 'package:eclogae/controller/subtitles_controller.dart';
+import 'package:eclogae/controller/sync_manager/sync_manager.dart';
+import 'package:eclogae/controller/tagger_controller.dart';
+import 'package:eclogae/controller/tray_controller.dart';
+import 'package:eclogae/controller/version_controller.dart';
+import 'package:eclogae/controller/video_controller.dart';
+import 'package:eclogae/controller/waveform_controller.dart';
+import 'package:eclogae/controller/window_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/themes.dart';
+import 'package:eclogae/core/translations/arb/app_localizations.dart';
+import 'package:eclogae/core/translations/fallback_delegates.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/ui_scale.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/floating_lyrics/floating_lyrics_controller.dart';
+import 'package:eclogae/main_page_wrapper.dart';
+import 'package:eclogae/packages/scroll_physics_modified.dart';
+import 'package:eclogae/ui/dialogs/common_dialogs.dart';
+import 'package:eclogae/ui/dialogs/general_popup_dialog.dart';
+import 'package:eclogae/ui/pages/onboarding.dart';
+import 'package:eclogae/ui/widgets/animated_widgets.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/effects/effects.dart';
+import 'package:eclogae/ui/widgets/library/track_tile.dart';
+import 'package:eclogae/ui/widgets/mascots/mascots.dart';
+import 'package:eclogae/ui/widgets/mini_lyrics_window.dart';
+import 'package:eclogae/ui/widgets/pip_view.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_account_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_history_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_playlist_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_subscriptions_controller.dart';
+import 'package:eclogae/youtube/controller/yt_miniplayer_ui_controller.dart';
+import 'package:eclogae/youtube/pages/yt_playlist_subpage.dart';
 
 void main(List<String> args) {
   runZonedGuarded(
@@ -250,6 +249,13 @@ Future<bool> _mainAppInitialization() async {
     }
 
     await settings.prepareAllSettings();
+    _removeSavedPartyTabs();
+    // -- settings can also be loaded through backup restore or sync after startup
+    void onLibraryTabsChanged() => scheduleMicrotask(_removeSavedPartyTabs);
+    settings.libraryTabs.addListener(onLibraryTabsChanged);
+    settings.extra.staticLibraryTab.addListener(onLibraryTabsChanged);
+    settings.extra.selectedLibraryTab.addListener(onLibraryTabsChanged);
+
     NetworkProxyController.inst.init();
     NamidaStorage.inst.initPickedDirectories().ignoreError();
     Language.initialize(); // should be done as early as possible
@@ -414,6 +420,25 @@ void _recheckTimeAwareEssentials() async {
   const StorageCacheManager().trimExtraFiles();
   VersionController.inst.ensureRefreshed();
   _clearIntentCachedFiles();
+}
+
+void _removeSavedPartyTabs() {
+  if (settings.libraryTabs.value.contains(LibraryTab.party)) {
+    final visibleTabs = settings.libraryTabs.value.where((tab) => tab != LibraryTab.party).toList();
+    final missingCount = 2 - visibleTabs.length;
+    if (missingCount > 0) {
+      visibleTabs.addAll(settings.libraryTabs.fallback.where((tab) => !visibleTabs.contains(tab)).take(missingCount));
+    }
+    settings.libraryTabs.replace(visibleTabs);
+  }
+
+  final staticTabIsParty = settings.extra.staticLibraryTab.value == LibraryTab.party;
+  final selectedTabIsParty = settings.extra.selectedLibraryTab.value == LibraryTab.party;
+  if (staticTabIsParty || selectedTabIsParty) {
+    final fallbackTab = settings.libraryTabs.value.first;
+    if (staticTabIsParty) settings.extra.staticLibraryTab.save(fallbackTab);
+    if (selectedTabIsParty) settings.extra.setSelectedLibraryTab(fallbackTab);
+  }
 }
 
 Future<Set<DirectoryIndex>> _getDefaultDirectoriesToScan(List<String> paths) async {
@@ -795,7 +820,7 @@ class _NamidaState extends State<Namida> {
                       key: const Key('namida_app'),
                       debugShowCheckedModeBanner: false,
                       navigatorKey: namida.rootNavigatorKey,
-                      title: 'Namida',
+                      title: 'Eclogae',
                       shortcuts: ShortcutsController.instance?.appShortcuts,
                       actions: ShortcutsController.instance?.appActions,
                       // restorationScopeId: 'Namida',
@@ -995,11 +1020,7 @@ class NamidaReceiveIntentManager {
           return;
         }
         if (NowPlayingBroadcaster.inst.handleDiscordAuthRedirect(link)) return;
-        if (PartyController.parseInvite(link) != null) {
-          PartyController.inst.pendingInvite.value = link;
-          WidgetsBinding.instance.addPostFrameCallback((_) => const NamidaPartyPage().navigate());
-          return;
-        }
+        if (PartyController.parseInvite(link) != null) return;
       }
     }
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {

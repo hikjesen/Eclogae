@@ -1,10 +1,10 @@
 // rewrite by claude
 
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/download_task_base.dart';
-import 'package:namida/youtube/class/youtube_item_download_config.dart';
-import 'package:namida/youtube/controller/youtube_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/download_task_base.dart';
+import 'package:eclogae/youtube/class/youtube_item_download_config.dart';
+import 'package:eclogae/youtube/controller/youtube_controller.dart';
 
 class YTOnGoingFinishedDownloads {
   static final YTOnGoingFinishedDownloads inst = YTOnGoingFinishedDownloads._internal();

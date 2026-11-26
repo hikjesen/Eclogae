@@ -1,4 +1,4 @@
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class MediaChapter {
   final int startMS;

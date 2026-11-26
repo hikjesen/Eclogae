@@ -3,7 +3,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/controller/sync_manager/sync_manager.dart';
+import 'package:eclogae/controller/sync_manager/sync_manager.dart';
 
 void main() {
   const deviceId = 'sender';

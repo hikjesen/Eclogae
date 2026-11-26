@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 
 import 'package:window_manager/window_manager.dart';
 
-import 'package:namida/base/audio_handler.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/lyrics_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/window_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/simple_lyrics_line.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/base/audio_handler.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/lyrics_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/window_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/simple_lyrics_line.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 // by claude
 class MiniLyricsWindow extends StatefulWidget {

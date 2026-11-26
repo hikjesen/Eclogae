@@ -1,9 +1,9 @@
 import 'dart:ui' show Locale;
 
-import 'package:namida/core/translations/arb/app_localizations.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/core/translations/arb/app_localizations.dart';
+import 'package:eclogae/core/utils.dart';
 
-part 'package:namida/core/translations/localized_language_names.dart';
+part 'package:eclogae/core/translations/localized_language_names.dart';
 
 class NamidaLanguage {
   /// ex: en_US

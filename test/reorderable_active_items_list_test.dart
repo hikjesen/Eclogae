@@ -5,9 +5,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/ui/widgets/reorderable_active_items_list.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/ui/widgets/reorderable_active_items_list.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 enum _T { a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t }
 

@@ -1,7 +1,7 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/missing_track_matcher.dart';
+import 'package:eclogae/class/missing_track_matcher.dart';
 
 void main() {
   const fillerPaths = [

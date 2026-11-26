@@ -10,15 +10,15 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:history_manager/history_manager.dart';
 
-import 'package:namida/class/split_config.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/class/video.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/json_to_history_parser.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_history_controller.dart';
+import 'package:eclogae/class/split_config.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/json_to_history_parser.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_history_controller.dart';
 
 import 'bench_data.dart';
 

@@ -9,17 +9,17 @@ import 'package:dbus/dbus.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/platform/base.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/tray_controller.dart';
-import 'package:namida/controller/window_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/main.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/platform/base.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/tray_controller.dart';
+import 'package:eclogae/controller/window_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/main.dart';
 
 part 'tray_manager_base.dart';
 part 'tray_manager_desktop.dart';

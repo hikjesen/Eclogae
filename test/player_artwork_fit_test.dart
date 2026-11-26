@@ -6,14 +6,14 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/lang.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/miniplayer_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/packages/miniplayer.dart';
-import 'package:namida/ui/widgets/artwork.dart';
+import 'package:eclogae/class/lang.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/miniplayer_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/packages/miniplayer.dart';
+import 'package:eclogae/ui/widgets/artwork.dart';
 
 void main() {
   const imageSizes = [

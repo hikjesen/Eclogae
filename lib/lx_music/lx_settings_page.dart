@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:namida/class/route.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/file_browser.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/platform/namida_storage/namida_storage.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/ui/pages/main_page.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/mascots/mascots.dart';
-import 'package:namida/ui/widgets/settings_card.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/file_browser.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/platform/namida_storage/namida_storage.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/ui/pages/main_page.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/mascots/mascots.dart';
+import 'package:eclogae/ui/widgets/settings_card.dart';
 
 import 'lx_bridge_service.dart';
 import 'lx_download_manager.dart';

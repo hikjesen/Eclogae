@@ -1,11 +1,11 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/class/video.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/sync_manager/sync_manager.dart';
-import 'package:namida/core/constants.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/sync_manager/sync_manager.dart';
+import 'package:eclogae/core/constants.dart';
 
 void main() {
   final tagged = kDummyExtendedTrack.copyWith(

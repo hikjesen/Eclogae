@@ -6,10 +6,10 @@ import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 import 'package:path/path.dart' as p;
 import 'package:playlist_manager/playlist_manager.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

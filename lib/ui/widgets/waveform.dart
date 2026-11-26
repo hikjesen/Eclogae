@@ -6,16 +6,16 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/miniplayer_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/waveform_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/jellyfish.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/miniplayer_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/waveform_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/jellyfish.dart';
 
 class WaveformComponent extends StatefulWidget {
   final int durationInMilliseconds;

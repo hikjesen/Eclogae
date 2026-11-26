@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/base/tracks_search_wrapper.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/base/tracks_search_wrapper.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/utils.dart';
 
 class SearchBoxManager {
   RxBaseCore<bool> get searchBoxVisible => _searchBoxVisible;

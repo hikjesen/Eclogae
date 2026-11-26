@@ -3,10 +3,10 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/controller/text_suggestions_provider.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/controller/text_suggestions_provider.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 /// Wraps a text field with a suggestions dropdown, values are fetched & filtered only while focused.
 class TextFieldSuggestionsDropdown extends StatefulWidget {

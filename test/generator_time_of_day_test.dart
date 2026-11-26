@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/base/generator_base.dart';
+import 'package:eclogae/base/generator_base.dart';
 
 void main() {
   /// local clock times on different days, so each one is a separate listen.

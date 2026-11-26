@@ -6,20 +6,20 @@ import 'package:history_manager/history_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:paged_vertical_calendar/paged_vertical_calendar.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/time_ago_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/themes.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/time_ago_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/themes.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 void showTrackListensDialog(Track track, {List<int> datesOfListen = const [], Color? colorScheme}) {
   final ogYearDate = track.yearAsDateTime()?.dateFormattedOriginal;

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/core/sort_key.dart';
+import 'package:eclogae/core/sort_key.dart';
 
 void main() {
   SortKeyPrefixIgnorer create(List<String> prefixes, {bool ignoreSymbols = true}) => SortKeyPrefixIgnorer(prefixes, ignoreSymbols: ignoreSymbols, normalize: SortKey.of);

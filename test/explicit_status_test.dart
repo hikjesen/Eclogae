@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/media_info.dart';
-import 'package:namida/class/taglib_res.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/namida_converter_ext.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/media_info.dart';
+import 'package:eclogae/class/taglib_res.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
 
 void main() {
   test('tag values', () {

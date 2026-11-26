@@ -5,8 +5,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 class NamidaReorderableActiveItemsList<E extends Enum> extends StatefulWidget {
   static const kLockedOpacity = 0.5;

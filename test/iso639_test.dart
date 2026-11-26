@@ -1,7 +1,7 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/core/iso639.dart';
+import 'package:eclogae/core/iso639.dart';
 
 void main() {
   group('resolve', () {

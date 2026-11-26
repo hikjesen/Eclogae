@@ -1,12 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/main.dart';
-import 'package:namida/ui/widgets/artwork.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/main.dart';
+import 'package:eclogae/ui/widgets/artwork.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 class NamidaInnerDrawer extends StatefulWidget {
   final Widget drawerChild;

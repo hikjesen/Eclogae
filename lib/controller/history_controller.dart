@@ -7,15 +7,15 @@ import 'package:flutter/widgets.dart';
 
 import 'package:history_manager/history_manager.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/library/track_tile.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/library/track_tile.dart';
 
 class HistoryController with HistoryManager<TrackWithDate, Track> {
   static HistoryController get inst => _instance;

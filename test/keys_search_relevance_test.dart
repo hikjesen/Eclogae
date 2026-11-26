@@ -1,7 +1,7 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/base/tracks_search_wrapper.dart';
+import 'package:eclogae/base/tracks_search_wrapper.dart';
 
 void main() {
   final albums = [

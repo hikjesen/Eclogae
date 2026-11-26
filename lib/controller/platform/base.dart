@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:namida/class/file_parts.dart';
+import 'package:eclogae/class/file_parts.dart';
 
 class NamidaPlatformBuilder {
   static T init<T>({

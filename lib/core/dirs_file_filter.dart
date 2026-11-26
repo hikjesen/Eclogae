@@ -5,13 +5,13 @@ import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 
-import 'package:namida/class/folder.dart';
-import 'package:namida/class/search_matcher.dart';
-import 'package:namida/controller/directory_index.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/folder.dart';
+import 'package:eclogae/class/search_matcher.dart';
+import 'package:eclogae/controller/directory_index.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
 
 part 'dirs_file_filter.windows.dart';
 

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/utils.dart';
 
 class AppThemes {
   static AppThemes get inst => _instance;

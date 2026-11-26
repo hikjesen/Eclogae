@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dart_extensions/dart_extensions.dart';
 
-import 'package:namida/controller/romanizer/romanizer_engine.dart';
+import 'package:eclogae/controller/romanizer/romanizer_engine.dart';
 
 /// Lower case key that ignores diacritics & orders digit runs by value, comparable using [String.compareTo].
 ///

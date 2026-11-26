@@ -7,7 +7,7 @@
   android:targetCellHeight="2"
   android:label="@string/widget_label"
   android:description="@string/widget_description"
-  android:configure="com.msob7y.namida.glance.SchwarzConfigActivity"
+  android:configure="com.wander.eclogae.glance.SchwarzConfigActivity"
   android:widgetCategory="home_screen"
   android:widgetFeatures="reconfigurable|configuration_optional"
   android:initialLayout="@layout/mk2_initial"

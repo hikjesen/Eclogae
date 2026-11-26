@@ -1,4 +1,4 @@
-import 'package:namida/class/track.dart';
+import 'package:eclogae/class/track.dart';
 
 enum LxPlatform {
   kw('酷我'),

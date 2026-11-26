@@ -6,11 +6,11 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:namida_party_relay/namida_party_relay.dart';
 
-import 'package:namida/controller/party/party_connection.dart';
-import 'package:namida/controller/party/party_controller.dart';
-import 'package:namida/controller/party/party_host.dart';
-import 'package:namida/controller/party/party_protocol.dart';
-import 'package:namida/controller/party/party_state.dart';
+import 'package:eclogae/controller/party/party_connection.dart';
+import 'package:eclogae/controller/party/party_controller.dart';
+import 'package:eclogae/controller/party/party_host.dart';
+import 'package:eclogae/controller/party/party_protocol.dart';
+import 'package:eclogae/controller/party/party_state.dart';
 
 /// the wiring [PartyController] does, without the player & app singletons.
 class _Peer implements PartyConnectionListener, PartyHostDelegate {

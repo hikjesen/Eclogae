@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter_taglib/flutter_taglib.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/taglib_res.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/taglib_res.dart';
 
 void main() {
   const artistId1 = '11111111-1111-1111-1111-111111111111';

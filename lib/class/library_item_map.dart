@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_rx_value_getter_outside_obx
 import 'dart:collection';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/core/utils.dart';
 
 class LibraryItemMap extends LibraryItemMapRaw<String> {
   LibraryItemMap()

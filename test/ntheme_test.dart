@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/themes.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/themes.dart';
 
 void main() {
   final themeRed = AppThemes.inst.getAppTheme(const Color(0xFFFF0000), true);

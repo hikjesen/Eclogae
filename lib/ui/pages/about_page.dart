@@ -3,48 +3,42 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:basic_audio_handler/basic_audio_handler.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter_mailer/flutter_mailer.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rhttp/rhttp.dart';
 
-import 'package:namida/class/eggs_data.dart';
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/http_response_wrapper.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/class/version_wrapper.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/network_proxy_controller.dart';
-import 'package:namida/controller/platform/base.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/shortcuts_controller.dart';
-import 'package:namida/controller/time_ago_controller.dart';
-import 'package:namida/controller/version_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/themes.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/main.dart';
-import 'package:namida/ui/dialogs/shortcuts_dialog.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/eggs/eggs.dart';
-import 'package:namida/ui/widgets/jellyfish.dart';
-import 'package:namida/ui/widgets/mascots/mascots.dart';
-import 'package:namida/ui/widgets/namida_markdown.dart';
-import 'package:namida/ui/widgets/settings/extra_settings.dart';
-import 'package:namida/ui/widgets/settings_card.dart';
-import 'package:namida/ui/widgets/stats.dart';
+import 'package:eclogae/class/eggs_data.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/http_response_wrapper.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/class/version_wrapper.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/network_proxy_controller.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/shortcuts_controller.dart';
+import 'package:eclogae/controller/time_ago_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/themes.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/main.dart';
+import 'package:eclogae/ui/dialogs/shortcuts_dialog.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/eggs/eggs.dart';
+import 'package:eclogae/ui/widgets/jellyfish.dart';
+import 'package:eclogae/ui/widgets/mascots/mascots.dart';
+import 'package:eclogae/ui/widgets/settings/extra_settings.dart';
+import 'package:eclogae/ui/widgets/settings_card.dart';
+import 'package:eclogae/ui/widgets/stats.dart';
 
 class AboutPage extends StatefulWidget with NamidaRouteWidget {
   @override
@@ -65,21 +59,27 @@ class AboutPage extends StatefulWidget with NamidaRouteWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-  late final _loadingChangelog = false.obso;
   final _scrollOffset = ValueNotifier<double>(0.0);
 
   @override
-  void initState() {
-    super.initState();
-
-    VersionController.inst.ensureInitialized();
-  }
-
-  @override
   void dispose() {
-    _loadingChangelog.close();
     _scrollOffset.dispose();
     super.dispose();
+  }
+
+  static Future<void> _exportLogs() async {
+    final outputDirectory = FileParts.joinPath(AppDirs.INTERNAL_STORAGE, 'Logs');
+    if (!await requestManageStoragePermission(directoryToCreate: outputDirectory)) return;
+
+    final zipPaths = await AppPaths.getAllExistingLogsAndSettingsAsZip(outputDirectory: outputDirectory);
+    final zipPath = zipPaths.first;
+    if (NamidaChannel.inst.canOpenFileInExplorer) NamidaChannel.inst.openFileInExplorer(zipPath);
+
+    snackyy(
+      icon: Broken.clipboard_text,
+      message: '${lang.savedIn}: ${zipPath.toDisplayPath()}',
+      displayDuration: SnackDisplayDuration.tutorial,
+    );
   }
 
   String _getDateDifferenceText() {
@@ -97,16 +97,6 @@ class _AboutPageState extends State<AboutPage> {
     final buildDateDiff = _getDateDifferenceText();
     final currentVersion = VersionWrapper.current;
     final currentVersionText = currentVersion?.prettyVersion ?? '';
-    final isBeta = currentVersion?.isBeta ?? false;
-
-    final fallbackAvatar = SizedBox(
-      width: 48.0,
-      height: 48.0,
-      child: Icon(
-        Broken.user,
-        color: Colors.white.withOpacityExt(0.8),
-      ),
-    );
 
     final double horizontalMargin = Dimensions.inst.getSettingsHorizontalMargin(context);
     final mascot = NamidaMascots.active;
@@ -142,351 +132,135 @@ class _AboutPageState extends State<AboutPage> {
       NamidaMascot.namiween => NamiweenScene.show,
       null => null,
     };
-    final aboutPage = ObxO(
-      rx: VersionController.inst.latestVersion,
-      builder: (context, latestVersion) => SuperSmoothListView(
-        padding: kBottomPaddingInsets.add(EdgeInsets.symmetric(horizontal: horizontalMargin)),
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.topCenter,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: topPadding),
-                  NContainer(
-                    margin: const EdgeInsets.symmetric(horizontal: 24.0),
-                    decoration: (colors) => BoxDecoration(
-                      color: colors.card.withOpacityExt(0.6),
-                      borderRadius: BorderRadius.circular(20.0.multipliedRadius),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(height: topPadding + textTopPadding),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: NamidaAboutListTile(
-                            trailing: const Icon(Broken.code_circle),
-                            leading: Container(
-                              clipBehavior: Clip.antiAlias,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color.fromRGBO(25, 25, 25, 0.8),
-                              ),
-                              child: _CachedAvatar(
-                                asset: _AboutAsset.developerAvatar,
-                                size: 48.0,
-                                fallback: fallbackAvatar,
-                              ),
-                            ),
-                            title: lang.developer,
-                            subtitle: 'MSOB7YY',
-                            link: 'https://github.com/MSOB7YY',
-                          ),
+    final aboutPage = SuperSmoothListView(
+      padding: kBottomPaddingInsets.add(EdgeInsets.symmetric(horizontal: horizontalMargin)),
+      children: [
+        Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.topCenter,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: topPadding),
+                NContainer(
+                  margin: const EdgeInsets.symmetric(horizontal: 24.0),
+                  decoration: (colors) => BoxDecoration(
+                    color: colors.card.withOpacityExt(0.6),
+                    borderRadius: BorderRadius.circular(20.0.multipliedRadius),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(height: topPadding + textTopPadding),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: NamidaAboutListTile(
+                          leading: const Icon(Broken.code_circle),
+                          title: lang.developer,
+                          subtitle: 'Hiko & Wan',
+                          link: null,
                         ),
-                      ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              top: 0,
+              child: Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.all(4.0),
+                    width: imageSize,
+                    height: imageSize,
+                    clipBehavior: Clip.none,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromRGBO(25, 25, 25, 0.1),
+                    ),
+                    child: _KuruKuruActivator(
+                      child: GestureDetector(
+                        onLongPress: showFullScene,
+                        child: Image.asset(
+                          enabledIcon.assetPath,
+                        ),
+                      ),
                     ),
                   ),
+                  const SizedBox(height: 4.0),
+                  const NamidaText(
+                    'Eclogae',
+                    style: NText.large,
+                  ),
+                  if (currentVersionText != '')
+                    NamidaText(
+                      currentVersionText,
+                      style: NText.small,
+                    ),
+                  if (buildDateDiff != '')
+                    NamidaText(
+                      buildDateDiff,
+                      style: NText.small,
+                    ),
                 ],
               ),
-              Positioned(
-                top: 0,
-                child: Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(4.0),
-                      width: imageSize,
-                      height: imageSize,
-                      clipBehavior: Clip.none,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromRGBO(25, 25, 25, 0.1),
-                      ),
-                      child: _KuruKuruActivator(
-                        child: GestureDetector(
-                          onLongPress: showFullScene,
-                          child: Image.asset(
-                            enabledIcon.assetPath,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 4.0),
-                    const NamidaText(
-                      "Namida",
-                      style: NText.large,
-                    ),
-                    if (currentVersionText != '')
-                      latestVersion?.isUpdate() ?? false
-                          ? Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                NamidaText(
-                                  currentVersionText,
-                                  style: NText.small,
-                                ),
-                                const SizedBox(width: 4.0),
-                                const Icon(
-                                  Broken.arrow_up_1,
-                                  size: 8.0,
-                                ),
-                              ],
-                            )
-                          : NamidaText(
-                              currentVersionText,
-                              style: NText.small,
-                            ),
-                    if (buildDateDiff != '')
-                      NamidaText(
-                        buildDateDiff,
-                        style: NText.small,
-                      ),
-                  ],
+            ),
+          ],
+        ),
+        const StatsSection(showViewAll: true),
+        const EggsSection(),
+        SettingsCard(
+          title: lang.others,
+          icon: Broken.record_circle,
+          subtitle: null,
+          child: Column(
+            children: [
+              if (ShortcutsController.instance != null)
+                NamidaAboutListTile(
+                  icon: Broken.flash_1,
+                  title: lang.shortcuts,
+                  onTap: () => AboutPage.showShortcutsDialog(context),
                 ),
+              NamidaAboutListTile(
+                icon: Broken.archive_book,
+                title: lang.license,
+                subtitle: lang.licenseSubtitle,
+                onTap: () {
+                  showLicensePage(
+                    context: context,
+                    useRootNavigator: true,
+                    applicationName: 'Eclogae',
+                    applicationVersion: currentVersionText,
+                  );
+                },
+              ),
+              NamidaAboutListTile(
+                icon: Broken.cpu,
+                title: lang.appVersion,
+                subtitle: currentVersionText,
+                link: null,
+              ),
+              NamidaAboutListTile(
+                icon: Broken.clipboard_text,
+                title: lang.shareLogs,
+                trailing: NamidaIconButton(
+                  iconColor: NColors.defaultIcon(),
+                  icon: Broken.export,
+                  tooltip: () => lang.save,
+                  onPressed: _exportLogs,
+                ),
+                onTap: () async {
+                  final filePaths = await AppPaths.getAllExistingLogsAndSettingsAsZip();
+                  NamidaUtils.shareFiles(filePaths);
+                },
               ),
             ],
           ),
-          SettingsCard(
-            icon: Broken.link_circle,
-            title: lang.socials,
-            subtitle: lang.socialsSubtitle,
-            child: Column(
-              children: [
-                const NamidaAboutListTile(
-                  icon: Broken.send_2,
-                  title: 'Telegram',
-                  link: 'https://t.me/namida_official',
-                ),
-                NamidaAboutListTile(
-                  leading: NBuilder(
-                    builder: (context, colors) => Image.asset(
-                      'assets/icons/discord.png',
-                      color: NColors.defaultIcon().resolve(colors),
-                      height: 24.0,
-                    ),
-                  ),
-                  title: 'Discord',
-                  link: 'https://discord.gg/WeY7DTVChT',
-                ),
-              ],
-            ),
-          ),
-          const StatsSection(showViewAll: true),
-          const EggsSection(),
-          SettingsCard(
-            icon: Broken.hierarchy,
-            title: lang.development,
-            subtitle: null,
-            child: Column(
-              children: [
-                NamidaAboutListTile(
-                  icon: Broken.message_question,
-                  title: lang.guide,
-                  subtitle: lang.learnMore,
-                  link: AppDocsLinks.BASE.link,
-                ),
-                NamidaAboutListTile(
-                  icon: Broken.message_programming,
-                  title: 'GitHub',
-                  subtitle: lang.seeProjectCodeOnSite(site: 'Github'),
-                  link: AppSocial.GITHUB,
-                ),
-                NamidaAboutListTile(
-                  // icon: Broken.bezier,
-                  icon: Broken.command_square,
-                  title: '${lang.issues}/${lang.features}',
-                  subtitle: lang.suggestionSubtitle(site: 'Github'),
-                  link: AppSocial.GITHUB_ISSUES,
-                ),
-                ObxO(
-                  rx: _loadingChangelog,
-                  builder: (context, isLoading) => NamidaAboutListTile(
-                    icon: Broken.activity,
-                    title: lang.changelog,
-                    subtitle: lang.changelogSubtitle,
-                    trailing: isLoading ? const LoadingIndicator() : null,
-                    onTap: () async {
-                      _loadingChangelog.value = true;
-                      final NamidaMarkdownDocument document;
-                      try {
-                        final proxySettings = NetworkProxyController.inst.rhttpSettings;
-                        final response = await NamidaHttp.get(
-                          'https://raw.githubusercontent.com/namidaco/namida/main/CHANGELOG.md',
-                          settings: proxySettings,
-                        );
-                        document = await NamidaMarkdownDocument.parseAsync(response.body);
-                      } finally {
-                        _loadingChangelog.value = false;
-                      }
-                      NamidaNavigator.inst.showSheet(
-                        showDragHandle: true,
-                        isScrollControlled: true,
-                        heightPercentage: 0.6,
-                        builder: (context, bottomPadding, maxWidth, maxHeight) => NamidaMarkdown.document(
-                          document: document,
-                          selectable: true,
-                          scrollable: true,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                NamidaAboutListTile(
-                  icon: Broken.language_circle,
-                  title: lang.addLanguage,
-                  subtitle: lang.addLanguageSubtitle,
-                  link: AppSocial.TRANSLATION_REPO,
-                ),
-              ],
-            ),
-          ),
-          SettingsCard(
-            icon: Broken.heart_circle,
-            title: lang.donate,
-            subtitle: lang.donateSubtitle,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () => NamidaLinkUtils.openLink(AppSocial.DONATE_KOFI),
-                      child: CustomAnimatedSwitcher(
-                        duration: const Duration(milliseconds: kThemeAnimationDurationMS),
-                        child: context.isDarkMode
-                            ? Image.asset(
-                                'assets/logos/donate_kofi_dark.png',
-                                height: 48.0,
-                                key: const Key('donate_kofi_dark'),
-                              )
-                            : Image.asset(
-                                'assets/logos/donate_kofi_light.png',
-                                height: 48.0,
-                                key: const Key('donate_kofi_light'),
-                              ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8.0),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () => NamidaLinkUtils.openLink(AppSocial.DONATE_BUY_ME_A_COFFEE),
-                      child: Image.asset(
-                        'assets/logos/donate_bmc.webp',
-                        height: 48.0,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SettingsCard(
-            title: lang.others,
-            icon: Broken.record_circle,
-            subtitle: null,
-            child: Column(
-              children: [
-                if (ShortcutsController.instance != null)
-                  NamidaAboutListTile(
-                    icon: Broken.flash_1,
-                    title: lang.shortcuts,
-                    onTap: () => AboutPage.showShortcutsDialog(context),
-                  ),
-                NamidaAboutListTile(
-                  icon: Broken.archive_book,
-                  title: lang.license,
-                  subtitle: lang.licenseSubtitle,
-                  onTap: () {
-                    showLicensePage(
-                      context: context,
-                      useRootNavigator: true,
-                      applicationVersion: currentVersionText,
-                    );
-                  },
-                ),
-                NamidaAboutListTile(
-                  icon: Broken.cpu,
-                  title: lang.appVersion,
-                  subtitle: currentVersionText,
-                  link: isBeta ? AppSocial.GITHUB_RELEASES_BETA : AppSocial.GITHUB_RELEASES,
-                  trailing: NamidaInkWell(
-                    borderRadius: 8.0,
-                    bgColor: NColors.card,
-                    padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 3.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: latestVersion == null
-                          ? [
-                              const NamidaText(
-                                '?',
-                                style: NText.small,
-                              ),
-                            ]
-                          : latestVersion.isUpdate() ?? false
-                          ? [
-                              NamidaText(
-                                latestVersion.prettyVersion,
-                                style: NText.small,
-                              ),
-                              const SizedBox(width: 4.0),
-                              const Icon(
-                                Broken.arrow_up_1,
-                                size: 14.0,
-                              ),
-                            ]
-                          : [
-                              const Icon(
-                                Broken.tick_circle,
-                                size: 14.0,
-                              ),
-                            ],
-                    ),
-                  ),
-                ),
-                NamidaAboutListTile(
-                  icon: Broken.clipboard_text,
-                  title: lang.shareLogs,
-                  trailing: NamidaIconButton(
-                    iconColor: NColors.defaultIcon(),
-                    icon: Broken.direct_send,
-                    tooltip: () => AppSocial.EMAIL,
-                    onPressed: () async {
-                      final attachments = await AppPaths.getAllExistingLogsAndSettingsAsZip();
-                      try {
-                        final mailOptions = MailOptions(
-                          body: 'pls look at this report im beggin u pls solve my issue pls i wa-',
-                          subject: 'Namida Logs Report',
-                          recipients: [AppSocial.EMAIL],
-                          attachments: attachments,
-                        );
-                        await FlutterMailer.send(mailOptions);
-                      } on MissingPluginException catch (_) {
-                        NamidaUtils.shareFiles(attachments);
-                      } on PlatformException catch (_) {
-                        NamidaUtils.shareFiles(attachments);
-                      }
-                    },
-                  ),
-                  onTap: () async {
-                    final filePaths = await AppPaths.getAllExistingLogsAndSettingsAsZip();
-                    NamidaUtils.shareFiles(filePaths);
-                  },
-                ),
-                NamidaAboutListTile(
-                  icon: Broken.message_question,
-                  title: lang.reportAnIssue,
-                  onTap: () => NamidaNavigator.inst.navigateDialog(dialog: const _ReportIssueDialog()),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
     final themedAboutPage = _AppIconTheme(
       icon: enabledIcon,
@@ -545,171 +319,16 @@ class NamidaAboutListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final link = this.link;
     return CustomListTile(
       leading: leading,
       icon: icon,
       title: title,
       subtitle: subtitle,
       trailing: trailing,
-      onTap:
-          onTap ??
-          () {
-            if (link != null) {
-              NamidaLinkUtils.openLink(link!);
-            }
-          },
+      onTap: onTap ?? (link == null ? null : () => NamidaLinkUtils.openLink(link)),
     );
   }
-}
-
-class _ReportIssueDialog extends StatelessWidget {
-  const _ReportIssueDialog();
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomBlurryDialog(
-      icon: Broken.message_question,
-      title: lang.reportAnIssue,
-      normalTitleStyle: true,
-      actions: const [
-        CancelButton(),
-      ],
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ..._IssueTemplate.values.map(
-            (template) => CustomListTile(
-              icon: template.toIcon(),
-              title: template.toText(),
-              onTap: () {
-                NamidaNavigator.inst.closeDialog();
-                _IssueReporter.open(template);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _IssueReporter {
-  static final _exportedLogsDirectory = FileParts.joinPath(AppDirs.INTERNAL_STORAGE, 'Logs');
-
-  static Future<void> open(_IssueTemplate template) async {
-    final query = {
-      'template': template.fileName,
-      if (template.includeEnvironment) ..._environmentFields(),
-    };
-
-    if (template.attachLogs) {
-      final unrevealedZipPath = await _prepareLogsZipAndGetUnrevealedPath();
-      if (unrevealedZipPath != null) query['logs'] = '📦 attach $unrevealedZipPath';
-    }
-
-    final newIssueUri = Uri.parse('${AppSocial.GITHUB_ISSUES}/new');
-    final url = newIssueUri.replace(queryParameters: query).toString();
-    await NamidaLinkUtils.openLink(url);
-  }
-
-  static Map<String, String> _environmentFields() {
-    final platformName = NamidaPlatformBuilder.init(
-      android: () => 'Android',
-      windows: () => 'Windows',
-      linux: () => 'Linux',
-      ios: () => 'iOS',
-      macos: () => 'macOS',
-    );
-    final fields = <String, String>{
-      'platforms': platformName,
-    };
-
-    final package = NamidaDeviceInfo.packageInfo;
-    if (package != null) {
-      final needsBuildNumber = package.buildNumber.isNotEmpty && !package.version.contains('+');
-      fields['version'] = needsBuildNumber ? '${package.version}+${package.buildNumber}' : package.version;
-    }
-
-    switch (NamidaDeviceInfo.deviceInfo) {
-      case AndroidDeviceInfo info:
-        fields['os'] = 'Android ${info.version.release} (SDK ${info.version.sdkInt})';
-        fields['device'] = '${info.manufacturer} ${info.model}';
-
-      case WindowsDeviceInfo info:
-        final isWindows11 = info.buildNumber >= 22000;
-        var productName = info.productName;
-        if (isWindows11) productName = productName.replaceFirst('Windows 10', 'Windows 11');
-        final memoryGB = info.systemMemoryInMegabytes ~/ 1024;
-        fields['os'] = '$productName ${info.displayVersion} (build ${info.buildNumber})';
-        fields['device'] = '${info.numberOfCores} cores, $memoryGB GB RAM';
-
-      case LinuxDeviceInfo info:
-        final env = Platform.environment;
-        final desktopName = env['XDG_CURRENT_DESKTOP'];
-        final sessionType = env['XDG_SESSION_TYPE'];
-        final sessionInfo = [?desktopName, ?sessionType].join(', ');
-        fields['os'] = sessionInfo.isEmpty ? info.prettyName : '${info.prettyName} ($sessionInfo)';
-
-        if (env.containsKey('FLATPAK_ID')) {
-          fields['source'] = 'Flatpak';
-        } else if (env.containsKey('APPIMAGE')) {
-          fields['source'] = 'AppImage';
-        }
-    }
-
-    return fields;
-  }
-
-  static Future<String?> _prepareLogsZipAndGetUnrevealedPath() async {
-    final canReveal = NamidaChannel.inst.canOpenFileInExplorer;
-    final canRevealTemporaryFile = canReveal && NamidaFeaturesVisibility.temporaryFilesVisibleInFileExplorer;
-    final outputDirectory = canRevealTemporaryFile ? null : _exportedLogsDirectory;
-
-    if (outputDirectory != null) {
-      final granted = await requestManageStoragePermission(directoryToCreate: outputDirectory);
-      if (!granted) return null;
-    }
-
-    final zipPaths = await AppPaths.getAllExistingLogsAndSettingsAsZip(outputDirectory: outputDirectory);
-    final zipPath = zipPaths.first;
-    if (canReveal) NamidaChannel.inst.openFileInExplorer(zipPath);
-
-    snackyy(
-      icon: Broken.clipboard_text,
-      message: '${lang.savedIn}: ${zipPath.toDisplayPath()}',
-      displayDuration: SnackDisplayDuration.tutorial,
-    );
-
-    return canReveal ? null : zipPath;
-  }
-}
-
-enum _IssueTemplate {
-  bug('bug-report.yml', includeEnvironment: true, attachLogs: true),
-  youtube('youtube.yml', includeEnvironment: true, attachLogs: true),
-  feature('feature_request.yml', includeEnvironment: false, attachLogs: false),
-  question('question.yml', includeEnvironment: true, attachLogs: false),
-  ;
-
-  final String fileName;
-  final bool includeEnvironment;
-  final bool attachLogs;
-
-  const _IssueTemplate(this.fileName, {required this.includeEnvironment, required this.attachLogs});
-
-  String toText() => switch (this) {
-    _IssueTemplate.bug => lang.bugReport,
-    _IssueTemplate.youtube => lang.youtube,
-    _IssueTemplate.feature => lang.featureRequest,
-    _IssueTemplate.question => lang.question,
-  };
-
-  IconData toIcon() => switch (this) {
-    _IssueTemplate.bug => Broken.danger,
-    _IssueTemplate.youtube => Broken.video_square,
-    _IssueTemplate.feature => Broken.lamp_charge,
-    _IssueTemplate.question => Broken.message_question,
-  };
 }
 
 /// Themes [child] after the colors of an app icon, so a page matches the icon the user picked.
@@ -1032,53 +651,12 @@ class _AmbienceVoice {
   }
 }
 
-class _CachedAvatar extends StatefulWidget {
-  final _AboutAsset asset;
-  final double size;
-  final Widget fallback;
-
-  const _CachedAvatar({required this.asset, required this.size, required this.fallback});
-
-  @override
-  State<_CachedAvatar> createState() => _CachedAvatarState();
-}
-
-class _CachedAvatarState extends State<_CachedAvatar> {
-  File? _file;
-
-  @override
-  void initState() {
-    super.initState();
-    final file = widget.asset.file;
-    if (file.existsSync()) {
-      _file = file;
-    } else {
-      widget.asset.resolve().then((file) {
-        if (file != null && mounted) setState(() => _file = file);
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final file = _file;
-    if (file == null) return widget.fallback;
-    return Image.file(
-      file,
-      width: widget.size,
-      height: widget.size,
-      errorBuilder: (context, error, stackTrace) => widget.fallback,
-    );
-  }
-}
-
 class _AboutAsset {
   final String url;
   final String filename;
 
   const _AboutAsset(this.url, this.filename);
 
-  static const developerAvatar = _AboutAsset('https://avatars.githubusercontent.com/u/85245079?s=144', 'developer_avatar');
   static const kuruKuru = _AboutAsset('https://www.myinstants.com/media/sounds/kurukuru.mp3', 'kurukuru.mp3');
   static const kururin = _AboutAsset('https://www.myinstants.com/media/sounds/kururinnn.mp3', 'kururinnn.mp3');
   static const kuruKuruLong = _AboutAsset('https://www.myinstants.com/media/sounds/kuru-kuru.mp3', 'kuru-kuru.mp3');
@@ -1103,7 +681,7 @@ class _AboutAsset {
       final response = await NamidaHttp.getBytes(
         url,
         settings: proxySettings,
-        headers: const HttpHeaders.rawMap({'User-Agent': 'Namida'}),
+        headers: const HttpHeaders.rawMap({'User-Agent': 'Eclogae'}),
       );
       final bytes = response.body;
       if (bytes.isEmpty) return null;

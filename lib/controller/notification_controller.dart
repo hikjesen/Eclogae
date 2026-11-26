@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:namida/controller/json_to_history_parser.dart';
-import 'package:namida/controller/platform/base.dart';
-import 'package:namida/controller/platform/permission_manager/permission_manager.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/youtube/class/download_task_base.dart';
+import 'package:eclogae/controller/json_to_history_parser.dart';
+import 'package:eclogae/controller/platform/base.dart';
+import 'package:eclogae/controller/platform/permission_manager/permission_manager.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/youtube/class/download_task_base.dart';
 
 class NotificationManager {
   static final instance = NotificationManager._platform();

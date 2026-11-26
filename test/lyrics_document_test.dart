@@ -5,10 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lrc/lrc.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:namida/class/lyrics.dart';
-import 'package:namida/controller/lyrics_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/ui/pages/lyrics_editor_page.dart';
+import 'package:eclogae/class/lyrics.dart';
+import 'package:eclogae/controller/lyrics_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/ui/pages/lyrics_editor_page.dart';
 
 void main() {
   group('untimed lines and tags', () {

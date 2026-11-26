@@ -6,14 +6,14 @@ import 'package:flutter/foundation.dart';
 import 'package:lrc/lrc.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/lyrics_search_utils/lrc_search_details.dart';
-import 'package:namida/controller/lyrics_search_utils/lrc_search_utils_selectable.dart';
-import 'package:namida/controller/lyrics_search_utils/lrc_search_utils_youtubeid.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/lyrics_search_utils/lrc_search_details.dart';
+import 'package:eclogae/controller/lyrics_search_utils/lrc_search_utils_selectable.dart';
+import 'package:eclogae/controller/lyrics_search_utils/lrc_search_utils_youtubeid.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 abstract class LrcSearchUtils {
   const LrcSearchUtils();

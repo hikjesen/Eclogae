@@ -6,20 +6,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:namida/class/color_m.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/effects/effects.dart';
-import 'package:namida/ui/widgets/floating_image.dart';
-import 'package:namida/ui/widgets/jellyfish.dart';
+import 'package:eclogae/class/color_m.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/effects/effects.dart';
+import 'package:eclogae/ui/widgets/floating_image.dart';
+import 'package:eclogae/ui/widgets/jellyfish.dart';
 
 part 'mascots.namiween.dart';
 

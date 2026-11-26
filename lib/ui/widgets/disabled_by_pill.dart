@@ -1,9 +1,9 @@
 // by claude
 import 'package:flutter/material.dart';
 
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
 
 /// marks a greyed out option with what turned it off.
 class DisabledByPill extends StatelessWidget {

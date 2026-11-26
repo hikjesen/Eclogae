@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/ui/dialogs/common_dialogs.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/network_artwork.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/ui/dialogs/common_dialogs.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/network_artwork.dart';
 
 class ArtistTile extends StatelessWidget {
   final String name;

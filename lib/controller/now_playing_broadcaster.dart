@@ -10,17 +10,17 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart' show mapEquals, visibleForTesting;
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:namida/class/progress_span.dart';
-import 'package:namida/controller/directory_index.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/music_web_server/music_web_server_base.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/class/progress_span.dart';
+import 'package:eclogae/controller/directory_index.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/music_web_server/music_web_server_base.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
 
 part 'now_playing_broadcaster.discord.dart';
 part 'now_playing_broadcaster.discord_gateway.dart';

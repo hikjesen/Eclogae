@@ -2,18 +2,18 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/split_config.dart';
-import 'package:namida/class/taglib_res.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/class/video.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/platform/tags_extractor/tags_extractor.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/split_config.dart';
+import 'package:eclogae/class/taglib_res.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/platform/tags_extractor/tags_extractor.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class NamidaTaggerController {
   static final NamidaTaggerController inst = NamidaTaggerController._internal();

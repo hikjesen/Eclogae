@@ -4,43 +4,41 @@ import 'package:flutter/material.dart';
 
 import 'package:youtipie/class/youtipie_feed/playlist_basic_info.dart';
 
-import 'package:namida/base/queue_search.dart';
-import 'package:namida/base/setting_subpage_provider.dart';
-import 'package:namida/class/queue_scroll_follower.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/lyrics_controller.dart';
-import 'package:namida/controller/miniplayer_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/party/party_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/packages/miniplayer_base.dart';
-import 'package:namida/packages/scroll_physics_modified.dart';
-import 'package:namida/ui/dialogs/add_to_playlist_dialog.dart';
-import 'package:namida/ui/dialogs/general_popup_dialog.dart';
-import 'package:namida/ui/dialogs/set_lrc_dialog.dart';
-import 'package:namida/ui/pages/party_page.dart';
-import 'package:namida/ui/pages/settings_page.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/settings/playback_settings.dart';
-import 'package:namida/ui/widgets/settings/youtube_settings.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
-import 'package:namida/youtube/controller/yt_generators_controller.dart';
-import 'package:namida/youtube/controller/yt_miniplayer_ui_controller.dart';
-import 'package:namida/youtube/functions/add_to_playlist_sheet.dart';
-import 'package:namida/youtube/pages/yt_playlist_download_subpage.dart';
-import 'package:namida/youtube/widgets/yt_history_video_card.dart';
+import 'package:eclogae/base/queue_search.dart';
+import 'package:eclogae/base/setting_subpage_provider.dart';
+import 'package:eclogae/class/queue_scroll_follower.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/lyrics_controller.dart';
+import 'package:eclogae/controller/miniplayer_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/packages/miniplayer_base.dart';
+import 'package:eclogae/packages/scroll_physics_modified.dart';
+import 'package:eclogae/ui/dialogs/add_to_playlist_dialog.dart';
+import 'package:eclogae/ui/dialogs/general_popup_dialog.dart';
+import 'package:eclogae/ui/dialogs/set_lrc_dialog.dart';
+import 'package:eclogae/ui/pages/settings_page.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/settings/playback_settings.dart';
+import 'package:eclogae/ui/widgets/settings/youtube_settings.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/youtube/controller/yt_generators_controller.dart';
+import 'package:eclogae/youtube/controller/yt_miniplayer_ui_controller.dart';
+import 'package:eclogae/youtube/functions/add_to_playlist_sheet.dart';
+import 'package:eclogae/youtube/pages/yt_playlist_download_subpage.dart';
+import 'package:eclogae/youtube/widgets/yt_history_video_card.dart';
 
 /// save state after resuming app from pip
 bool _wasOpened = false;
@@ -779,19 +777,6 @@ class QueueChipHeaderRow extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           const SizedBox(width: 6.0),
-                          ObxO(
-                            rx: PartyController.inst.isActive,
-                            builder: (context, isActive) => isActive
-                                ? Padding(
-                                    padding: const EdgeInsets.only(right: 6.0),
-                                    child: _ActionItem(
-                                      icon: Broken.people,
-                                      tooltip: '${lang.partyListeningParty}: ${PartyController.inst.state.roomName}',
-                                      onTap: const NamidaPartyPage().navigate,
-                                    ),
-                                  )
-                                : const SizedBox(),
-                          ),
                           if (onSearchTap != null) ...[
                             _ActionItem(
                               icon: Broken.filter_search,

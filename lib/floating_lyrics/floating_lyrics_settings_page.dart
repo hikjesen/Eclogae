@@ -2,18 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/ui/dialogs/color_picker_dialog.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/mascots/mascots.dart';
-import 'package:namida/ui/widgets/settings_card.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/ui/dialogs/color_picker_dialog.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/mascots/mascots.dart';
+import 'package:eclogae/ui/widgets/settings_card.dart';
 
 import 'floating_lyrics_controller.dart';
 import 'floating_lyrics_eyedropper_dialog.dart';
@@ -102,7 +102,7 @@ class _FloatingLyricsSettingsPageState extends State<FloatingLyricsSettingsPage>
 
   Widget _buildPermission() => SettingsCard(
     title: '需要悬浮窗权限',
-    subtitle: '允许 Namida 显示在其他应用上层后，即可启用悬浮歌词。',
+    subtitle: '允许 Eclogae 显示在其他应用上层后，即可启用悬浮歌词。',
     icon: Broken.info_circle,
     child: Padding(
       padding: const EdgeInsets.all(8),

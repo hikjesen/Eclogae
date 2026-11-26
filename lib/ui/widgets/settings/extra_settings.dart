@@ -5,44 +5,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_scrollbar_modified/flutter_scrollbar_modified.dart';
 import 'package:modern_titlebar_buttons/modern_titlebar_buttons.dart' as mtb;
 
-import 'package:namida/base/setting_subpage_provider.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/file_browser.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/lyrics_controller.dart';
-import 'package:namida/controller/miniplayer_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/now_playing_broadcaster.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/romanizer/romanizer.dart';
-import 'package:namida/controller/romanizer/romanizer_engine.dart';
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/controller/search_sort_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/sort_key.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/floating_lyrics/floating_lyrics_settings_page.dart';
-import 'package:namida/main.dart';
-import 'package:namida/ui/dialogs/edit_tags_dialog.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/jellyfish.dart';
-import 'package:namida/ui/widgets/lyrics_karaoke_text.dart';
-import 'package:namida/ui/widgets/reorderable_active_items_list.dart';
-import 'package:namida/ui/widgets/settings/effects_tiles.dart';
-import 'package:namida/ui/widgets/settings_card.dart';
-import 'package:namida/youtube/widgets/yt_thumbnail.dart';
+import 'package:eclogae/base/setting_subpage_provider.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/file_browser.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/lyrics_controller.dart';
+import 'package:eclogae/controller/miniplayer_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/now_playing_broadcaster.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/romanizer/romanizer.dart';
+import 'package:eclogae/controller/romanizer/romanizer_engine.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/controller/search_sort_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/sort_key.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/floating_lyrics/floating_lyrics_settings_page.dart';
+import 'package:eclogae/main.dart';
+import 'package:eclogae/ui/dialogs/edit_tags_dialog.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/jellyfish.dart';
+import 'package:eclogae/ui/widgets/lyrics_karaoke_text.dart';
+import 'package:eclogae/ui/widgets/reorderable_active_items_list.dart';
+import 'package:eclogae/ui/widgets/settings/effects_tiles.dart';
+import 'package:eclogae/ui/widgets/settings_card.dart';
+import 'package:eclogae/youtube/widgets/yt_thumbnail.dart';
 
 part 'extra_settings.lyrics_effects.dart';
 
@@ -1071,6 +1071,7 @@ class _DefaultLibraryTabTile extends StatelessWidget {
       onTap: _onAutoTap,
     );
     for (final tab in settings.libraryTabs.value) {
+      if (tab == LibraryTab.party) continue;
       yield NamidaPopupItem(
         icon: tab.toIcon(),
         title: tab.toText(),
@@ -1092,7 +1093,9 @@ class _DefaultLibraryTabTile extends StatelessWidget {
           childrenDefault: _getMenuItems,
           child: Obx(
             (context) {
-              final valueText = settings.extra.autoLibraryTab.valueR ? lang.auto : settings.extra.staticLibraryTab.valueR.toText();
+              final isAuto = settings.extra.autoLibraryTab.valueR;
+              final staticTab = settings.extra.staticLibraryTab.valueR;
+              final valueText = isAuto || staticTab == LibraryTab.party ? lang.auto : staticTab.toText();
               return NamidaText(
                 valueText,
                 style: NText.medium,
@@ -1128,7 +1131,7 @@ class _LibraryTabsTile extends StatelessWidget {
   }
 
   void _showDialog(List<LibraryTab> libraryTabs) {
-    final groupHeads = LibraryTab.values.where((e) => e.isGroupHead).toFixedList();
+    final groupHeads = LibraryTab.values.where((tab) => tab != LibraryTab.party && tab.isGroupHead).toFixedList();
     NamidaNavigator.inst.navigateDialog(
       scale: 1.0,
       dialog: CustomBlurryDialog(
@@ -1157,14 +1160,15 @@ class _LibraryTabsTile extends StatelessWidget {
     return ObxO(
       rx: settings.libraryTabs,
       builder: (context, libraryTabs) {
-        final tabsText = libraryTabs.map((e) => e.toText()).join(', ');
+        final visibleTabs = libraryTabs.where((tab) => tab != LibraryTab.party).toFixedList();
+        final tabsText = visibleTabs.map((tab) => tab.toText()).join(', ');
         return CustomListTile(
           bgColor: bgColor,
           icon: Broken.color_swatch,
           title: lang.libraryTabs,
           subtitle: tabsText,
-          trailingText: "${libraryTabs.length}",
-          onTap: () => _showDialog(libraryTabs),
+          trailingText: "${visibleTabs.length}",
+          onTap: () => _showDialog(visibleTabs),
         );
       },
     );

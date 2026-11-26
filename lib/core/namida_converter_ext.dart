@@ -15,97 +15,96 @@ import 'package:youtipie/core/enum.dart';
 import 'package:youtipie/core/extensions.dart';
 import 'package:youtipie/core/url_utils.dart';
 
-import 'package:namida/base/audio_handler.dart';
-import 'package:namida/class/count_per_row.dart';
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/media_info.dart';
-import 'package:namida/class/queue.dart';
-import 'package:namida/class/queue_insertion.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/audio_output_controller.dart';
-import 'package:namida/controller/back_cover_controller.dart';
-import 'package:namida/controller/bookmarks_controller.dart';
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/edit_delete_controller.dart';
-import 'package:namida/controller/ffmpeg_controller.dart';
-import 'package:namida/controller/folders_controller.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/json_to_history_parser.dart';
-import 'package:namida/controller/music_web_server/music_web_server_base.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/party/party_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/controller/queue_controller.dart';
-import 'package:namida/controller/romanizer/romanizer_engine.dart';
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/controller/search_sort_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/smart_playlists/smart_playlists_controller.dart';
-import 'package:namida/controller/stats_controller.dart';
-import 'package:namida/controller/sync_manager/sync_manager.dart';
-import 'package:namida/controller/thumbnail_manager.dart';
-import 'package:namida/controller/version_controller.dart';
-import 'package:namida/controller/vibrator_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/lx_music/lx_download_manager.dart';
-import 'package:namida/lx_music/lx_music_page.dart';
-import 'package:namida/lx_music/lx_settings_page.dart';
-import 'package:namida/ui/dialogs/add_to_playlist_dialog.dart';
-import 'package:namida/ui/dialogs/common_dialogs.dart';
-import 'package:namida/ui/dialogs/edit_tags_dialog.dart';
-import 'package:namida/ui/dialogs/track_advanced_dialog.dart';
-import 'package:namida/ui/dialogs/track_info_dialog.dart';
-import 'package:namida/ui/dialogs/track_listens_dialog.dart';
-import 'package:namida/ui/dialogs/track_stats_dialog.dart';
-import 'package:namida/ui/pages/albums_page.dart';
-import 'package:namida/ui/pages/artists_map_page.dart';
-import 'package:namida/ui/pages/artists_page.dart';
-import 'package:namida/ui/pages/current_queue_page.dart';
-import 'package:namida/ui/pages/folders_page.dart';
-import 'package:namida/ui/pages/genres_page.dart';
-import 'package:namida/ui/pages/home_page.dart';
-import 'package:namida/ui/pages/languages_page.dart';
-import 'package:namida/ui/pages/main_page.dart';
-import 'package:namida/ui/pages/moods_tags_page.dart';
-import 'package:namida/ui/pages/party_page.dart';
-import 'package:namida/ui/pages/playlists_page.dart';
-import 'package:namida/ui/pages/queues_page.dart';
-import 'package:namida/ui/pages/settings_page.dart';
-import 'package:namida/ui/pages/smart_playlists_page.dart';
-import 'package:namida/ui/pages/subpages/playlist_tracks_subpage.dart';
-import 'package:namida/ui/pages/sync_manager_page.dart';
-import 'package:namida/ui/pages/tracks_page.dart';
-import 'package:namida/ui/widgets/circular_percentages.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/network_artwork.dart';
-import 'package:namida/ui/widgets/settings/extra_settings.dart';
-import 'package:namida/ui/widgets/settings_search_bar.dart';
-import 'package:namida/ui/widgets/stats.dart';
-import 'package:namida/youtube/class/sponsorblock.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_history_controller.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
-import 'package:namida/youtube/controller/youtube_playlist_controller.dart' as ytplc;
-import 'package:namida/youtube/functions/add_to_playlist_sheet.dart';
-import 'package:namida/youtube/functions/download_sheet.dart';
-import 'package:namida/youtube/functions/video_listens_dialog.dart';
-import 'package:namida/youtube/pages/youtube_home_view.dart';
-import 'package:namida/youtube/pages/yt_channel_subpage.dart';
-import 'package:namida/youtube/pages/yt_playlist_download_subpage.dart';
-import 'package:namida/youtube/widgets/video_info_dialog.dart';
-import 'package:namida/youtube/widgets/yt_thumbnail.dart';
-import 'package:namida/youtube/yt_utils.dart';
+import 'package:eclogae/base/audio_handler.dart';
+import 'package:eclogae/class/count_per_row.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/media_info.dart';
+import 'package:eclogae/class/queue.dart';
+import 'package:eclogae/class/queue_insertion.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/audio_output_controller.dart';
+import 'package:eclogae/controller/back_cover_controller.dart';
+import 'package:eclogae/controller/bookmarks_controller.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/edit_delete_controller.dart';
+import 'package:eclogae/controller/ffmpeg_controller.dart';
+import 'package:eclogae/controller/folders_controller.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/json_to_history_parser.dart';
+import 'package:eclogae/controller/music_web_server/music_web_server_base.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/controller/queue_controller.dart';
+import 'package:eclogae/controller/romanizer/romanizer_engine.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/controller/search_sort_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/smart_playlists/smart_playlists_controller.dart';
+import 'package:eclogae/controller/stats_controller.dart';
+import 'package:eclogae/controller/sync_manager/sync_manager.dart';
+import 'package:eclogae/controller/thumbnail_manager.dart';
+import 'package:eclogae/controller/version_controller.dart';
+import 'package:eclogae/controller/vibrator_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/lx_music/lx_download_manager.dart';
+import 'package:eclogae/lx_music/lx_music_page.dart';
+import 'package:eclogae/lx_music/lx_settings_page.dart';
+import 'package:eclogae/ui/dialogs/add_to_playlist_dialog.dart';
+import 'package:eclogae/ui/dialogs/common_dialogs.dart';
+import 'package:eclogae/ui/dialogs/edit_tags_dialog.dart';
+import 'package:eclogae/ui/dialogs/track_advanced_dialog.dart';
+import 'package:eclogae/ui/dialogs/track_info_dialog.dart';
+import 'package:eclogae/ui/dialogs/track_listens_dialog.dart';
+import 'package:eclogae/ui/dialogs/track_stats_dialog.dart';
+import 'package:eclogae/ui/pages/albums_page.dart';
+import 'package:eclogae/ui/pages/artists_map_page.dart';
+import 'package:eclogae/ui/pages/artists_page.dart';
+import 'package:eclogae/ui/pages/current_queue_page.dart';
+import 'package:eclogae/ui/pages/folders_page.dart';
+import 'package:eclogae/ui/pages/genres_page.dart';
+import 'package:eclogae/ui/pages/home_page.dart';
+import 'package:eclogae/ui/pages/languages_page.dart';
+import 'package:eclogae/ui/pages/main_page.dart';
+import 'package:eclogae/ui/pages/moods_tags_page.dart';
+import 'package:eclogae/ui/pages/party_page.dart';
+import 'package:eclogae/ui/pages/playlists_page.dart';
+import 'package:eclogae/ui/pages/queues_page.dart';
+import 'package:eclogae/ui/pages/settings_page.dart';
+import 'package:eclogae/ui/pages/smart_playlists_page.dart';
+import 'package:eclogae/ui/pages/subpages/playlist_tracks_subpage.dart';
+import 'package:eclogae/ui/pages/sync_manager_page.dart';
+import 'package:eclogae/ui/pages/tracks_page.dart';
+import 'package:eclogae/ui/widgets/circular_percentages.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/network_artwork.dart';
+import 'package:eclogae/ui/widgets/settings/extra_settings.dart';
+import 'package:eclogae/ui/widgets/settings_search_bar.dart';
+import 'package:eclogae/ui/widgets/stats.dart';
+import 'package:eclogae/youtube/class/sponsorblock.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_history_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_playlist_controller.dart' as ytplc;
+import 'package:eclogae/youtube/functions/add_to_playlist_sheet.dart';
+import 'package:eclogae/youtube/functions/download_sheet.dart';
+import 'package:eclogae/youtube/functions/video_listens_dialog.dart';
+import 'package:eclogae/youtube/pages/youtube_home_view.dart';
+import 'package:eclogae/youtube/pages/yt_channel_subpage.dart';
+import 'package:eclogae/youtube/pages/yt_playlist_download_subpage.dart';
+import 'package:eclogae/youtube/widgets/video_info_dialog.dart';
+import 'package:eclogae/youtube/widgets/yt_thumbnail.dart';
+import 'package:eclogae/youtube/yt_utils.dart';
 
 extension MediaTypeUtils on MediaType {
   LibraryTab toLibraryTab() {
@@ -1334,7 +1333,6 @@ extension RouteUtils on NamidaRoute {
     return switch (route) {
       RouteType.SETTINGS_page => AppDocsLinks.SETTINGS,
       RouteType.PAGE_Sync => AppDocsLinks.SETTINGS_SYNC,
-      RouteType.PAGE_about => AppDocsLinks.BASE,
       _ => null,
     };
   }
@@ -1722,18 +1720,6 @@ extension RouteUtils on NamidaRoute {
               : const SizedBox(),
         ),
         shouldShow: shouldShowMissingServerDirAuth,
-      ),
-
-      ObxO(
-        rx: PartyController.inst.isActive,
-        builder: (context, isActive) => _getAnimatedCrossFade(
-          child: NamidaAppBarIcon(
-            icon: Broken.people,
-            tooltip: () => lang.partyListeningParty,
-            onPressed: const NamidaPartyPage().navigate,
-          ),
-          shouldShow: isActive && route != RouteType.PAGE_party,
-        ),
       ),
 
       ObxO(

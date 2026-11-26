@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/spectrum_controller.dart';
-import 'package:namida/controller/vibrator_controller.dart';
-import 'package:namida/controller/waveform_extractor.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/spectrum_controller.dart';
+import 'package:eclogae/controller/vibrator_controller.dart';
+import 'package:eclogae/controller/waveform_extractor.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
 import 'package:namida_waveform/namida_waveform.dart';
 
 class WaveformController {

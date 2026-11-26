@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/json_to_history_parser.dart';
-import 'package:namida/controller/video_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/json_to_history_parser.dart';
+import 'package:eclogae/controller/video_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 class IndexingPercentage extends _PercentageWithHeroWidget {
   const IndexingPercentage({super.key, super.size = 48.0, super.hero}) : super(defaultHeroTag: 'indexingper');

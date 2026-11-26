@@ -15,12 +15,12 @@ import 'package:youtipie/class/youtipie_feed/channel_info_item.dart';
 import 'package:youtipie/core/enum.dart';
 import 'package:youtipie/youtipie.dart';
 
-import 'package:namida/class/video.dart';
-import 'package:namida/controller/sensitive_data_key.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/controller/youtube_history_controller.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/controller/sensitive_data_key.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/controller/youtube_history_controller.dart';
 
 enum YTLocalSearchSortType {
   mostPlayed,

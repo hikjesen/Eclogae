@@ -5,10 +5,10 @@ import 'package:dbus/dbus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:windows_single_instance/windows_single_instance.dart';
 
-import 'package:namida/controller/platform/base.dart';
-import 'package:namida/controller/platform/tray_manager/tray_manager.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/main.dart';
+import 'package:eclogae/controller/platform/base.dart';
+import 'package:eclogae/controller/platform/tray_manager/tray_manager.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/main.dart';
 
 part 'app_single_instance_base.dart';
 part 'app_single_instance_linux.dart';

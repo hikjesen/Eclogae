@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/search_matcher.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/class/search_matcher.dart';
+import 'package:eclogae/core/enums.dart';
 
 void main() {
   final sep = Platform.pathSeparator;

@@ -6,9 +6,9 @@ import 'package:path/path.dart' as p;
 import 'package:tray_manager/tray_manager.dart';
 import 'package:win32_registry/win32_registry.dart' as win32_registry;
 
-import 'package:namida/controller/platform/base.dart';
-import 'package:namida/controller/platform/tray_manager/tray_manager.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/controller/platform/base.dart';
+import 'package:eclogae/controller/platform/tray_manager/tray_manager.dart';
+import 'package:eclogae/core/enums.dart';
 
 class TrayController with TrayListener {
   static final instance = NamidaTrayManager.platform();

@@ -27,20 +27,20 @@ if (hasKeystoreProperties) {
     }
 }
 
-val namidaLxArm64 = project.hasProperty("namidaLxArm64")
+val arm64Only = project.hasProperty("namidaLxArm64") || project.hasProperty("eclogaeArm64")
 
 kotlin {
     jvmToolchain(17)
 }
 
 android {
-    namespace = "com.msob7y.namida"
+    namespace = "com.wander.eclogae"
     compileSdkVersion(36)
     ndkVersion = flutter.ndkVersion
     
     splits {
         abi {
-            isEnable = !namidaLxArm64
+            isEnable = !arm64Only
             if (isEnable) {
                 reset()
                 // -- no x86: ffmpeg_kit_extended_flutter ships no 32-bit x86 library
@@ -57,13 +57,13 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.msob7y.namida.lx"
+        applicationId = "com.wander.eclogae"
         minSdk = 26 // -- ffmpeg_kit_extended_flutter needs 26
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true
-        if (namidaLxArm64) {
+        if (arm64Only) {
             ndk {
                 abiFilters.clear()
                 abiFilters.add("arm64-v8a")
@@ -90,7 +90,7 @@ android {
         outputs.all {
             val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
             val abiText = output.filters.find { it.filterType == "ABI" }?.identifier?.let { "-$it" } ?: ""
-            output.outputFileName = "namida-v${versionName}${abiText}.apk"
+            output.outputFileName = "eclogae-v${versionName}${abiText}.apk"
         }
     }
 

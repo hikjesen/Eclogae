@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/download_task_base.dart';
-import 'package:namida/youtube/class/youtube_item_download_config.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/download_task_base.dart';
+import 'package:eclogae/youtube/class/youtube_item_download_config.dart';
 
 // rewrite by claude
 class YoutubeParallelDownloadsHandler {

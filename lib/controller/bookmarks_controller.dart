@@ -3,18 +3,18 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:namida/base/audio_handler.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/vibrator_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/dialogs/bookmarks_sheet.dart';
-import 'package:namida/youtube/controller/youtube_controller.dart';
+import 'package:eclogae/base/audio_handler.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/vibrator_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/dialogs/bookmarks_sheet.dart';
+import 'package:eclogae/youtube/controller/youtube_controller.dart';
 
 class BookmarksController {
   static final inst = BookmarksController._();

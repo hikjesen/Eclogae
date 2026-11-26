@@ -9,14 +9,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:basic_audio_handler/basic_audio_handler.dart' show PlayerRepeatMode;
 import 'package:nampack/nampack.dart' show Rx, RxBaseCore;
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/party/party_host.dart';
-import 'package:namida/controller/party/party_player_binder.dart';
-import 'package:namida/controller/party/party_player_gate.dart';
-import 'package:namida/controller/party/party_protocol.dart';
-import 'package:namida/controller/party/party_state.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/party/party_host.dart';
+import 'package:eclogae/controller/party/party_player_binder.dart';
+import 'package:eclogae/controller/party/party_player_gate.dart';
+import 'package:eclogae/controller/party/party_protocol.dart';
+import 'package:eclogae/controller/party/party_state.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
 
 /// in-memory room: every message goes through encode/decode like on the wire.
 class _Room implements PartyHostDelegate {

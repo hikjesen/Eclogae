@@ -1,6 +1,6 @@
 import 'package:basic_audio_handler/basic_audio_handler.dart';
 
-import 'package:namida/class/track.dart';
+import 'package:eclogae/class/track.dart';
 
 enum PartyQueueRewrite {
   shuffleAll,

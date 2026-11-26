@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/controller/music_web_server/music_web_server_base.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/translations/language.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/controller/music_web_server/music_web_server_base.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/translations/language.dart';
 
 final class DirectoryIndexLocal extends DirectoryIndex {
   const DirectoryIndexLocal(

@@ -2,13 +2,13 @@ import 'package:youtipie/class/execute_details.dart';
 import 'package:youtipie/class/sponsorblock_segment.dart';
 import 'package:youtipie/class/sponsorblock_segments_result.dart';
 
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/sponsorblock.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/sponsorblock.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 class SponsorBlockController {
   static final inst = SponsorBlockController._internal();

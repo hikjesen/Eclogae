@@ -1,7 +1,7 @@
 import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
 
 // by claude
 class ListenTimeController {

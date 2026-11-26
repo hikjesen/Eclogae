@@ -10,15 +10,15 @@ import 'package:youtipie/class/publish_time.dart';
 import 'package:youtipie/core/enum.dart';
 import 'package:youtipie/youtipie.dart';
 
-import 'package:namida/base/generator_base.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/sensitive_data_key.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_history_controller.dart';
-import 'package:namida/youtube/controller/youtube_playlist_controller.dart';
+import 'package:eclogae/base/generator_base.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/sensitive_data_key.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_history_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_playlist_controller.dart';
 
 class NamidaYTGenerator extends NamidaGeneratorBase<YoutubeID, String> with PortsProvider<YTGeneratorIsolateParams> {
   static final NamidaYTGenerator inst = NamidaYTGenerator._internal();

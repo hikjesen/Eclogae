@@ -1,12 +1,12 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/base/queue_search.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/selected_tracks_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
+import 'package:eclogae/base/queue_search.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/selected_tracks_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
 
 void main() {
   final controller = SelectedTracksController.inst;

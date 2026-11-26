@@ -4,11 +4,11 @@ import 'package:youtipie/class/stream_info_item/stream_info_item.dart';
 import 'package:youtipie/class/streams/video_stream_info.dart';
 import 'package:youtipie/youtipie.dart';
 
-import 'package:namida/controller/connectivity.dart';
-import 'package:namida/controller/video_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/controller/connectivity.dart';
+import 'package:eclogae/controller/video_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 class VideoCardInfoFetcherWrapper {
   final State _state;

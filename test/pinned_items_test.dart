@@ -1,12 +1,12 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/pinned_controller.dart';
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/controller/smart_playlists/smart_playlists_controller.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/pinned_controller.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/controller/smart_playlists/smart_playlists_controller.dart';
+import 'package:eclogae/core/enums.dart';
 
 void main() {
   LocalPlaylist playlistFromJson(Map<String, dynamic> json) => LocalPlaylist.fromJson(json, TrackWithDate.fromJson, SortType.sortListFromJsonList);

@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/ui/widgets/simple_lyrics_line.dart';
+import 'package:eclogae/ui/widgets/simple_lyrics_line.dart';
 
 void main() {
   const shortLength = 12;

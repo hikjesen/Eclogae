@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:basic_audio_handler/basic_audio_handler.dart';
 
-import 'package:namida/controller/party/party_protocol.dart';
-import 'package:namida/controller/party/party_state.dart';
+import 'package:eclogae/controller/party/party_protocol.dart';
+import 'package:eclogae/controller/party/party_state.dart';
 
 abstract class PartyHostDelegate {
   /// relay clock.

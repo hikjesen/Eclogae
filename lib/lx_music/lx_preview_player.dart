@@ -8,15 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart' show sha256;
 import 'package:just_audio/just_audio.dart';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 import 'lx_audio_sniffer.dart';
 import 'lx_bridge_service.dart';

@@ -6,12 +6,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lrc/lrc.dart';
 
-import 'package:namida/class/lang.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/simple_lyrics_line.dart';
+import 'package:eclogae/class/lang.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/simple_lyrics_line.dart';
 
 void main() {
   const primaryText = "Don't tell me, are you after her too?";

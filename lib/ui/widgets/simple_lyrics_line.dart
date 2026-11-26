@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'package:lrc/lrc.dart';
 
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/lyrics_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/romanizer/romanizer.dart';
-import 'package:namida/controller/romanizer/romanizer_engine.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/lyrics_karaoke_text.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/lyrics_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/romanizer/romanizer.dart';
+import 'package:eclogae/controller/romanizer/romanizer_engine.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/lyrics_karaoke_text.dart';
 
 /// built by claude (based on lyrics_lrc_parsed_view.dart)
 class SimpleLyricsLineWidget extends StatefulWidget {

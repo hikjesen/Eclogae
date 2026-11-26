@@ -5,12 +5,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_taglib/flutter_taglib.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/taglib_res.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/text_suggestions_provider.dart';
-import 'package:namida/core/constants.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/taglib_res.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/text_suggestions_provider.dart';
+import 'package:eclogae/core/constants.dart';
 
 void main() {
   setUpAll(() {

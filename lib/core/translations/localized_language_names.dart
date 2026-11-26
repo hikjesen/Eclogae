@@ -1,6 +1,6 @@
 /// Source: https://github.com/nickolas-pohilets/flutter-localized-countries
 
-part of 'package:namida/class/lang.dart';
+part of 'package:eclogae/class/lang.dart';
 
 const _allLocalizedLanguageNamesMap = {
   "af": "Afrikaans",

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mdns_dart/mdns_dart.dart';
 
-import 'package:namida/controller/platform/lan_service_discovery/lan_service_discovery.dart';
+import 'package:eclogae/controller/platform/lan_service_discovery/lan_service_discovery.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

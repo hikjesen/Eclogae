@@ -7,8 +7,8 @@ import 'dart:typed_data';
 
 import 'package:rhttp/rhttp.dart';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/class/http_response_wrapper.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/class/http_response_wrapper.dart';
 
 /// Downloads [url] into [file], resuming whatever is already on disk.
 abstract class DownloadWrapper {

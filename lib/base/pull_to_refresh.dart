@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart' hide SliverReorderableListState;
 
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/packages/scroll_physics_modified.dart';
-import 'package:namida/ui/widgets/custom_reorderable_list.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/packages/scroll_physics_modified.dart';
+import 'package:eclogae/ui/widgets/custom_reorderable_list.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 typedef PullToRefreshCallback = FutureOr<void> Function();
 const double _defaultMaxDistance = 128.0;

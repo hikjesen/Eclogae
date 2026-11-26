@@ -1,4 +1,4 @@
-import 'package:namida/class/track.dart';
+import 'package:eclogae/class/track.dart';
 
 class YoutubeIDStats extends PlayableItemStats {
   final String videoId;

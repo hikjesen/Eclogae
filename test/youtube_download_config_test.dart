@@ -3,8 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/youtube/class/download_task_base.dart';
-import 'package:namida/youtube/class/youtube_item_download_config.dart';
+import 'package:eclogae/youtube/class/download_task_base.dart';
+import 'package:eclogae/youtube/class/youtube_item_download_config.dart';
 
 void main() {
   YoutubeItemDownloadConfig createConfig({required DateTime? fileDate, bool cacheOnly = false}) {

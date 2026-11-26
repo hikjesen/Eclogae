@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:lrc/lrc.dart';
 
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/core/enums.dart';
 
 class LyricsModel {
   static final _lengthTagRegex = RegExp(r'\[length:([\d:\.]+)\]');

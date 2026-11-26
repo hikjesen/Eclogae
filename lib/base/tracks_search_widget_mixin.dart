@@ -5,26 +5,26 @@ import 'package:flutter/material.dart';
 
 import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 
-import 'package:namida/base/tracks_search_wrapper.dart';
-import 'package:namida/class/route.dart';
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/smart_playlists/smart_playlists_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/dialogs/create_smart_playlist_dialog.dart';
-import 'package:namida/ui/pages/search_page.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/expandable_box.dart';
+import 'package:eclogae/base/tracks_search_wrapper.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/smart_playlists/smart_playlists_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/dialogs/create_smart_playlist_dialog.dart';
+import 'package:eclogae/ui/pages/search_page.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/expandable_box.dart';
 
 mixin TracksSearchWidgetMixin<W extends StatefulWidget> on State<W>, PortsProvider<TracksSearchParams> {
   static final _ofRoute = Expando<TracksSearchWidgetMixin>();

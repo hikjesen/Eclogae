@@ -11,16 +11,16 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart' as pp;
 import 'package:sqlite3/sqlite3.dart';
 
-import 'package:namida/class/file_parts.dart';
-import 'package:namida/controller/directory_index.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/platform/base.dart';
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/translations/language.dart';
+import 'package:eclogae/class/file_parts.dart';
+import 'package:eclogae/controller/directory_index.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/platform/base.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/translations/language.dart';
 
 part 'namida_storage_android.dart';
 part 'namida_storage_base.dart';

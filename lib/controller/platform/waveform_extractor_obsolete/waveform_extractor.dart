@@ -24,12 +24,12 @@
 // import 'package:waveform_extractor/waveform_extractor.dart' as pkgwaveform;
 
 // import 'package:namico_db_wrapper/namico_db_wrapper.dart';
-// import 'package:namida/class/file_parts.dart';
-// import 'package:namida/controller/ffmpeg_controller.dart';
-// import 'package:namida/controller/logs_controller.dart';
-// import 'package:namida/controller/platform/base.dart';
-// import 'package:namida/core/constants.dart';
-// import 'package:namida/core/extensions.dart';
+// import 'package:eclogae/class/file_parts.dart';
+// import 'package:eclogae/controller/ffmpeg_controller.dart';
+// import 'package:eclogae/controller/logs_controller.dart';
+// import 'package:eclogae/controller/platform/base.dart';
+// import 'package:eclogae/core/constants.dart';
+// import 'package:eclogae/core/extensions.dart';
 
 // part 'waveform_extractor_android.dart';
 // part 'waveform_extractor_base.dart';

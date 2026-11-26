@@ -11,11 +11,11 @@ import 'package:just_audio/just_audio.dart';
 import 'package:media_kit/media_kit.dart' as mk;
 import 'package:media_kit_video/media_kit_video.dart';
 
-import 'package:namida/controller/audio_output_controller.dart';
-import 'package:namida/controller/network_proxy_controller.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/controller/audio_output_controller.dart';
+import 'package:eclogae/controller/network_proxy_controller.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
 
 // Missing features: quick settings tile, picture in picture
 // `isPlaying()`, `hasVideo()`, `getVideoRational()`.

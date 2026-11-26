@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/expandable_box.dart';
-import 'package:namida/youtube/pages/youtube_home_view.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/expandable_box.dart';
+import 'package:eclogae/youtube/pages/youtube_home_view.dart';
 
 class LibraryTabVariantsPopup extends StatelessWidget {
   final LibraryTab tab;

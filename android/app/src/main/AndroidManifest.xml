@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.msob7y.namida">
+    package="com.wander.eclogae">
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
@@ -29,7 +29,7 @@
      </intent>
      </queries>
     <application
-        android:label="Namida LX"
+        android:label="Eclogae"
         android:name=".NamidaApplication"
         android:icon="@mipmap/ic_launcher"
         android:appCategory="audio"
@@ -44,7 +44,7 @@
 		<!-- SPLASH_AUTO_GENERATED START -->
         <activity-alias
             android:enabled="true"
-            android:name="com.msob7y.namida.DefaultIcon"
+            android:name="com.wander.eclogae.DefaultIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher"
@@ -59,7 +59,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.CutsieIcon"
+            android:name="com.wander.eclogae.CutsieIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_cutsie"
             android:roundIcon="@mipmap/ic_launcher_cutsie"
@@ -74,7 +74,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.JellydaIcon"
+            android:name="com.wander.eclogae.JellydaIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_jellyda"
             android:roundIcon="@mipmap/ic_launcher_jellyda"
@@ -89,7 +89,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.CutsiedaIcon"
+            android:name="com.wander.eclogae.CutsiedaIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_cutsieda"
             android:roundIcon="@mipmap/ic_launcher_cutsieda"
@@ -104,7 +104,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.KyundaIcon"
+            android:name="com.wander.eclogae.KyundaIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_kyunda"
             android:roundIcon="@mipmap/ic_launcher_kyunda"
@@ -119,7 +119,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.DokidaIcon"
+            android:name="com.wander.eclogae.DokidaIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_dokida"
             android:roundIcon="@mipmap/ic_launcher_dokida"
@@ -134,7 +134,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.NamiweenIcon"
+            android:name="com.wander.eclogae.NamiweenIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_namiween"
             android:roundIcon="@mipmap/ic_launcher_namiween"
@@ -149,7 +149,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.EddyIcon"
+            android:name="com.wander.eclogae.EddyIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_eddy"
             android:roundIcon="@mipmap/ic_launcher_eddy"
@@ -164,7 +164,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.NamichinIcon"
+            android:name="com.wander.eclogae.NamichinIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_namichin"
             android:roundIcon="@mipmap/ic_launcher_namichin"
@@ -179,7 +179,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.TetodaIcon"
+            android:name="com.wander.eclogae.TetodaIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_tetoda"
             android:roundIcon="@mipmap/ic_launcher_tetoda"
@@ -194,7 +194,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.SpaceIcon"
+            android:name="com.wander.eclogae.SpaceIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_space"
             android:roundIcon="@mipmap/ic_launcher_space"
@@ -209,7 +209,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.RetroIcon"
+            android:name="com.wander.eclogae.RetroIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_retro"
             android:roundIcon="@mipmap/ic_launcher_retro"
@@ -224,7 +224,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.OokamiIcon"
+            android:name="com.wander.eclogae.OokamiIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_ookami"
             android:roundIcon="@mipmap/ic_launcher_ookami"
@@ -239,7 +239,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.OriginalIcon"
+            android:name="com.wander.eclogae.OriginalIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_original"
             android:roundIcon="@mipmap/ic_launcher_original"
@@ -254,7 +254,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.EnhancedIcon"
+            android:name="com.wander.eclogae.EnhancedIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_enhanced"
             android:roundIcon="@mipmap/ic_launcher_enhanced"
@@ -269,7 +269,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.HollowIcon"
+            android:name="com.wander.eclogae.HollowIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_hollow"
             android:roundIcon="@mipmap/ic_launcher_hollow"
@@ -284,7 +284,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.PastelIcon"
+            android:name="com.wander.eclogae.PastelIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_pastel"
             android:roundIcon="@mipmap/ic_launcher_pastel"
@@ -299,7 +299,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.MonetIcon"
+            android:name="com.wander.eclogae.MonetIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_monet"
             android:roundIcon="@mipmap/ic_launcher_monet"
@@ -314,7 +314,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.GlowyIcon"
+            android:name="com.wander.eclogae.GlowyIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_glowy"
             android:roundIcon="@mipmap/ic_launcher_glowy"
@@ -329,7 +329,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.SpookyIcon"
+            android:name="com.wander.eclogae.SpookyIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_spooky"
             android:roundIcon="@mipmap/ic_launcher_spooky"
@@ -344,7 +344,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.TiredIcon"
+            android:name="com.wander.eclogae.TiredIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher_tired"
             android:roundIcon="@mipmap/ic_launcher_tired"
@@ -360,7 +360,7 @@
         <!-- SPLASH_AUTO_GENERATED REMOVED ICONS START -->
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.ShadeIcon"
+            android:name="com.wander.eclogae.ShadeIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher"
@@ -375,7 +375,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.MiniIcon"
+            android:name="com.wander.eclogae.MiniIcon"
             android:targetActivity=".NamidaMainActivity"
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher"
@@ -444,39 +444,6 @@
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.SEND" />
-                <data
-                    android:host="patreonauth.msob7y.namida"
-                    android:scheme="app" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:host="discordauth.msob7y.namida"
-                    android:scheme="app" />
-            </intent-filter>
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" />
-                <data android:host="namida.app" />
-                <data android:pathPrefix="/party" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:host="party"
-                    android:scheme="namida" />
-            </intent-filter>
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="content" />
                 <data android:scheme="file" />
                 <data android:host="*" android:pathPattern=".*\\.m3u"
@@ -508,7 +475,7 @@
         <!-- enabled only while usb direct is on, lets android offer namida as the dac's default app, which also grants access without asking -->
         <activity-alias
             android:enabled="false"
-            android:name="com.msob7y.namida.UsbDacHandler"
+            android:name="com.wander.eclogae.UsbDacHandler"
             android:targetActivity=".NamidaMainActivity"
             android:exported="true">
             <intent-filter>
@@ -562,9 +529,9 @@
             </intent-filter>
         </activity>
         <service
-            android:name="NamidaQuickSettingsTile"
+            android:name=".NamidaQuickSettingsTile"
             android:exported="true"
-            android:label="Namida LX"
+            android:label="Eclogae"
             android:icon="@drawable/ic_stat_musicnote"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <meta-data android:name="android.service.quicksettings.TOGGLEABLE_TILE"
@@ -574,9 +541,9 @@
             </intent-filter>
         </service>
         <service
-            android:name="NamidaShuffleQuickSettingsTile"
+            android:name=".NamidaShuffleQuickSettingsTile"
             android:exported="true"
-            android:label="Namida LX Shuffle"
+            android:label="Eclogae Shuffle"
             android:icon="@drawable/shuffle"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <meta-data android:name="android.service.quicksettings.TOGGLEABLE_TILE"

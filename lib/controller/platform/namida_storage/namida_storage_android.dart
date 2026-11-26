@@ -2,7 +2,7 @@ part of 'namida_storage.dart';
 
 class _NamidaStorageAndroid extends NamidaStorage {
   _NamidaStorageAndroid._init() : super('/storage/emulated/0') {
-    _channel = const MethodChannel('namida/storage');
+    _channel = const MethodChannel('eclogae/storage');
   }
 
   late final MethodChannel _channel;

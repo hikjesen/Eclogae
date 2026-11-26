@@ -1,5 +1,5 @@
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
 
 class SplitArtistGenreConfigsWrapper {
   final String dbPath;

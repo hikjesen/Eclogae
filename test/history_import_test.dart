@@ -7,19 +7,19 @@ import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/search_matcher.dart';
-import 'package:namida/class/split_config.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/class/video.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/json_to_history_parser.dart';
-import 'package:namida/controller/platform/zip_manager/zip_manager.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_import_controller.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/search_matcher.dart';
+import 'package:eclogae/class/split_config.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/class/video.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/json_to_history_parser.dart';
+import 'package:eclogae/controller/platform/zip_manager/zip_manager.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_import_controller.dart';
 
 void main() {
   late Directory dir;

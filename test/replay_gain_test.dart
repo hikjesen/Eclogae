@@ -1,7 +1,7 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/replay_gain_data.dart';
+import 'package:eclogae/class/replay_gain_data.dart';
 
 void main() {
   double? trackGainOf(String tagValue) => ReplayGainData.fromPropertiesMap({'REPLAYGAIN_TRACK_GAIN': tagValue})?.trackGain;

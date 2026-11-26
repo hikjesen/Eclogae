@@ -6,13 +6,13 @@ import 'package:youtipie/class/result_wrapper/channel_user_result.dart';
 import 'package:youtipie/core/enum.dart';
 import 'package:youtipie/youtipie.dart';
 
-import 'package:namida/class/route.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
-import 'package:namida/youtube/pages/youtube_main_page_fetcher_acc_base.dart';
-import 'package:namida/youtube/widgets/yt_channel_card.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/youtube/pages/youtube_main_page_fetcher_acc_base.dart';
+import 'package:eclogae/youtube/widgets/yt_channel_card.dart';
 
 class YoutubeUserChannelsPage extends StatelessWidget with NamidaRouteWidget {
   @override

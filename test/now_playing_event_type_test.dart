@@ -2,8 +2,8 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/controller/now_playing_broadcaster.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/controller/now_playing_broadcaster.dart';
+import 'package:eclogae/core/enums.dart';
 
 void main() {
   MediaItem mediaOf({

@@ -1,7 +1,7 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/version_wrapper.dart';
+import 'package:eclogae/class/version_wrapper.dart';
 
 void main() {
   bool? isAfter(String version, String other) => VersionWrapper(version).isAfter(VersionWrapper(other));

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:namida/class/taglib_res.dart';
+import 'package:eclogae/class/taglib_res.dart';
 
 class ReplayGainData {
   final double? trackGain, albumGain;

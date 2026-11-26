@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/youtube/widgets/yt_shimmer.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/youtube/widgets/yt_shimmer.dart';
 
 class SmallYTActionButton extends StatelessWidget {
   final String? title;

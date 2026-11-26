@@ -9,10 +9,10 @@ import 'package:flutter/scheduler.dart';
 
 import 'package:nampack/extensions/extensions.dart';
 
-import 'package:namida/controller/vibrator_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/ntheme.dart';
+import 'package:eclogae/controller/vibrator_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/ntheme.dart';
 
 /// Extra flavor animations, all usages are guarded by [kEnableFancyAnimations].
 ///

@@ -7,20 +7,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:namida/base/settings_file_writer.dart';
-import 'package:namida/class/lang.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/backup_controller.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/listen_time_controller.dart';
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/controller/queue_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/translations/language.dart';
+import 'package:eclogae/base/settings_file_writer.dart';
+import 'package:eclogae/class/lang.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/backup_controller.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/listen_time_controller.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/controller/queue_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/translations/language.dart';
 import 'package:youtipie/class/map_serializable.dart';
 
 void main() {

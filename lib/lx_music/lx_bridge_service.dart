@@ -26,8 +26,8 @@ class LxBridgeService {
   static final inst = LxBridgeService._();
   static bool get isSupported => Platform.isAndroid;
 
-  static const _bridge = MethodChannel('namida/lx_bridge');
-  static const _events = EventChannel('namida/lx_events');
+  static const _bridge = MethodChannel('eclogae/lx_bridge');
+  static const _events = EventChannel('eclogae/lx_events');
   static const _timeout = Duration(seconds: 20);
   static const _maxScriptBytes = 2 * 1024 * 1024;
   static const _unsupported = '在线曲库桥接仅支持 Android';

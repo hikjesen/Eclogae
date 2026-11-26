@@ -7,20 +7,20 @@ import 'package:flutter/material.dart';
 
 import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 
-import 'package:namida/base/tracks_search_wrapper.dart';
-import 'package:namida/class/jump_highlight.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/selected_tracks_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/expandable_box.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/base/tracks_search_wrapper.dart';
+import 'package:eclogae/class/jump_highlight.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/selected_tracks_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/expandable_box.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
 
 class QueueSearch with PortsProvider<TracksSearchParams> {
   final void Function(bool isNewQuery) onResultsChanged;

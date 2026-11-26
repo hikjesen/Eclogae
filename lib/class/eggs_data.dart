@@ -1,5 +1,5 @@
 // by claude
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/extensions.dart';
 
 /// stored by name, so reordering the enums never shifts what a user collected.
 class EggsData {

@@ -10,9 +10,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:history_manager/history_manager.dart';
 import 'package:nampack/nampack.dart';
 
-import 'package:namida/base/settings_file_writer.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
+import 'package:eclogae/base/settings_file_writer.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
 
 final _fixturesDir = Directory('test/fixtures/settings');
 

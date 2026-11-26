@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter_taglib/flutter_taglib.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/tag_rating.dart';
-import 'package:namida/class/taglib_res.dart';
+import 'package:eclogae/class/tag_rating.dart';
+import 'package:eclogae/class/taglib_res.dart';
 
 void main() {
   final starsMappings = [

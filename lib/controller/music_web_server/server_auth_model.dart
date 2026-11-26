@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:opensubsonic_api/opensubsonic_api.dart';
 
-import 'package:namida/controller/music_web_server/music_web_server_base.dart';
+import 'package:eclogae/controller/music_web_server/music_web_server_base.dart';
 
 sealed class ServerAuthModel {
   final String username;

@@ -1,7 +1,7 @@
 import 'package:dart_extensions/dart_extensions.dart';
 
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
 
 class FilePathMatcher extends SearchMatcher {
   FilePathMatcher.init(super.paths) : super.init(transformer: _pathTransformer);

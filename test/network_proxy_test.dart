@@ -1,7 +1,7 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/controller/network_proxy_controller.dart';
+import 'package:eclogae/controller/network_proxy_controller.dart';
 
 void main() {
   group('tryParseUrl', () {

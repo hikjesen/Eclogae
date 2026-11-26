@@ -1,7 +1,7 @@
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/replay_gain_data.dart';
-import 'package:namida/class/tag_rating.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/replay_gain_data.dart';
+import 'package:eclogae/class/tag_rating.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class MediaInfo {
   final String path;

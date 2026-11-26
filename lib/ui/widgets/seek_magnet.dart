@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/controller/vibrator_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/controller/vibrator_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
 
 abstract class SeekMagnet {
   static double threshold({bool isFullscreen = false}) => isDesktop || isFullscreen ? 0.01 : 0.05;

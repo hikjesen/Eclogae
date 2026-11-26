@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 
 import 'package:namico_db_wrapper/namico_db_wrapper.dart';
 
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
 
 typedef SearchRequest = ({String text, bool temp, bool? isVideo});
 

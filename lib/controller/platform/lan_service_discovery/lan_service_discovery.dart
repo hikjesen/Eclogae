@@ -6,8 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:mdns_dart/mdns_dart.dart';
 import 'package:nampack/reactive/reactive.dart';
 
-import 'package:namida/controller/platform/base.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/controller/platform/base.dart';
+import 'package:eclogae/core/extensions.dart';
 
 part 'lan_service_discovery_base.dart';
 part 'lan_service_discovery_bonjour.dart';

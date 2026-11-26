@@ -1,7 +1,7 @@
 import 'package:jiffy/jiffy.dart';
 
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class TimeAgoController {
   const TimeAgoController._();

@@ -1,16 +1,16 @@
 import 'dart:math' as math;
 
-import 'package:namida/base/generator_base.dart';
-import 'package:namida/class/file_matcher.dart';
-import 'package:namida/class/library_item_map.dart';
-import 'package:namida/class/queue_insertion.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/history_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/rhythm_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/base/generator_base.dart';
+import 'package:eclogae/class/file_matcher.dart';
+import 'package:eclogae/class/library_item_map.dart';
+import 'package:eclogae/class/queue_insertion.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/history_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/rhythm_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class NamidaGenerator extends NamidaGeneratorBase<TrackWithDate, Track> {
   static final NamidaGenerator inst = NamidaGenerator._internal();

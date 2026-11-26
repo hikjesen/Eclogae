@@ -3,10 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:playlist_manager/module/general_playlist.dart';
 
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/youtube/class/youtube_id.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/youtube/class/youtube_id.dart';
 
 void main() {
   group('sorts saved by a newer version', () {

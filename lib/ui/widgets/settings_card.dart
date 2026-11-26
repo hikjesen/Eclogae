@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/ntheme.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/ntheme.dart';
 
 class SettingsCard extends StatelessWidget {
   final Widget child;

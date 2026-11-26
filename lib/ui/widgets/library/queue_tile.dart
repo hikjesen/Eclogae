@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/queue.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/queue_controller.dart';
-import 'package:namida/controller/time_ago_controller.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/dialogs/common_dialogs.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/library/multi_artwork_container.dart';
+import 'package:eclogae/class/queue.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/queue_controller.dart';
+import 'package:eclogae/controller/time_ago_controller.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/dialogs/common_dialogs.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/library/multi_artwork_container.dart';
 
 class QueueTile extends StatelessWidget {
   final Queue queue;

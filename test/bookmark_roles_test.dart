@@ -1,8 +1,8 @@
 // by claude
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/bookmarks_controller.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/bookmarks_controller.dart';
 
 void main() {
   const start = PlayableBookmarkRole.start;

@@ -8,9 +8,9 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rhttp/rhttp.dart' show CancelState, CancelToken, HttpRequest, HttpStreamResponse, HttpVersion, RhttpCancelException, RhttpStatusCodeException;
 
-import 'package:namida/class/download_wrapper.dart';
-import 'package:namida/class/http_response_wrapper.dart';
-import 'package:namida/controller/files_download_manager.dart';
+import 'package:eclogae/class/download_wrapper.dart';
+import 'package:eclogae/class/http_response_wrapper.dart';
+import 'package:eclogae/controller/files_download_manager.dart';
 
 void main() {
   late Directory dir;

@@ -6,42 +6,42 @@ import 'package:flutter/material.dart';
 import 'package:modern_titlebar_buttons/modern_titlebar_buttons.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:namida/class/route.dart';
-import 'package:namida/controller/miniplayer_controller.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/platform/namida_channel/namida_channel.dart';
-import 'package:namida/controller/platform/window_manager/window_manager.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/shortcuts_controller.dart';
-import 'package:namida/controller/window_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/dimensions.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/functions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/namida_converter_ext.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/ui_scale.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/packages/miniplayer.dart';
-import 'package:namida/ui/dialogs/edit_tags_dialog.dart';
-import 'package:namida/ui/pages/about_page.dart';
-import 'package:namida/ui/pages/main_page.dart';
-import 'package:namida/ui/pages/settings_page.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/ui/widgets/effects/effects.dart';
-import 'package:namida/ui/widgets/eggs/eggs.dart';
-import 'package:namida/ui/widgets/inner_drawer.dart';
-import 'package:namida/ui/widgets/library_tab_variant_chip.dart';
-import 'package:namida/ui/widgets/mascots/mascots.dart';
-import 'package:namida/ui/widgets/selected_tracks_preview.dart';
-import 'package:namida/ui/widgets/settings/customization_settings.dart';
-import 'package:namida/ui/widgets/settings/indexer_settings.dart';
-import 'package:namida/ui/widgets/settings/theme_settings.dart';
+import 'package:eclogae/class/route.dart';
+import 'package:eclogae/controller/miniplayer_controller.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/platform/namida_channel/namida_channel.dart';
+import 'package:eclogae/controller/platform/window_manager/window_manager.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/shortcuts_controller.dart';
+import 'package:eclogae/controller/window_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/dimensions.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/functions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/ui_scale.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/packages/miniplayer.dart';
+import 'package:eclogae/ui/dialogs/edit_tags_dialog.dart';
+import 'package:eclogae/ui/pages/about_page.dart';
+import 'package:eclogae/ui/pages/main_page.dart';
+import 'package:eclogae/ui/pages/settings_page.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/ui/widgets/effects/effects.dart';
+import 'package:eclogae/ui/widgets/eggs/eggs.dart';
+import 'package:eclogae/ui/widgets/inner_drawer.dart';
+import 'package:eclogae/ui/widgets/library_tab_variant_chip.dart';
+import 'package:eclogae/ui/widgets/mascots/mascots.dart';
+import 'package:eclogae/ui/widgets/selected_tracks_preview.dart';
+import 'package:eclogae/ui/widgets/settings/customization_settings.dart';
+import 'package:eclogae/ui/widgets/settings/indexer_settings.dart';
+import 'package:eclogae/ui/widgets/settings/theme_settings.dart';
 
 class MainPageWrapper extends StatefulWidget {
   const MainPageWrapper({super.key});
@@ -381,6 +381,7 @@ class NamidaDrawer extends StatelessWidget {
               children: [
                 if (showLogoInDrawer)
                   NamidaLogoContainer(
+                    displayText: false,
                     afterTap: NamidaNavigator.inst.toggleDrawer,
                   ),
                 const NamidaContainerDivider(
@@ -388,7 +389,13 @@ class NamidaDrawer extends StatelessWidget {
                   margin: EdgeInsets.all(10.0),
                 ),
                 ...LibraryTab.values
-                    .where((element) => element != LibraryTab.search && element.isGroupHead && (!element.isInDrawerOnlyWhenActive || libraryTabs.contains(element)))
+                    .where(
+                      (tab) =>
+                          tab != LibraryTab.search &&
+                          tab != LibraryTab.party &&
+                          tab.isGroupHead &&
+                          (!tab.isInDrawerOnlyWhenActive || libraryTabs.contains(tab)),
+                    )
                     .map(
                       (e) => ObxO(
                         rx: settings.extra.selectedLibraryTab,
@@ -617,7 +624,7 @@ class NamidaDesktopAppBarState extends State<NamidaDesktopAppBar> with WindowLis
 
   @override
   Widget build(BuildContext context) {
-    const title = 'Namida';
+    const title = 'Eclogae';
     final height = WindowController.instance?.windowTitleBarHeightIfActive;
 
     final appBarTheme = AppBarTheme.of(context);

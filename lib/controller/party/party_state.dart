@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'dart:typed_data';
 
-import 'package:namida/controller/party/party_protocol.dart';
+import 'package:eclogae/controller/party/party_protocol.dart';
 
 abstract class PartyStateListener {
   /// the whole queue got replaced (snapshot, new queue), fully loaded.

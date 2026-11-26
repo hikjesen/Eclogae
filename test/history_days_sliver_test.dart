@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/ui/widgets/custom_widgets.dart' show NamidaScrollController;
-import 'package:namida/ui/widgets/history_days_sliver.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart' show NamidaScrollController;
+import 'package:eclogae/ui/widgets/history_days_sliver.dart';
 
 const _itemExtent = 50.0;
 const _headerExtent = 40.0;

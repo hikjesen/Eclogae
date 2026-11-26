@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:playlist_manager/playlist_manager.dart';
 
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/controller/smart_playlists/smart_playlists_controller.dart';
-import 'package:namida/controller/sync_manager/sync_manager.dart';
-import 'package:namida/core/constants.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/controller/smart_playlists/smart_playlists_controller.dart';
+import 'package:eclogae/controller/sync_manager/sync_manager.dart';
+import 'package:eclogae/core/constants.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

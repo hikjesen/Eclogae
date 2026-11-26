@@ -4,8 +4,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/core/extensions.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
 
 class FocusedMenuHolder extends StatefulWidget {
   final Widget child;

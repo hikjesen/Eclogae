@@ -5,15 +5,15 @@ import 'dart:io';
 
 import 'package:modern_titlebar_buttons/modern_titlebar_buttons.dart' as mtb;
 
-import 'package:namida/class/queue.dart';
-import 'package:namida/class/sort_chain.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/platform/base.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/namida_converter_ext.dart';
+import 'package:eclogae/class/queue.dart';
+import 'package:eclogae/class/sort_chain.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/platform/base.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/namida_converter_ext.dart';
 
 export 'package:basic_audio_handler/basic_audio_handler.dart' show PlayerRepeatMode, InterruptionType, InterruptionAction;
 export 'package:history_manager/history_manager.dart' show TrackSource;

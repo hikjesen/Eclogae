@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/ui/widgets/floating_image.dart';
+import 'package:eclogae/ui/widgets/floating_image.dart';
 
 void main() {
   testWidgets('60hz ticks on every vsync', (tester) async {

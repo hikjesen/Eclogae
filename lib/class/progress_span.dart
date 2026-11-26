@@ -2,7 +2,7 @@
 
 import 'package:just_audio/just_audio.dart';
 
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/extensions.dart';
 
 /// what a progress bar spans: the whole item, or the seekable window of a live item.
 class ProgressSpan {

@@ -1,9 +1,9 @@
 // by claude
 import 'dart:async';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/utils.dart';
 
 /// the highlight of an item that was jumped to, laid over the tile's own background.
 abstract final class JumpHighlight {

@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/music_web_server/music_web_server_base.dart';
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/controller/scroll_search_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/icon_fonts/broken_icons.dart';
-import 'package:namida/core/ntheme.dart';
-import 'package:namida/core/translations/language.dart';
-import 'package:namida/core/utils.dart';
-import 'package:namida/ui/widgets/artwork.dart';
-import 'package:namida/ui/widgets/custom_widgets.dart';
-import 'package:namida/youtube/controller/parallel_downloads_controller.dart';
-import 'package:namida/youtube/pages/youtube_home_view.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/music_web_server/music_web_server_base.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/controller/scroll_search_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/icon_fonts/broken_icons.dart';
+import 'package:eclogae/core/ntheme.dart';
+import 'package:eclogae/core/translations/language.dart';
+import 'package:eclogae/core/utils.dart';
+import 'package:eclogae/ui/widgets/artwork.dart';
+import 'package:eclogae/ui/widgets/custom_widgets.dart';
+import 'package:eclogae/youtube/controller/parallel_downloads_controller.dart';
+import 'package:eclogae/youtube/pages/youtube_home_view.dart';
 
 class ServerCacheTrackIndicator extends StatelessWidget {
   final Track track;

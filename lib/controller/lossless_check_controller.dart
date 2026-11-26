@@ -3,11 +3,11 @@ import 'dart:math' as math;
 
 import 'package:namida_waveform/namida_lossless.dart';
 
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/playlist_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/playlist_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/utils.dart';
 
 // by claude
 /// One time scan for lossless files built from a lossy, lower rate or lower depth source.

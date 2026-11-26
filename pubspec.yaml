@@ -1,5 +1,5 @@
-name: namida
-description: A Beautiful and Feature-rich Music Player, With YouTube & Video Support Built in Flutter
+name: eclogae
+description: Eclogae — Personal cross-platform music player with online library and native floating lyrics.
 publish_to: "none"
 version: 8.6.7+261120140
 
@@ -344,9 +344,9 @@ flutter:
         - asset: assets/fonts/LexendDeca/LexendDeca-Thin.ttf
 
 msix_config:
-  display_name: Namida
-  publisher_display_name: namidaco
-  identity_name: com.msob7y.namida
+  display_name: Eclogae
+  publisher_display_name: Hiko & Wan
+  identity_name: com.wander.eclogae
   logo_path: assets\namida_icon_monet.png
   capabilities: musicLibrary, videosLibrary, internetClient
   # certificate_path: .certificates\CERTIFICATE.pfx
@@ -355,10 +355,9 @@ msix_config:
 
 inno_bundle:
   id: 94dba250-1e0f-11f0-846e-a101934a6b13
-  name: Namida
-  publisher: MSOB7Y
+  name: Eclogae
+  publisher: Hiko & Wan
   installer_icon: windows/runner/resources/app_icon.ico
-  updates_url: https://github.com/namidaco/namida/releases
   admin: auto
   firewall_rule: true # sync discovery (mdns udp 5353) & server (tcp 62310)
   file_extensions_associations:

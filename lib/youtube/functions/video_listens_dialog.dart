@@ -2,15 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/controller/current_color.dart';
-import 'package:namida/controller/thumbnail_manager.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/ui/dialogs/track_listens_dialog.dart';
-import 'package:namida/youtube/controller/youtube_history_controller.dart';
-import 'package:namida/youtube/controller/youtube_info_controller.dart';
-import 'package:namida/youtube/widgets/yt_thumbnail.dart';
-import 'package:namida/youtube/yt_utils.dart';
+import 'package:eclogae/controller/current_color.dart';
+import 'package:eclogae/controller/thumbnail_manager.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/ui/dialogs/track_listens_dialog.dart';
+import 'package:eclogae/youtube/controller/youtube_history_controller.dart';
+import 'package:eclogae/youtube/controller/youtube_info_controller.dart';
+import 'package:eclogae/youtube/widgets/yt_thumbnail.dart';
+import 'package:eclogae/youtube/yt_utils.dart';
 
 void showVideoListensDialog(String videoId, {List<int> datesOfListen = const [], Color? colorScheme}) async {
   final releaseDate = await YoutubeInfoController.utils.getVideoReleaseDate(videoId);

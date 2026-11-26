@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:namida/controller/navigator_controller.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/controller/navigator_controller.dart';
+import 'package:eclogae/core/enums.dart';
 
 class NamidaDummyPage extends StatelessWidget with NamidaRouteWidget {
   @override

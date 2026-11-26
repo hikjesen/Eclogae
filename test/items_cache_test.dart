@@ -4,18 +4,18 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/audio_cache_detail.dart';
-import 'package:namida/class/lang.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/audio_cache_controller.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/controller/items_cache.dart';
-import 'package:namida/controller/spectrum_controller.dart';
-import 'package:namida/controller/video_controller.dart';
-import 'package:namida/controller/waveform_extractor.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
-import 'package:namida/core/translations/language.dart';
+import 'package:eclogae/class/audio_cache_detail.dart';
+import 'package:eclogae/class/lang.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/audio_cache_controller.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/controller/items_cache.dart';
+import 'package:eclogae/controller/spectrum_controller.dart';
+import 'package:eclogae/controller/video_controller.dart';
+import 'package:eclogae/controller/waveform_extractor.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
+import 'package:eclogae/core/translations/language.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

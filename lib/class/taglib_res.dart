@@ -4,12 +4,12 @@ import 'dart:typed_data';
 
 import 'package:flutter_taglib/flutter_taglib.dart';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/media_chapter.dart';
-import 'package:namida/class/replay_gain_data.dart';
-import 'package:namida/class/tag_rating.dart';
-import 'package:namida/controller/logs_controller.dart';
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/media_chapter.dart';
+import 'package:eclogae/class/replay_gain_data.dart';
+import 'package:eclogae/class/tag_rating.dart';
+import 'package:eclogae/controller/logs_controller.dart';
+import 'package:eclogae/core/extensions.dart';
 
 class TagLibRes {
   final String originalPath;

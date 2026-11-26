@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/extensions.dart';
 
 mixin LoadingItemsDelayMixin<T extends StatefulWidget> on State<T> {
   /// creates a completer that checks wether the widget is mounted or not.

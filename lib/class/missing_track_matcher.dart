@@ -3,9 +3,9 @@ import 'dart:math' as math;
 
 import 'package:dart_extensions/dart_extensions.dart';
 
-import 'package:namida/class/file_matcher.dart';
-import 'package:namida/class/fuzzy_matcher.dart';
-import 'package:namida/core/constants.dart';
+import 'package:eclogae/class/file_matcher.dart';
+import 'package:eclogae/class/fuzzy_matcher.dart';
+import 'package:eclogae/core/constants.dart';
 
 /// existing files that could be a missing path after a move or a rename, built once for many [getSuggestions] calls.
 /// paths from another platform work too.

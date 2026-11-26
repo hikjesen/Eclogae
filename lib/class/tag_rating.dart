@@ -1,6 +1,6 @@
 import 'package:flutter_taglib/flutter_taglib.dart';
 
-import 'package:namida/core/extensions.dart';
+import 'package:eclogae/core/extensions.dart';
 
 // by claude
 /// a 0-100 rating in every place players keep one: text fields (`RATING`, `FMPS_RATING`, `RATING:xxx`...) each in

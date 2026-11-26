@@ -5,14 +5,14 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/faudiomodel.dart';
-import 'package:namida/class/media_chapter.dart';
-import 'package:namida/class/replay_gain_data.dart';
-import 'package:namida/class/split_config.dart';
-import 'package:namida/class/track.dart';
-import 'package:namida/controller/indexer_controller.dart';
-import 'package:namida/core/constants.dart';
-import 'package:namida/core/enums.dart';
+import 'package:eclogae/class/faudiomodel.dart';
+import 'package:eclogae/class/media_chapter.dart';
+import 'package:eclogae/class/replay_gain_data.dart';
+import 'package:eclogae/class/split_config.dart';
+import 'package:eclogae/class/track.dart';
+import 'package:eclogae/controller/indexer_controller.dart';
+import 'package:eclogae/core/constants.dart';
+import 'package:eclogae/core/enums.dart';
 
 void main() {
   late Directory dir;

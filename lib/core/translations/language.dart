@@ -6,14 +6,14 @@ import 'package:intl/intl.dart';
 import 'package:intl/number_symbols_data.dart' as intl_data;
 import 'package:intl/src/plural_rules.dart' as plural_rules;
 
-import 'package:namida/class/lang.dart';
-import 'package:namida/controller/player_controller.dart';
-import 'package:namida/controller/settings_controller.dart';
-import 'package:namida/controller/time_ago_controller.dart';
-import 'package:namida/core/extensions.dart';
-import 'package:namida/core/translations/arb/app_localizations.dart';
-import 'package:namida/core/translations/arb/app_localizations_en.dart';
-import 'package:namida/core/utils.dart';
+import 'package:eclogae/class/lang.dart';
+import 'package:eclogae/controller/player_controller.dart';
+import 'package:eclogae/controller/settings_controller.dart';
+import 'package:eclogae/controller/time_ago_controller.dart';
+import 'package:eclogae/core/extensions.dart';
+import 'package:eclogae/core/translations/arb/app_localizations.dart';
+import 'package:eclogae/core/translations/arb/app_localizations_en.dart';
+import 'package:eclogae/core/utils.dart';
 
 AppLocalizations get lang => _lang!;
 

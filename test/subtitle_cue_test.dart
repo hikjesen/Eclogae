@@ -4,7 +4,7 @@ import 'package:flutter/material.dart' show Color;
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:namida/class/subtitle_cue.dart';
+import 'package:eclogae/class/subtitle_cue.dart';
 
 void main() {
   test('parses colors, bold & the karaoke split out of a styled cue', () {
