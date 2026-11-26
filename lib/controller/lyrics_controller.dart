@@ -36,6 +36,7 @@ import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/floating_lyrics/floating_lyrics_controller.dart';
 import 'package:namida/lx_music/lx_preview_player.dart';
 import 'package:namida/main.dart';
 import 'package:namida/packages/lyrics_lrc_parsed_view.dart';
@@ -63,7 +64,7 @@ class Lyrics {
   final isResolvingLyrics = false.obs;
 
   bool get _lyricsViewsEnabled => settings.enableLyrics.value || settings.enableSimpleLyricsLine.value;
-  bool get _lyricsEnabled => _lyricsViewsEnabled || LyricsIntegrations.isActive;
+  bool get _lyricsEnabled => _lyricsViewsEnabled || LyricsIntegrations.isActive || FloatingLyricsController.inst.isEnabled;
   EmbeddedLyricsPriority get _embeddedLyricsPriority => settings.embeddedLyricsPriority.value;
   LyricsSource get _lyricsSource => settings.lyricsSource.value;
 

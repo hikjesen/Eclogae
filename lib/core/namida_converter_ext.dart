@@ -2888,6 +2888,8 @@ extension NotificationButtonUtils on NotificationButton {
     NotificationButton.stopAfterCurrent => lang.stopAfterThisTrack,
     NotificationButton.addToPlaylist => lang.addToPlaylist,
     NotificationButton.bookmark => lang.addBookmark,
+    NotificationButton.floatingLyrics => '悬浮歌词',
+    NotificationButton.floatingLyricsLock => '锁定悬浮歌词',
   };
 
   IconData toIcon() => switch (this) {
@@ -2906,6 +2908,8 @@ extension NotificationButtonUtils on NotificationButton {
     NotificationButton.stopAfterCurrent => Broken.pause_circle,
     NotificationButton.addToPlaylist => Broken.music_library_2,
     NotificationButton.bookmark => Broken.bookmark,
+    NotificationButton.floatingLyrics => Broken.message_text,
+    NotificationButton.floatingLyricsLock => Broken.lock_1,
   };
 }
 

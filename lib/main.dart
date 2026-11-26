@@ -81,6 +81,7 @@ import 'package:namida/core/translations/fallback_delegates.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/ui_scale.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/floating_lyrics/floating_lyrics_controller.dart';
 import 'package:namida/main_page_wrapper.dart';
 import 'package:namida/packages/scroll_physics_modified.dart';
 import 'package:namida/ui/dialogs/common_dialogs.dart';
@@ -322,7 +323,16 @@ Future<bool> _mainAppInitialization() async {
     // -- best to initialize last, so that tracks are prepared (for info/colors) and rhttp is initialized (for network), etc.
     // -- lyrics integrations require the player, and must be active before the latest queue loads lyrics
     try {
-      await Player.inst.initializePlayer().then((_) => LyricsIntegrations.init()).whenComplete(prepareLatestQueue);
+      await Player.inst.initializePlayer().then((_) async {
+        LyricsIntegrations.init();
+        final floatingLyrics = FloatingLyricsController.inst;
+        floatingLyrics.hasLockNotificationButton = () => settings.notificationButtons.value.contains(NotificationButton.floatingLyricsLock);
+        floatingLyrics.attachAccentColorSource(
+          listenable: CurrentColor.inst.miniplayerColorListenable,
+          readColor: () => CurrentColor.inst.miniplayerColorValue,
+        );
+        await floatingLyrics.init();
+      }).whenComplete(prepareLatestQueue);
     } catch (e, st) {
       logger.error('', e: e, st: st);
     }

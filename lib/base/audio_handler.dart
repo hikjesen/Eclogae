@@ -66,6 +66,7 @@ import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/core/namida_converter_ext.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/floating_lyrics/floating_lyrics_controller.dart';
 import 'package:namida/lx_music/lx_preview_player.dart';
 import 'package:namida/main.dart';
 import 'package:namida/ui/dialogs/common_dialogs.dart';

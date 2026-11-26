@@ -1106,6 +1106,8 @@ enum NotificationButton {
   stopAfterCurrent,
   addToPlaylist,
   bookmark,
+  floatingLyrics,
+  floatingLyricsLock,
   ;
 
   final bool isTransport;

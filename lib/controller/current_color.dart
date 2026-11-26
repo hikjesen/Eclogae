@@ -73,6 +73,12 @@ class CurrentColor {
   bool get _shouldUpdateFromDeviceWallpaper => settings.pickColorsFromDeviceWallpaper.value;
 
   Color get miniplayerColor => settings.forceMiniplayerTrackColor.valueR ? _namidaColorMiniplayer.valueR?.color ?? color : color;
+  late final Listenable miniplayerColorListenable = Listenable.merge([_namidaColor, _namidaColorMiniplayer, settings.forceMiniplayerTrackColor]);
+  Color get miniplayerColorValue {
+    final trackColor = settings.forceMiniplayerTrackColor.value ? _namidaColorMiniplayer.value?.color : null;
+    return trackColor ?? _namidaColor.value?.color ?? playerStaticColor;
+  }
+
   NamidaColor get miniplayerColorM =>
       settings.forceMiniplayerTrackColor.valueR ? _namidaColorMiniplayer.valueR ?? _namidaColor.valueR ?? _defaultNamidaColor : _namidaColor.valueR ?? _defaultNamidaColor;
   Color get color => _namidaColor.valueR?.color ?? _defaultNamidaColor.color;

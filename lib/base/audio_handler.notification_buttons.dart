@@ -29,6 +29,7 @@ mixin _NotificationButtonsMixin<Q extends Playable> on BasicAudioHandler<Q> {
     settings.player.isSeekDurationPercentage.addListener(_onSeekDurationChanged);
     sleepTimerConfig.addListener(_onSleepTimerConfigChanged);
     numberOfRepeats.addListener(_onNumberOfRepeatsChanged);
+    FloatingLyricsController.inst.settingsNotifier.addListener(_onFloatingLyricsChanged);
   }
 
   static List<NotificationButton> _resolveNotificationButtons() {
@@ -85,6 +86,21 @@ mixin _NotificationButtonsMixin<Q extends Playable> on BasicAudioHandler<Q> {
 
   void _onNumberOfRepeatsChanged() {
     if (displayRepeatMode == PlayerRepeatMode.forNtimes) _refreshNotificationButtonsIfShown(NotificationButton.repeatMode);
+  }
+
+  bool _wasFloatingLyricsEnabled = false;
+  bool _wasFloatingLyricsLocked = false;
+
+  void _onFloatingLyricsChanged() {
+    final controller = FloatingLyricsController.inst;
+    final isEnabled = controller.isEnabled;
+    final isLocked = controller.isLocked;
+    final shouldRefresh =
+        (isEnabled != _wasFloatingLyricsEnabled && _notificationButtons.contains(NotificationButton.floatingLyrics)) || //
+        (isLocked != _wasFloatingLyricsLocked && _notificationButtons.contains(NotificationButton.floatingLyricsLock));
+    _wasFloatingLyricsEnabled = isEnabled;
+    _wasFloatingLyricsLocked = isLocked;
+    if (shouldRefresh) _refreshNotificationButtons();
   }
 
   bool _wasSleepTimerActive = false;
@@ -175,6 +191,12 @@ mixin _NotificationButtonsMixin<Q extends Playable> on BasicAudioHandler<Q> {
       NotificationButton.stopAfterCurrent => _stopAfterCurrentControl(),
       NotificationButton.addToPlaylist => _playlistControl(item),
       NotificationButton.bookmark => _customControl(button, 'drawable/bookmark', lang.addBookmark),
+      NotificationButton.floatingLyrics => _customControl(
+        button,
+        FloatingLyricsController.inst.isEnabled ? 'drawable/floating_lyric_on' : 'drawable/floating_lyric_off',
+        '悬浮歌词',
+      ),
+      NotificationButton.floatingLyricsLock => _floatingLyricsLockControl(),
     };
   }
 
@@ -192,6 +214,15 @@ mixin _NotificationButtonsMixin<Q extends Playable> on BasicAudioHandler<Q> {
   static MediaControl _stopAfterCurrentControl() {
     final icon = Player.inst.isStoppingAfterCurrent ? 'drawable/pause_circle_bold' : 'drawable/pause_circle';
     return _customControl(NotificationButton.stopAfterCurrent, icon, lang.stopAfterThisTrack);
+  }
+
+  static MediaControl _floatingLyricsLockControl() {
+    final isLocked = FloatingLyricsController.inst.isLocked;
+    return _customControl(
+      NotificationButton.floatingLyricsLock,
+      isLocked ? 'drawable/floating_lyric_lock' : 'drawable/floating_lyric_unlock',
+      isLocked ? '解锁悬浮歌词' : '锁定悬浮歌词',
+    );
   }
 
   static MediaControl _customControl(NotificationButton button, String androidIcon, String label) {
@@ -344,6 +375,10 @@ mixin _NotificationButtonsMixin<Q extends Playable> on BasicAudioHandler<Q> {
         await _toggleCurrentItemInPlaylist();
       case NotificationButton.bookmark:
         await BookmarksController.inst.addAtCurrentPosition();
+      case NotificationButton.floatingLyrics:
+        await FloatingLyricsController.inst.toggleEnabled(promptPermission: true);
+      case NotificationButton.floatingLyricsLock:
+        await FloatingLyricsController.inst.toggleLocked();
     }
     return true;
   }

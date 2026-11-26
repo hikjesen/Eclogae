@@ -1,0 +1,369 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+
+import 'package:namida/class/route.dart';
+import 'package:namida/core/dimensions.dart';
+import 'package:namida/core/enums.dart';
+import 'package:namida/core/extensions.dart';
+import 'package:namida/core/icon_fonts/broken_icons.dart';
+import 'package:namida/core/ntheme.dart';
+import 'package:namida/ui/widgets/custom_widgets.dart';
+import 'package:namida/ui/widgets/mascots/mascots.dart';
+import 'package:namida/ui/widgets/settings_card.dart';
+
+import 'floating_lyrics_controller.dart';
+import 'floating_lyrics_models.dart';
+
+class FloatingLyricsSettingsPage extends StatefulWidget with NamidaRouteWidget {
+  const FloatingLyricsSettingsPage({super.key});
+
+  @override
+  RouteType get route => RouteType.SETTINGS_subpage;
+
+  @override
+  String get name => '悬浮歌词';
+
+  @override
+  State<FloatingLyricsSettingsPage> createState() => _FloatingLyricsSettingsPageState();
+}
+
+class _FloatingLyricsSettingsPageState extends State<FloatingLyricsSettingsPage> {
+  final _controller = FloatingLyricsController.inst;
+  late final _changes = Listenable.merge([_controller.settingsNotifier, _controller.hasPermissionNotifier]);
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.setSettingsPreview(true);
+    unawaited(_controller.init());
+  }
+
+  @override
+  void dispose() {
+    _controller.setSettingsPreview(false);
+    super.dispose();
+  }
+
+  Future<void> _update(FloatingLyricsSettings Function(FloatingLyricsSettings) change, {bool persist = true}) async {
+    await _controller.init();
+    await _controller.updateSettings(change(_controller.settingsNotifier.value), persist: persist);
+  }
+
+  @override
+  Widget build(BuildContext context) => BackgroundWrapper(
+    child: Stack(
+      children: [
+        Positioned.fill(
+          child: NDecoratedBox(
+            decoration: (colors) {
+              final theme = Theme.of(context);
+              final isDark = theme.brightness == Brightness.dark;
+              final accent = colors.accent ?? colors.primary;
+              return BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: const [0.2, 1.0],
+                  colors: [
+                    theme.appBarTheme.backgroundColor ?? accent.withOpacityExt(isDark ? 0.0 : 0.10),
+                    accent.withOpacityExt(isDark ? 0.16 : 0.24),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+        const Positioned.fill(child: NamidaMascotBackground.settings()),
+        ListenableBuilder(
+          listenable: _changes,
+          builder: (context, _) {
+            final s = _controller.settingsNotifier.value;
+            return SuperSmoothListView(
+              key: const PageStorageKey('floating-lyrics-settings'),
+              padding: EdgeInsets.symmetric(horizontal: Dimensions.inst.getSettingsHorizontalMargin(context)),
+              children: [
+                if (!_controller.hasPermissionNotifier.value) _buildPermission(),
+                _buildControls(s),
+                _buildStyle(context, s),
+                _shortcutHelp,
+                kBottomPaddingWidget,
+              ],
+            );
+          },
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildPermission() => SettingsCard(
+    title: '需要悬浮窗权限',
+    subtitle: '允许 Namida 显示在其他应用上层后，即可启用悬浮歌词。',
+    icon: Broken.info_circle,
+    child: Padding(
+      padding: const EdgeInsets.all(8),
+      child: NamidaButton(
+        text: '去开启悬浮窗权限',
+        icon: Broken.layer,
+        onTap: _controller.requestOverlayPermission,
+      ),
+    ),
+  );
+
+  Widget _buildControls(FloatingLyricsSettings s) => SettingsCard(
+    title: '基础控制',
+    subtitle: null,
+    icon: Broken.setting_2,
+    child: Column(
+      children: [
+        CustomSwitchListTile(
+          title: '启用悬浮歌词',
+          icon: Broken.message_text,
+          value: s.enabled,
+          onChanged: (current) => _controller.setEnabled(!current),
+        ),
+        CustomSwitchListTile(
+          title: '锁定位置',
+          subtitle: '锁定后触摸会穿透悬浮窗',
+          icon: Broken.lock_1,
+          value: s.locked,
+          onChanged: (current) => _controller.setLocked(!current),
+        ),
+        CustomSwitchListTile(
+          title: '在应用内也显示',
+          icon: Broken.mobile,
+          value: s.showInApp,
+          onChanged: (current) => _update((latest) => latest.copyWith(showInApp: !current)),
+        ),
+        CustomSwitchListTile(
+          title: '显示双语或译文副行',
+          subtitle: s.singleLine ? '单行滚动模式仅显示主行' : null,
+          icon: Broken.translate,
+          value: s.showSecondaryLine,
+          enabled: !s.singleLine,
+          onChanged: (current) => _update((latest) => latest.copyWith(showSecondaryLine: !current)),
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildStyle(BuildContext context, FloatingLyricsSettings s) {
+    final colors = NColorsData.of(context);
+    return SettingsCard(
+      title: '样式与排版',
+      subtitle: null,
+      icon: Broken.brush_2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          CustomListTile(title: '配色预设', subtitle: s.colorPreset.label, icon: Broken.color_swatch),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                for (final preset in FloatingLyricsColorPreset.values) _colorButton(colors, preset, selected: preset == s.colorPreset),
+              ],
+            ),
+          ),
+          CustomSwitchListTile(
+            title: '文字描边',
+            subtitle: '增强歌词在复杂背景上的可读性',
+            icon: Broken.text_block,
+            value: s.textOutline,
+            onChanged: (current) => _update((latest) => latest.copyWith(textOutline: !current)),
+          ),
+          _FloatingLyricsSlider(
+            title: '字体大小',
+            icon: Broken.text,
+            value: s.fontSizeSp,
+            min: 12,
+            max: 34,
+            unit: ' sp',
+            onChanged: (value) => _update((latest) => latest.copyWith(fontSizeSp: value), persist: false),
+            onChangeEnd: (value) => _update((latest) => latest.copyWith(fontSizeSp: value), persist: true),
+          ),
+          _FloatingLyricsSlider(
+            title: '文字透明度',
+            icon: Broken.eye,
+            value: (s.opacity * 100).roundToDouble(),
+            min: 20,
+            max: 100,
+            unit: '%',
+            onChanged: (value) => _update((latest) => latest.copyWith(opacity: value / 100), persist: false),
+            onChangeEnd: (value) => _update((latest) => latest.copyWith(opacity: value / 100), persist: true),
+          ),
+          _FloatingLyricsSlider(
+            title: '悬浮窗宽度',
+            icon: Broken.size,
+            value: s.widthPercent,
+            min: 40,
+            max: 100,
+            unit: '%',
+            onChanged: (value) => _update((latest) => latest.copyWith(widthPercent: value), persist: false),
+            onChangeEnd: (value) => _update((latest) => latest.copyWith(widthPercent: value), persist: true),
+          ),
+          const CustomListTile(title: '水平对齐', icon: Broken.textalign_center),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                for (final align in FloatingLyricsAlign.values) _alignButton(align, selected: align == s.textAlign),
+              ],
+            ),
+          ),
+          CustomSwitchListTile(
+            title: '单行滚动模式',
+            icon: Broken.textalign_left,
+            value: s.singleLine,
+            onChanged: (current) => _update((latest) => latest.copyWith(singleLine: !current)),
+          ),
+          if (!s.singleLine)
+            _FloatingLyricsSlider(
+              title: '最大行数',
+              icon: Broken.layer,
+              value: s.maxLines.toDouble(),
+              min: 2,
+              max: 6,
+              unit: ' 行',
+              onChanged: (value) => _update((latest) => latest.copyWith(maxLines: value.round()), persist: false),
+              onChangeEnd: (value) => _update((latest) => latest.copyWith(maxLines: value.round()), persist: true),
+            ),
+          CustomSwitchListTile(
+            title: '切句过渡动画',
+            icon: Broken.flash_1,
+            value: s.toggleAnimation,
+            onChanged: (current) => _update((latest) => latest.copyWith(toggleAnimation: !current)),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: NamidaButton(
+                text: '重置悬浮窗位置',
+                icon: Broken.refresh,
+                onTap: _controller.resetPosition,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _colorButton(NColorsData colors, FloatingLyricsColorPreset preset, {required bool selected}) {
+    final argb = preset.argb;
+    return Semantics(
+      label: preset.label,
+      selected: selected,
+      child: NamidaButton(
+        minWidth: 44,
+        minHeight: 44,
+        isCircle: true,
+        dense: true,
+        colors: selected ? NamidaButtonColors.selected : NamidaButtonColors.dimmed,
+        tooltip: () => preset.label,
+        iconWidget: Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            color: argb == null ? colors.accent ?? colors.primary : Color(argb),
+            border: Border.all(color: colors.onSurface.withOpacityExt(0.3)),
+            shape: BoxShape.circle,
+          ),
+          child: argb == null ? const Icon(Broken.colorfilter, size: 12) : null,
+        ),
+        onTap: () => _update((latest) => latest.copyWith(colorPreset: preset)),
+      ),
+    );
+  }
+
+  Widget _alignButton(FloatingLyricsAlign align, {required bool selected}) {
+    final (text, icon) = switch (align) {
+      FloatingLyricsAlign.left => ('左', Broken.textalign_left),
+      FloatingLyricsAlign.center => ('中', Broken.textalign_center),
+      FloatingLyricsAlign.right => ('右', Broken.textalign_right),
+    };
+    return Semantics(
+      selected: selected,
+      child: NamidaButton(
+        text: text,
+        icon: icon,
+        minHeight: 44,
+        minWidth: 52,
+        tooltip: () => align.label,
+        colors: selected ? NamidaButtonColors.selected : NamidaButtonColors.dimmed,
+        onTap: () => _update((latest) => latest.copyWith(textAlign: align)),
+      ),
+    );
+  }
+
+  static const _shortcutHelp = SettingsCard(
+    title: '快捷操作',
+    subtitle: null,
+    icon: Broken.flash_1,
+    child: Padding(
+      padding: EdgeInsets.fromLTRB(12, 10, 12, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          NamidaText('点按悬浮窗可打开四键控制条，进行播放或暂停、锁定、打开设置和关闭操作。', style: NText.small, color: NColors.textSmall),
+          SizedBox(height: 8),
+          NamidaText(
+            '在「播放设置 → 通知栏按钮」中可添加悬浮歌词快捷开关和锁定按钮。未配置锁定按钮时，锁定悬浮窗会显示静默解锁通知。',
+            style: NText.small,
+            color: NColors.textSmall,
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _FloatingLyricsSlider extends StatelessWidget {
+  const _FloatingLyricsSlider({
+    required this.title,
+    required this.icon,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.unit,
+    required this.onChanged,
+    required this.onChangeEnd,
+  });
+
+  final String title;
+  final IconData icon;
+  final double value;
+  final double min;
+  final double max;
+  final String unit;
+  final ValueChanged<double> onChanged;
+  final ValueChanged<double> onChangeEnd;
+
+  String _label(double value) => '${value.round()}$unit';
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      CustomListTile(title: title, icon: icon, trailingRaw: NamidaText(_label(value), style: NText.small)),
+      Semantics(
+        label: title,
+        child: Slider(
+          value: value,
+          min: min,
+          max: max,
+          divisions: (max - min).round(),
+          label: _label(value),
+          semanticFormatterCallback: _label,
+          onChanged: onChanged,
+          onChangeEnd: onChangeEnd,
+        ),
+      ),
+    ],
+  );
+}

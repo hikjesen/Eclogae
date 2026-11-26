@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
+import com.msob7y.namida.floatinglyrics.FloatingLyricsBridge
 import com.ryanheise.audioservice.AudioService
 import io.flutter.Log
 import io.flutter.embedding.engine.FlutterEngine
@@ -36,6 +37,7 @@ class NamidaAppChannels private constructor(private val context: Context) {
 
   fun configureEngine(flutterEngine: FlutterEngine) {
     com.msob7y.namida.lx.LxQuickJsBridge.get(context).attach(flutterEngine)
+    FloatingLyricsBridge.get(context).attach(flutterEngine)
     try {
       flutterEngine.plugins.add(FAudioTagger())
     } catch (e: Exception) {

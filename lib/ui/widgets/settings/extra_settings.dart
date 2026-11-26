@@ -32,6 +32,7 @@ import 'package:namida/core/ntheme.dart';
 import 'package:namida/core/sort_key.dart';
 import 'package:namida/core/translations/language.dart';
 import 'package:namida/core/utils.dart';
+import 'package:namida/floating_lyrics/floating_lyrics_settings_page.dart';
 import 'package:namida/main.dart';
 import 'package:namida/ui/dialogs/edit_tags_dialog.dart';
 import 'package:namida/ui/widgets/custom_widgets.dart';
@@ -222,6 +223,18 @@ class ExtrasSettings extends SettingSubpageProvider {
             ],
           ),
         ],
+      ),
+      SettingCustom(
+        availability: NamidaFeaturesAvailablity.android,
+        title: () => '悬浮歌词',
+        aliases: () => const ['Floating lyrics', 'Desktop lyrics', '桌面歌词'],
+        tile: (args) => CustomListTile(
+          bgColor: args.bgColor,
+          icon: Broken.message_text,
+          title: '悬浮歌词',
+          subtitle: '桌面悬浮歌词样式、锁屏穿透与快捷控制',
+          onTap: () => const FloatingLyricsSettingsPage().navigate(),
+        ),
       ),
       SettingExpansion(
         leading: const StackedIcon(
