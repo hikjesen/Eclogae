@@ -1,11 +1,27 @@
 {
   "@@locale": "ru",
+  "@acceptConnectionFromName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "@addMoreFromToQueue": {
     "placeholders": {
       "media": {
         "type": "String"
       }
     }
+  },
+  "@androidMixer": {
+    "description": "Android's own audio mixer, which mixes all apps and applies system volume and effects"
+  },
+  "@bitPerfect": {
+    "description": "Audio reaches the output device exactly as stored in the file, without any processing"
+  },
+  "@bitPerfectSubtitle": {
+    "description": "Subtitle of the bit-perfect option"
   },
   "@clearTrackItemMultiple": {
     "placeholders": {
@@ -143,6 +159,9 @@
       }
     }
   },
+  "@crossfade": {
+    "description": "Short name of the crossfade effect between tracks"
+  },
   "@crossfadeTriggerSeconds": {
     "placeholders": {
       "seconds": {
@@ -157,6 +176,9 @@
         "type": "String"
       }
     }
+  },
+  "@decoder": {
+    "description": "The component that turns compressed audio (MP3, FLAC, ...) into raw samples"
   },
   "@deleteFileCacheSubtitle": {
     "placeholders": {
@@ -184,12 +206,22 @@
       }
     }
   },
+  "@embeddedLyricsArePrioritized": {
+    "placeholders": {
+      "setting": {
+        "type": "String"
+      }
+    }
+  },
   "@enableM3uSyncNote2": {
     "placeholders": {
       "playlistsBackupPath": {
         "type": "String"
       }
     }
+  },
+  "@exclusive": {
+    "description": "Exclusive output mode, where only this app can use the audio device"
   },
   "@extractAllColorPalettesSubtitle": {
     "placeholders": {
@@ -198,6 +230,17 @@
         "type": "int"
       }
     }
+  },
+  "@forcedOffBy": {
+    "description": "Header above options disabled by a mode, {mode} is its name like Bit-perfect or USB direct access",
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "@frequency": {
+    "description": "Center frequency of an equalizer band, in Hz"
   },
   "@historyListensReplaceWarning": {
     "placeholders": {
@@ -253,6 +296,13 @@
       }
     }
   },
+  "@lyricsFilesArePrioritized": {
+    "placeholders": {
+      "setting": {
+        "type": "String"
+      }
+    }
+  },
   "@membershipYouNeedMembershipOfToAddMultipleAccounts": {
     "placeholders": {
       "name1": {
@@ -298,6 +348,24 @@
         "type": "String"
       },
       "operation": {
+        "type": "String"
+      }
+    }
+  },
+  "@partyMembershipRequired": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@partySavedToPlaylist": {
+    "placeholders": {
+      "count": {
+        "format": "decimalPattern",
+        "type": "int"
+      },
+      "name": {
         "type": "String"
       }
     }
@@ -362,6 +430,9 @@
       }
     }
   },
+  "@volumeKeys": {
+    "description": "The device's physical volume buttons"
+  },
   "@yourCurrentMembershipIs": {
     "placeholders": {
       "name": {
@@ -369,7 +440,16 @@
       }
     }
   },
+  "@yourYear": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
   "about": "О приложении",
+  "accept": "Принять",
+  "acceptConnectionFromName": "Принять соединение от {name}?",
   "active": "Активный",
   "add": "Добавить",
   "addAccount": "Добавить аккаунт",
@@ -392,6 +472,7 @@
   "addToPlaylist": "Добавить в Плейлист",
   "addTracksAtTheBeginning": "Добавить треки в начало",
   "added": "добавлено",
+  "address": "Адрес",
   "advanced": "Продвинутое",
   "advancedSettings": "Продвинутые",
   "advancedSettingsSubtitle": "Продвинутые настройки, не трогай",
@@ -414,6 +495,7 @@
   "alwaysExpandedSearchbar": "Всегда Раскрытая Панель поиска",
   "alwaysRestore": "Всегда восстанавливать",
   "and": "и",
+  "androidMixer": "Микшер Android",
   "animatingThumbnailIntensity": "Интенсивность Анимации Миниатюр",
   "animatingThumbnailInversed": "Инверсия Анимации",
   "animatingThumbnailInversedSubtitle": "Высокие пики громкости приведут к уменьшению размера миниатюры",
@@ -424,11 +506,13 @@
   "appearsOn": "Появляется в",
   "artist": "Исполнитель",
   "artists": "Исполнители",
+  "artistsMap": "Карта исполнителей",
   "artwork": "Обложка",
   "artworkGestures": "Жесты Обложек",
   "artworks": "Обложки",
   "audio": "Аудио",
   "audioCache": "Кэш Аудио",
+  "audioConfigs": "Аудио конфигурации",
   "audioOnly": "Только Аудио",
   "auto": "Автоматически",
   "autoBackupInterval": "Интервал автоматических резервных копий",
@@ -441,19 +525,29 @@
   "autoSkipOnce": "Автоматически пропустить единожды",
   "autoStartRadio": "Автозапуск радио",
   "autoStartRadioSubtitle": "Автоматически добавляет смешанный плейлист при воспроизведении одного трека",
+  "autoSyncInterval": "Интервал авто-синхронизации",
   "automaticBackup": "Автоматическое",
   "automaticBackupSubtitle": "Автоматически применяется последний файл резервной копии, найденный в хранилище",
+  "availableDevices": "Доступные устройства",
   "backupAndRestore": "Резервное копирование и Восстановление",
   "backupAndRestoreSubtitle": "Резервное копирование базы данных и настроек",
   "balanced": "Сбалансированный",
   "beta": "Бета",
   "betweenDates": "Между Датами",
   "bitDepth": "Битовая глубина",
+  "bitPerfect": "Точь-в-точь (бит-пёрфект)",
+  "bitPerfectSubtitle": "Проигрывает аудио без каких-либо изменений",
+  "bitPerfectUnsupportedFormat": "Этот файл не может быть воспроизведён точь-в-точь",
   "bitrate": "Битрейт",
   "bits": "Бит",
   "blacklist": "Чёрный список",
+  "block": "Заблокировать",
+  "blockedDevices": "Заблокированные устройства",
+  "blur": "Размытие",
   "borderRadiusMultiplier": "Множитель Радиуса Границ",
+  "bugReport": "Сообщение об ошибке",
   "cache": "Кэш",
+  "calculation": "Вычисление",
   "cancel": "Отмена",
   "canceled": "Отменено",
   "changed": "Изменено",
@@ -461,28 +555,35 @@
   "changelogSubtitle": "Посмотри, что нового добавили и исправили в Eclogae",
   "channel": "Канал",
   "channels": "Каналы",
+  "chapters": "Главы",
+  "charts": "Чарты",
   "check": "Проверить",
   "checkForMore": "Подробнее",
   "checkList": "Контрольный Список",
   "choose": "Выбрать",
   "chooseWhatToClear": "Выбери, что очистить",
+  "christmas": "Рождество",
   "claim": "Запросить",
   "clear": "Очистить",
   "clearAudioCache": "Очистить Кэш Аудио",
   "clearImageCache": "Очистить Кэш изображений",
   "clearImageCacheWarning": "Предупреждение: будет создана библиотека без изображений. Используй только для перестройки кэша изображений.",
+  "clearServerCache": "Очистить кэш сервера",
   "clearTrackItem": "Удаление у Трека",
   "clearTrackItemMultiple": "Очистить {number, plural, one{{number} трек} few{{number} трека} other{{number} треков}}",
   "clearVideoCache": "Очистить Кэш Видео",
   "clearVideoCacheNote": "Ты можешь выбрать, что удалить.",
+  "client": "Клиент",
   "clock": "Часы",
   "clockOnly": "Только Часы",
+  "color": "Цвет",
   "colorPalette": "Цветовая Палитра",
   "colorPaletteNote1": "Удерживайте по цвету, чтобы убрать его",
   "colorPaletteNote2": "Нажми на микс, чтобы использовать его в качестве цвета по умолчанию",
   "colorPalettes": "Цветовые Палитры",
   "comment": "Комментарий",
   "comments": "Комментарии",
+  "completedAlbums": "Завершённые альбомы",
   "composer": "Композитор",
   "compress": "Сжать",
   "compressImages": "Сжать Изображения",
@@ -491,6 +592,12 @@
   "configure": "Настроить",
   "confirm": "Подтвердить",
   "confirmRefresh": "Обновить?",
+  "connect": "Подключение",
+  "connectByIp": "Подключение по IP",
+  "connectedDevices": "Подключённые устройства",
+  "connectionAccepted": "Соединение установлено",
+  "connectionBlocked": "Соединение заблокированно",
+  "connectionRejected": "Соединение отклонено",
   "contains": "Содержит",
   "convertToM3UPlaylist": "Конвертировать в M3U Плейлист",
   "convertToNormalPlaylist": "Конвертировать в Обычный Плейлист",
@@ -527,6 +634,7 @@
   "createNewSmartPlaylist": "Создать новый Умный Плейлист",
   "createdBackupSuccessfully": "Резервная копия создана",
   "createdBackupSuccessfullySub": "Резервная копия была создана успешно",
+  "crossfade": "Плавный переход",
   "crossfadeDuration": "Длительность Затухающего перехода",
   "crossfadeTriggerSeconds": "Автоматическое включение Затухающего перехода за {seconds, plural, one{последнюю {seconds} секунду} few{последние {seconds} секунды} other{последние {seconds} секунд}}",
   "crossfadeTriggerSecondsDisabled": "Не запускать затухающий переход автоматически",
@@ -544,6 +652,7 @@
   "dateTimeFormat": "Формат даты и времени",
   "day": "День",
   "days": "Дня",
+  "decoder": "Декодер",
   "defaultBackupLocation": "Расположение Резервных копий по Умолчанию",
   "defaultColor": "Тема по Умолчанию",
   "defaultColorSubtitle": "Установка цвета, который будет использоваться плеером",
@@ -559,6 +668,9 @@
   "description": "Описание",
   "developer": "Разработчик",
   "development": "Разработка",
+  "deviceName": "Имя устройства",
+  "diagnostics": "Диагностика",
+  "dictionary": "Словарь",
   "didYouMean": "Может, ты имел ввиду",
   "dimIntensity": "Интенсивность Затемнения",
   "dimMiniplayerAfterSeconds": "Затемнять миниплеер после {seconds, plural, one{{seconds} секунды} other{{seconds} секунд}} бездействия",
@@ -569,7 +681,11 @@
   "disableSearchCleanup": "Отключить Очистку Поиска",
   "discNumber": "Номер Диска",
   "discNumberTotal": "Всего дисков",
+  "discardChanges": "Отменить изменения?",
+  "disconnect": "Отключиться",
   "discover": "Найти",
+  "discoveries": "Открытия",
+  "discoveryFailedTryReenablingNetworkAdapter": "Обнаружение не удалось. Попробуйте перезапустить сетевой адаптер или перезагрузить устройство",
   "dislike": "Не нравится",
   "dismissibleMiniplayer": "Закрываемый миниплеер",
   "displayActualPositionInsteadOfDifferenceWhileSeeking": "Отображать текущую позицию при прокрутке вместо разницы",
@@ -578,11 +694,9 @@
   "displayArtistBeforeTitle": "Отображать исполнителя перед названием",
   "displayArtworkOnLockscreen": "Отображать обложку на экране блокировки",
   "displayAudioInfoInMiniplayer": "Отображать Информацию об Аудио",
-  "displayFavButtonInNotification": "Отображать кнопку \"Избранное\" в Уведомлениях",
   "displayFavButtonInNotificationSubtitle": "Миниатюра может быть смещена.",
   "displayFavouriteIconInTrackTile": "Отображать Кнопку \"Избранное\"",
   "displayRemainingDurationInsteadOfTotal": "Отображать оставшуюся продолжительности вместо общей",
-  "displayStopButtonInNotification": "Показывать Кнопку \"Стоп\" в Уведомлениях",
   "displayThirdItemInRowInTrackTile": "Отображать Третий Элемент в каждом Ряду",
   "displayThirdRowInTrackTile": "Отображать Третий Ряд",
   "displayTrackNumberInAlbumPage": "Отображать номер Трека на странице Альбома",
@@ -598,6 +712,7 @@
   "dontResume": "Не продолжать воспроизведение",
   "doubleTapToToggleLyrics": "Двойной тап для отображения текста песни",
   "download": "Скачать",
+  "downloadingWillBeSkipped": "Скачивание будет пропущено",
   "downloadingWillOverrideIt": "Загрузка перезапишет его",
   "downloads": "Загрузки",
   "downloadsMetadataTags": "Скачивать теги Метаданных",
@@ -612,6 +727,7 @@
   "editArtwork": "Редактировать Обложку",
   "editTags": "Редактировать Теги",
   "email": "Почта",
+  "embeddedLyricsArePrioritized": "Используется встроенный текст песни вместо файла с текстом. Выключите \"{setting}\" или встройте текст чтобы использовать его",
   "emptyNonMeaningfulTagFields": "у тебя есть поля с пустыми/незначительными значениями, убедись, что ты действительно хочешь их редактировать",
   "emptyValue": "Пустое Значение",
   "enableArtworkCache": "Включить кэш обложек",
@@ -646,11 +762,14 @@
   "error": "Ошибка",
   "errorFetchingVideoList": "Ошибка анализа списка видео",
   "errorPlayingTrack": "Ошибка воспроизведении трека",
+  "exclude": "Исключить",
   "excludedFodlers": "Исключённые Папки",
+  "exclusive": "Эксклюзивный",
   "exists": "Существует",
   "exit": "Выход",
   "exitAppSubtitle": "Нажми ещё раз, чтобы выйти",
   "expandedMiniplayer": "Раскрытый Миниплеер",
+  "export": "Экспортировать",
   "exportAsM3u": "Экспорт в формате M3U",
   "extension": "Расширение",
   "externalFiles": "Внешние Файлы",
@@ -668,6 +787,7 @@
   "favourite": "Избранное",
   "favouritedDate": "Избранная дата",
   "favourites": "Избранные",
+  "featureRequest": "Запросить функцию",
   "features": "Возможности",
   "fetching": "Извлечение",
   "fetchingOfAllVideos": "Извлечь из всех видео",
@@ -688,6 +808,8 @@
   "filterType": "Тип Фильтра",
   "filtered": "Отфильтровано",
   "filteredBySizeAndDuration": "Треки, Отфильтрованные по размеру и продолжительности",
+  "find": "Найти",
+  "findAndReplace": "Найти и заменить",
   "finished": "Завершённые",
   "finishedUpdatingLibrary": "Обновление Библиотеки Завершено",
   "firstListen": "Первое прослушивание",
@@ -704,7 +826,11 @@
   "forceSquaredThumbnailNote": "Размер Миниатюры и Высота Плитки НЕ совпадают, квадратный вид может не соответствовать ожиданиям. Ты точно хочешь уравнять их?",
   "forceSquaredTrackThumbnail": "Принудительно сделать Миниатюру Трека Квадратной",
   "forceStopColorPaletteGeneration": "Принудительно прекратить извлечение цветовых палитр? Ты можешь продолжить это позже",
+  "forceUseGlobalConfig": "Принудительное использование глобальной конфигурации",
+  "forcedOffBy": "Неактивные параметры выключены {mode}",
   "format": "Формат",
+  "frequency": "Частота",
+  "fromClipboard": "Из буфера обмена",
   "fullscreen": "На весь экран",
   "gaplessPlayback": "Проигрывание Без пауз",
   "generate": "Подобрать",
@@ -724,7 +850,10 @@
   "group": "Группа",
   "groupArtworksByAlbum": "Группировать обложки по альбому",
   "guide": "Руководство",
+  "habits": "Привычки",
+  "halloween": "Хэллоуин",
   "hapticFeedback": "Тактильный отклик",
+  "hashtag": "Хэштэг",
   "heightOfAlbumTile": "Высота альбомной плитки",
   "heightOfTrackTile": "Высота плитки для треков",
   "hideSkipButtonAfter": "Убирать кнопку пропуска через",
@@ -749,10 +878,9 @@
   "immersiveModeSubtitle": "Скрывает статусную и навигационную панели при развёрнутом миниплеере",
   "import": "Импорт",
   "importAll": "Импортировать всё",
-  "importLastFmHistory": "Импорт истории LastFm",
   "importLastFmHistoryGuide": "1. Перейди на {lastfmCsvLink}\n\n2. Введи своё имя пользователя, получи и скачай csv-файл.\n\n3. Выбери файл на следующем экране.",
+  "importPlaylist": "Импортировать плейлист",
   "importTimeRange": "Импортировать диапазон времени",
-  "importYoutubeHistory": "Импорт истории YouTube",
   "importYoutubeHistoryGuide": "1. Перейди по {takeoutLink}\n\n2. Нажми \"Несколько форматов\" и напротив \"Истории\" выбери \"JSON\".\n\n3. Нажми \"Выбраны все данные YouTube\", нажми на \"Отменить выбор\" и выбери только \"историю\".\n\n4. \"Создай Экспорт\", загрузи и разархивируй.\n\n5. На следующем экране выбери \"история-просмотров.json\".",
   "importedNChannelsSuccessfully": "{number, plural, one{{number} канал успешно импортирован} two{{number} канала успешно импортировано} few{{number} канала успешно импортировано} other{{number} каналов успешно импортировано}}",
   "importedNPlaylistsSuccessfully": "{number, plural, other{{numberText} плейлистов импортировано успешно}}",
@@ -794,6 +922,7 @@
   "keepScreenAwakeWhen": "Держать экран включённым, когда",
   "killPlayerAfterDismissingApp": "Закрыть плеер после выхода из приложения",
   "language": "Язык",
+  "lastHour": "За последний час",
   "lastListen": "Последнее прослушивание",
   "lastPlayedPosition": "Последняя проигрываемая позиция",
   "learnMore": "Узнать больше",
@@ -807,6 +936,7 @@
   "liked": "Понравившиеся",
   "link": "Ссылка",
   "listOfFolders": "Список папок",
+  "listensPerMonth": "Прослушиваний в месяц",
   "loadAll": "Загрузить всё",
   "loadingFile": "Файл загружается",
   "local": "Локально",
@@ -814,6 +944,8 @@
   "login": "Логин",
   "longPressAction": "Действие при Зажатии",
   "longPressTheLyricsToEnterFullscreen": "Долгое нажатие на текст песни активирует полноэкранный режим",
+  "longestSession": "Самая длинная сессия",
+  "longestStreak": "Самый длинный стрик",
   "lossless": "Без потерь",
   "lostMemories": "Давно Прослушанное",
   "lostMemoriesSubtitle": "примерно в это время, {number, plural, one{{number} год} few{{number} года} other{{number} лет}} назад",
@@ -821,6 +953,9 @@
   "loudnessEnhancer": "Усиление громкости",
   "lyricist": "Лирик",
   "lyrics": "Текст песни",
+  "lyricsDeleteWithTrack": "Удалить текст вместе с треком",
+  "lyricsFilesArePrioritized": "Используются текстовые файлы вместо встроенного текста. Включите \"{setting}\" чтобы использовать их",
+  "lyricsFolders": "Папки с текстами треков",
   "lyricsSource": "Источник текста",
   "m3uPlaylist": "M3U-плейлист",
   "makeYourFirstListen": "Послушай впервые!",
@@ -834,6 +969,7 @@
   "matchingType": "Тип соответствия",
   "maxAudioCacheSize": "Максимальный размер кэша аудио",
   "maxImageCacheSize": "Максимальный размер кэша изображений",
+  "maxServerCacheSize": "Максимальный размер кэша сервера",
   "maxVideoCacheSize": "Максимальный размер кэша видео",
   "maximum": "Максимум",
   "mediaStoreIsEnabledThisWillHaveNoEffect": "Недоступно из-за включенного хранилища медиафайлов",
@@ -857,6 +993,7 @@
   "minTrackDurationToRestoreLastPosition": "Минимальная продолжительность трека для продолжения воспроизведения с предыдущего момента",
   "minValueCantBeMoreThanMax": "Минимальное значение не может быть больше максимального",
   "minValueToCountTrackListen": "Считать, что трек прослушан после: ",
+  "miniLyricsWindow": "Мини-окошко текста песни",
   "minimizedMiniplayer": "Минимизированный Миниплеер",
   "minimum": "Минимум",
   "minimumOneFolderSubtitle": "Должна быть как минимум одна папка, добавьте ещё папки, если хотите удалить эту",
@@ -957,6 +1094,49 @@
   "paletteSelectedMix": "Выбранный Микс",
   "parallelDownloads": "Параллельные загрузки",
   "parsed": "разобранный",
+  "partyBan": "Заблокировать",
+  "partyBannedMembers": "Заблокированные участники",
+  "partyBrowse": "Публичные комнаты",
+  "partyBrowseSubtitle": "Комнаты, к которым может присоединиться кто угодно",
+  "partyChat": "Чат",
+  "partyChatDisabled": "Чат выключен для гостей",
+  "partyChatHint": "Сообщение",
+  "partyCode": "Код вечеринки",
+  "partyCreate": "Создать вечеринку",
+  "partyDisplayName": "Ваше имя",
+  "partyDisplayNameSubtitle": "Как остальные видят вас в комнате",
+  "partyFull": "Эта вечеринка заполнена",
+  "partyHostOffline": "Организатор вечеринки не в сети",
+  "partyInvalidInvite": "Недействительная ссылка или код приглашения",
+  "partyInvalidServerUrl": "Неверный URL-адрес сервера",
+  "partyInviteLink": "Ссылка-приглашение",
+  "partyInviteLinkOrCode": "Ссылка или код приглашения",
+  "partyJoin": "Присоедениться к вечеринке",
+  "partyJoinRejected": "Организатор отклонил ваш запрос на присоединение",
+  "partyKick": "Выгнать",
+  "partyKicked": "Вы были выгнаны с вечеринки",
+  "partyLeave": "Покинуть",
+  "partyListenOnThisDevice": "Слушать на этом устройстве",
+  "partyMembers": "Участники",
+  "partyMembershipRequired": "Создание комнаты на нашем сервере требует уровня подписки {name} или выше, присоединение всегда бесплатно",
+  "partyNotFound": "Вечеринка не найдена",
+  "partyPermAdd": "Добавлять в очередь",
+  "partyPermChat": "Чат",
+  "partyPermControl": "Управление воспроизведением",
+  "partyPermEdit": "Управлять очередью",
+  "partyPrivacy": "Конфиденциальность",
+  "partyPublicRoom": "Публичная комната",
+  "partyQueueEmpty": "Очередь вечеринки пуста",
+  "partyQueueFull": "Очередь вечеринки переполнена",
+  "partyReactions": "Реакции",
+  "partyRejoin": "Переподключиться",
+  "partyRoleAdmin": "Администратор",
+  "partyRoleGuest": "Гость",
+  "partyRoomName": "Имя вечеринки",
+  "partyRoomPassword": "Пароль вечеринки",
+  "partySaveAsPlaylist": "Сохранить как плейлист",
+  "partySavedToPlaylist": "Сохранено {count} предметов в \"{name}\"",
+  "partyScanToJoin": "Сканировать для присоединения",
   "password": "Пароль",
   "path": "Полный Путь к Файлу",
   "pause": "Приостановить",
@@ -994,7 +1174,6 @@
   "pleaseEnterAName": "Пожалуйста, введите название",
   "port": "Порт",
   "preventDuplicatedTracks": "Предотвращать дублирование треков",
-  "preventDuplicatedTracksSubtitle": "Использует имя файла для однозначной идентификации треков",
   "preview": "Предпросмотр",
   "previous": "Предыдущий",
   "previousButtonReplays": "Перезапускать трек при выборе предыдущего трека",
@@ -1271,7 +1450,9 @@
   "view": "просмотр",
   "viewAll": "Посмотреть Всё",
   "views": "просмотра(ов)",
+  "visualizer": "Визуализатор",
   "volume": "Громкость",
+  "volumeKeys": "Кнопки громкости",
   "warning": "Предупреждение",
   "waveformBarsCount": "Количество полос волны громкости",
   "webmNoEditTagsSupport": "Формат WEBM не поддерживает редактирование тегов",
@@ -1282,7 +1463,7 @@
   "year": "Год",
   "yes": "да",
   "yourCurrentMembershipIs": "Твоё текущее членство: {name}",
-  "yourCustomOrderWillBeLost": "Текущая сортировка будет изменена. Продолжить?",
+  "yourYear": "Твой {year}",
   "youtube": "YouTube",
   "youtubeId": "Youtube ID",
   "youtubeMusic": "YouTube Music",

@@ -14,11 +14,44 @@
       }
     }
   },
+  "@androidMixer": {
+    "description": "Android's own audio mixer, which mixes all apps and applies system volume and effects"
+  },
+  "@bitPerfect": {
+    "description": "Audio reaches the output device exactly as stored in the file, without any processing"
+  },
+  "@bitPerfectActiveOn": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      },
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "@bitPerfectSubtitle": {
+    "description": "Subtitle of the bit-perfect option"
+  },
+  "@bitPerfectUpTo": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
   "@clearTrackItemMultiple": {
     "placeholders": {
       "number": {
         "format": "decimalPattern",
         "type": "int"
+      }
+    }
+  },
+  "@couldNotConnectToName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
       }
     }
   },
@@ -79,6 +112,14 @@
     }
   },
   "@countGenres": {
+    "placeholders": {
+      "count": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    }
+  },
+  "@countLanguages": {
     "placeholders": {
       "count": {
         "format": "decimalPattern",
@@ -174,6 +215,9 @@
       }
     }
   },
+  "@crossfade": {
+    "description": "Short name of the crossfade effect between tracks"
+  },
   "@crossfadeTriggerSeconds": {
     "placeholders": {
       "seconds": {
@@ -182,12 +226,18 @@
       }
     }
   },
+  "@curve": {
+    "description": "Shows the equalizer as a frequency response graph"
+  },
   "@dataIsProvidedByName": {
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
+  },
+  "@decoder": {
+    "description": "The component that turns compressed audio (MP3, FLAC, ...) into raw samples"
   },
   "@deleteFileCacheSubtitle": {
     "placeholders": {
@@ -215,6 +265,22 @@
       }
     }
   },
+  "@discoverPage": {
+    "description": "Title of the Discover page, also used in menus that open it"
+  },
+  "@dither": {
+    "description": "Adding tiny noise when reducing bit depth, to avoid distortion"
+  },
+  "@downmix": {
+    "description": "Combining more audio channels into fewer, for example 5.1 into stereo"
+  },
+  "@embeddedLyricsArePrioritized": {
+    "placeholders": {
+      "setting": {
+        "type": "String"
+      }
+    }
+  },
   "@enableM3uSyncNote2": {
     "placeholders": {
       "playlistsBackupPath": {
@@ -222,9 +288,64 @@
       }
     }
   },
+  "@eps": {
+    "description": "Plural of EP (extended play), a music release longer than a single but shorter than an album"
+  },
+  "@eqAllPass": {
+    "description": "Equalizer band type that only shifts phase, the volume stays the same"
+  },
+  "@eqBandPass": {
+    "description": "Equalizer band type that keeps only a range around a frequency"
+  },
+  "@eqHighPass": {
+    "description": "Equalizer band type that removes everything below a frequency"
+  },
+  "@eqHighShelf": {
+    "description": "Equalizer band type that boosts or cuts everything above a frequency"
+  },
+  "@eqLowPass": {
+    "description": "Equalizer band type that removes everything above a frequency"
+  },
+  "@eqLowShelf": {
+    "description": "Equalizer band type that boosts or cuts everything below a frequency"
+  },
+  "@eqNotch": {
+    "description": "Equalizer band type that removes a narrow range around a frequency"
+  },
+  "@eqPeak": {
+    "description": "Equalizer band type that boosts or cuts around one frequency (bell shape)"
+  },
+  "@exclusive": {
+    "description": "Exclusive output mode, where only this app can use the audio device"
+  },
   "@extractAllColorPalettesSubtitle": {
     "placeholders": {
       "number": {
+        "format": "decimalPattern",
+        "type": "int"
+      }
+    }
+  },
+  "@fadeOnPlayPause": {
+    "description": "Short name of the volume fade when playing or pausing"
+  },
+  "@forcedOffBy": {
+    "description": "Header above options disabled by a mode, {mode} is its name like Bit-perfect or USB direct access",
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "@frequency": {
+    "description": "Center frequency of an equalizer band, in Hz"
+  },
+  "@gain": {
+    "description": "How much an equalizer band boosts or cuts, in dB"
+  },
+  "@graphicEqualizerBands": {
+    "placeholders": {
+      "count": {
         "format": "decimalPattern",
         "type": "int"
       }
@@ -244,6 +365,13 @@
       }
     }
   },
+  "@importAppleMusicHistoryGuide": {
+    "placeholders": {
+      "link": {
+        "type": "String"
+      }
+    }
+  },
   "@importLastFmHistoryGuide": {
     "placeholders": {
       "lastfmCsvLink": {
@@ -254,6 +382,13 @@
   "@importListenBrainzHistoryGuide": {
     "placeholders": {
       "link": {
+        "type": "String"
+      }
+    }
+  },
+  "@importSourceData": {
+    "placeholders": {
+      "source": {
         "type": "String"
       }
     }
@@ -290,11 +425,21 @@
       }
     }
   },
+  "@limiter": {
+    "description": "Equalizer option that softly caps peaks so boosted audio never clips"
+  },
   "@lostMemoriesSubtitle": {
     "placeholders": {
       "number": {
         "format": "decimalPattern",
         "type": "int"
+      }
+    }
+  },
+  "@lyricsFilesArePrioritized": {
+    "placeholders": {
+      "setting": {
+        "type": "String"
       }
     }
   },
@@ -316,7 +461,17 @@
       }
     }
   },
+  "@monoAudio": {
+    "description": "Mixes the left and right channels together, so both sides play the same sound"
+  },
   "@newTracksRecommendedSubtitle": {
+    "placeholders": {
+      "currentTrack": {
+        "type": "String"
+      }
+    }
+  },
+  "@newTracksSimilarSubtitle": {
     "placeholders": {
       "currentTrack": {
         "type": "String"
@@ -329,6 +484,9 @@
         "type": "String"
       }
     }
+  },
+  "@nowAgo": {
+    "description": "Name of a home mix with the tracks you usually played at this same hour on past days. A playful name, a free translation is fine"
   },
   "@operationRequiresAccount": {
     "placeholders": {
@@ -346,6 +504,9 @@
         "type": "String"
       }
     }
+  },
+  "@otherAppsSounds": {
+    "description": "Sounds of other apps and notifications, which a mode like bit-perfect keeps off the output device"
   },
   "@partyAddedBy": {
     "placeholders": {
@@ -386,12 +547,21 @@
       }
     }
   },
+  "@preamp": {
+    "description": "Gain applied before the equalizer bands, usually negative to leave room for boosts"
+  },
+  "@qFactor": {
+    "description": "Q factor of an equalizer band: how narrow it is, higher is narrower"
+  },
   "@repeatForNTimes": {
     "placeholders": {
       "number": {
         "type": "int"
       }
     }
+  },
+  "@resample": {
+    "description": "Converting audio to a different sample rate"
   },
   "@resumeIfWasPausedForLessThanNMin": {
     "placeholders": {
@@ -415,6 +585,9 @@
       }
     }
   },
+  "@signalPath": {
+    "description": "Every step audio goes through, from the file to the output device"
+  },
   "@similarDiscoverDateSubtitle": {
     "placeholders": {
       "currentTrack": {
@@ -429,12 +602,34 @@
       }
     }
   },
+  "@sliders": {
+    "description": "Shows the equalizer as vertical gain sliders"
+  },
+  "@slope": {
+    "description": "Steepness of a low/high pass filter, in dB per octave"
+  },
+  "@sourcePerScope": {
+    "placeholders": {
+      "scope": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      }
+    }
+  },
   "@suggestionSubtitle": {
     "placeholders": {
       "site": {
         "type": "String"
       }
     }
+  },
+  "@systemAudioEffects": {
+    "description": "Audio effects applied by Android or other apps system wide"
+  },
+  "@templates": {
+    "description": "Ready made equalizer layouts, like a flat 10 band graphic equalizer"
   },
   "@trackPathOldNew": {
     "placeholders": {
@@ -445,6 +640,68 @@
         "type": "String"
       }
     }
+  },
+  "@turnsOff": {
+    "description": "Label before a list of options that a mode (bit-perfect, USB direct) turns off"
+  },
+  "@usbDirect": {
+    "description": "Option where the app talks to a USB DAC itself instead of going through Android's audio system"
+  },
+  "@usbDirectAwaitingPermission": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@usbDirectClaiming": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@usbDirectFailed": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@usbDirectHardwareVolume": {
+    "description": "The volume is changed by the USB DAC's own volume control"
+  },
+  "@usbDirectPermissionDenied": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@usbDirectUnsupportedDevice": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@usbDirectWaitingPlayback": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@useForDevice": {
+    "description": "Applies this equalizer preset automatically whenever the given output device is used",
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "@volumeKeys": {
+    "description": "The device's physical volume buttons"
   },
   "@yearInSongs": {
     "placeholders": {
@@ -478,6 +735,8 @@
   "addAllAndRemoveOldOnes": "Add all and remove old ones",
   "addAsANewPlaylist": "Add as a new Playlist",
   "addAudioToLocalLibrary": "Add audio to local library",
+  "addBand": "Add band",
+  "addBookmark": "Add bookmark",
   "addFolder": "Add Folder",
   "addGroup": "Add Group",
   "addLanguage": "Add Language",
@@ -493,6 +752,7 @@
   "addToPlaylist": "Add to Playlist",
   "addTracksAtTheBeginning": "Add tracks at the beginning",
   "added": "added",
+  "address": "Address",
   "advanced": "Advanced",
   "advancedSettings": "Advanced",
   "advancedSettingsSubtitle": "Advanced Settings, don't touch",
@@ -508,13 +768,17 @@
   "all": "All",
   "allListens": "All Listens",
   "allTime": "All time",
+  "allowThroughFirewall": "Allow through firewall",
   "alreadyExists": "Already Exists",
   "always": "Always",
   "alwaysAsk": "Always ask",
   "alwaysDim": "Always Dim",
   "alwaysExpandedSearchbar": "Always Expanded Searchbar",
   "alwaysRestore": "Always restore",
+  "ambientLights": "Ambient lights",
   "and": "and",
+  "androidMixer": "Android mixer",
+  "animated": "Animated",
   "animatingThumbnailIntensity": "Thumbnail Animation Intensity",
   "animatingThumbnailInversed": "Inverse Animations",
   "animatingThumbnailInversedSubtitle": "High peaks will cause the thumbnail to get smaller",
@@ -524,8 +788,10 @@
   "appIcon": "App Icon",
   "appVersion": "App Version",
   "appearsOn": "Appears On",
+  "applyTo": "Apply To",
   "artist": "Artist",
   "artists": "Artists",
+  "artistsMap": "Artists Map",
   "artwork": "Artwork",
   "artworkGestures": "Artwork Gestures",
   "artworks": "Artworks",
@@ -533,35 +799,57 @@
   "audioCache": "Audio Cache",
   "audioConfigs": "Audio Configs",
   "audioOnly": "Audio Only",
+  "aurora": "Aurora",
   "auto": "Auto",
   "autoBackupInterval": "Auto backup interval",
   "autoColoring": "Auto Coloring",
   "autoColoringSubtitle": "Automatically pick player colors from current artwork",
   "autoExtractTagsFromFilename": "Auto extract from filename",
-  "autoExtractTitleAndArtistFromVideoTitle": "Auto extract Title & Artist from video title",
+  "autoExtractTitleAndArtistFromVideoTitle": "Auto extract Title & Artist from Video title",
   "autoGenerated": "Auto Generated",
+  "autoPan": "8D audio",
   "autoSkip": "Auto Skip",
   "autoSkipOnce": "Auto Skip Once",
   "autoStartRadio": "Auto start radio",
   "autoStartRadioSubtitle": "Automatically adds a mix playlist when playing a single track",
   "autoSyncInterval": "Auto Sync Interval",
+  "autoTrackNumbers": "Auto track numbers",
+  "autoTrackNumbersSubtitle": "Number tracks by their current order, per disc",
   "automaticBackup": "Automatic",
   "automaticBackupSubtitle": "Automatically applies the most recent backup file found inside backup location",
   "availableDevices": "Available Devices",
+  "average": "Average",
+  "backgroundEffect": "Background effect",
   "backupAndRestore": "Backup & Restore",
   "backupAndRestoreSubtitle": "Backup your database and settings",
+  "backupHistoryBeforeImporting": "Backup history before importing",
   "balanced": "Balanced",
+  "bars": "Bars",
+  "bassEnhancer": "Bass enhancer",
+  "beatMatching": "Beat matching",
+  "beatRings": "Beat rings",
   "beta": "Beta",
   "betweenDates": "Between Dates",
   "bitDepth": "Bit Depth",
+  "bitPerfect": "Bit-perfect",
+  "bitPerfectActiveOn": "{format} on {device}",
+  "bitPerfectNoDevice": "Not available on this output, try USB direct access",
+  "bitPerfectSubtitle": "Plays the audio untouched",
+  "bitPerfectUnsupportedFormat": "This track can't play untouched on this output",
+  "bitPerfectUpTo": "Bit-perfect up to {format}",
   "bitrate": "Bitrate",
   "bits": "Bits",
   "blacklist": "Blacklist",
   "block": "Block",
   "blockedDevices": "Blocked Devices",
+  "blur": "Blur",
+  "bokeh": "Bokeh",
+  "bookmarks": "Bookmarks",
   "borderRadiusMultiplier": "Border Radius Multiplier",
+  "bugReport": "Bug report",
   "busiestDay": "Busiest Day",
   "cache": "Cache",
+  "calculation": "Calculation",
   "cancel": "Cancel",
   "canceled": "Canceled",
   "changed": "Changed",
@@ -569,18 +857,23 @@
   "changelogSubtitle": "See what's newly added/fixed inside Eclogae",
   "channel": "Channel",
   "channels": "Channels",
+  "chapters": "Chapters",
   "charts": "Charts",
   "check": "Check",
   "checkForMore": "Check for more",
   "checkList": "Check List",
   "choose": "Choose",
   "chooseWhatToClear": "Choose what to clear",
+  "chorus": "Chorus",
+  "christmas": "Christmas",
   "claim": "Claim",
+  "clean": "Clean",
   "cleanup": "Cleanup",
   "clear": "Clear",
   "clearAudioCache": "Clear Audio Cache",
   "clearImageCache": "Clear Image cache",
   "clearImageCacheWarning": "Warning: will result in a library without images, Use only to rebuild image cache.",
+  "clearServerCache": "Clear Server Cache",
   "clearTrackItem": "Clear Track's",
   "clearTrackItemMultiple": "{number, plural, one{Clear Track's} other{Clear {number} Tracks'}}",
   "clearVideoCache": "Clear Video Cache",
@@ -588,22 +881,27 @@
   "client": "Client",
   "clock": "Clock",
   "clockOnly": "Clock Only",
+  "color": "Color",
   "colorPalette": "Color Palette",
   "colorPaletteNote1": "Long press a color to remove it",
   "colorPaletteNote2": "Tap on a mix to use as a default color",
   "colorPalettes": "Color Palettes",
+  "colorWhenExpanded": "Color when expanded",
   "comment": "Comment",
   "comments": "Comments",
+  "compareBy": "Compare by",
   "completedAlbums": "Completed Albums",
   "composer": "Composer",
   "compress": "Compress",
   "compressImages": "Compress Images",
   "compressionPercentage": "Compression percentage",
+  "compressor": "Compressor",
   "condition": "Condition",
   "configure": "Configure",
   "confirm": "Confirm",
   "confirmRefresh": "Confirm Refresh?",
   "connect": "Connect",
+  "connectByIp": "Connect by IP",
   "connectedDevices": "Connected Devices",
   "connectionAccepted": "Connection Accepted",
   "connectionBlocked": "Connection Blocked",
@@ -615,10 +913,11 @@
   "copiedToClipboard": "Copied to Clipboard",
   "copy": "Copy",
   "corruptedFile": "Couldn't parse file, it might be corrupted",
+  "couldNotConnectToName": "Couldn't connect to {name}",
   "couldntOpen": "Couldn't open :(",
-  "couldntOpenYtLink": "No Youtube Link Available for this track",
+  "couldntOpenYtLink": "No YouTube Link Available for this track",
   "couldntPlayFile": "Couldn't play file",
-  "couldntRenamePlaylist": "Couldn't rename playlist",
+  "couldntRenamePlaylist": "Couldn't rename Playlist",
   "couldntSaveImage": "Couldn't save image",
   "countAlbumArtists": "{count, plural, one{{count} Album Artist} other{{count} Album Artists}}",
   "countAlbums": "{count, plural, one{{count} Album} other{{count} Albums}}",
@@ -628,6 +927,7 @@
   "countFiles": "{count, plural, one{{count} File} other{{count} Files}}",
   "countFolders": "{count, plural, one{{count} Folder} other{{count} Folders}}",
   "countGenres": "{count, plural, one{{count} Genre} other{{count} Genres}}",
+  "countLanguages": "{count, plural, one{{count} Language} other{{count} Languages}}",
   "countMonths": "{count, plural, one{{count} Month} other{{count} Months}}",
   "countMoods": "{count, plural, one{{count} Mood} other{{count} Moods}}",
   "countPlaylists": "{count, plural, one{{count} Playlist} other{{count} Playlists}}",
@@ -647,12 +947,17 @@
   "createNewSmartPlaylist": "Create new Smart Playlist",
   "createdBackupSuccessfully": "Created Backup",
   "createdBackupSuccessfullySub": "Backup file has been created successfully",
+  "crop": "Crop",
+  "crossfade": "Crossfade",
   "crossfadeDuration": "Crossfade duration",
   "crossfadeTriggerSeconds": "{seconds, plural, one{Trigger Crossfade automatically in the last {seconds} second} other{Trigger Crossfade automatically in the last {seconds} seconds}}",
   "crossfadeTriggerSecondsDisabled": "Do not trigger crossfade automatically",
+  "crossfeed": "Crossfeed",
+  "curve": "Curve",
   "custom": "Custom",
   "customizations": "Customizations",
   "customizationsSubtitle": "Customize how your player looks, make it yours",
+  "daily": "Daily",
   "dataIsProvidedByName": "Data is provided by: {name}",
   "dataSaver": "Data Saver",
   "dataSaverMode": "Data Saver Mode",
@@ -665,6 +970,8 @@
   "dateTimeFormat": "Date Time Format",
   "day": "Day",
   "days": "Days",
+  "decoder": "Decoder",
+  "deepOcean": "Deep ocean",
   "defaultBackupLocation": "Default Backup Location",
   "defaultColor": "Default Color",
   "defaultColorSubtitle": "Set a color to be used by the player",
@@ -681,6 +988,7 @@
   "developer": "Developer",
   "development": "Development",
   "deviceName": "Device Name",
+  "diagnostics": "Diagnostics",
   "dictionary": "Dictionary",
   "didYouMean": "Did you mean",
   "dimIntensity": "Dim Intensity",
@@ -692,9 +1000,15 @@
   "disableSearchCleanup": "Disable Search Cleanup",
   "discNumber": "Disc Number",
   "discNumberTotal": "Disc Total",
+  "discard": "Discard",
+  "discardChanges": "Discard changes?",
   "disconnect": "Disconnect",
+  "discordRichPresence": "Discord Rich Presence",
   "discover": "Discover",
+  "discoverPage": "Discover",
   "discoveries": "Discoveries",
+  "discoveryFailedAllowLocalNetworkAccess": "Discovery failed, allow Eclogae in Privacy & Security > Local Network settings (turn it off and on again if it's already allowed)",
+  "discoveryFailedTryReenablingNetworkAdapter": "Discovery failed, try re-enabling your network adapter or restarting the device",
   "dislike": "Dislike",
   "dismissibleMiniplayer": "Dismissible Miniplayer",
   "displayActualPositionInsteadOfDifferenceWhileSeeking": "Display actual position instead of difference while seeking",
@@ -703,15 +1017,14 @@
   "displayArtistBeforeTitle": "Display artist before title",
   "displayArtworkOnLockscreen": "Display artwork on lockscreen",
   "displayAudioInfoInMiniplayer": "Display Audio Info",
-  "displayFavButtonInNotification": "Display Favourite Button in Notification",
   "displayFavButtonInNotificationSubtitle": "Thumbnail might get displaced.",
   "displayFavouriteIconInTrackTile": "Display Favourite Button",
   "displayRemainingDurationInsteadOfTotal": "Display remaining duration instead of total",
-  "displayStopButtonInNotification": "Display Stop Button in Notification",
   "displayThirdItemInRowInTrackTile": "Display Third Item in each Row",
   "displayThirdRowInTrackTile": "Display Third Row",
   "displayTrackNumberInAlbumPage": "Display Track number in Album Page",
   "displayTrackNumberInAlbumPageSubtitle": "Display a small box containing the track number in the album page",
+  "dither": "Dither",
   "doNothing": "Do nothing",
   "doesNotContain": "does not Contain",
   "donate": "Donate",
@@ -723,20 +1036,27 @@
   "dontResume": "Dont resume",
   "doubleTapToToggleLyrics": "Double tap to toggle lyrics",
   "download": "Download",
+  "downloadingWillBeSkipped": "Downloading will be skipped",
   "downloadingWillOverrideIt": "Downloading will override it",
   "downloads": "Downloads",
   "downloadsMetadataTags": "Downloads Metadata tags",
-  "downloadsMetadataTagsSubtitle": "Extract artist, title & album from video info by default",
+  "downloadsMetadataTagsSubtitle": "Extract Artist, Title & Album from Video info by default",
+  "downmix": "Downmix",
+  "draft": "Draft",
   "dragToSeek": "Drag to seek",
   "duckAudio": "Duck audio",
   "duplicatedItemsAdding": "You are trying to add some items that already exist in this playlist",
   "duplicatedTracks": "Duplicated Tracks",
   "duration": "Duration",
+  "echo": "Echo",
   "edgeColorsSwitching": "Edge Colors Switching",
+  "edgeLights": "Edge lights",
   "edit": "Edit",
   "editArtwork": "Edit Artwork",
   "editTags": "Edit Tags",
   "email": "Email",
+  "embed": "Embed",
+  "embeddedLyricsArePrioritized": "Embedded lyrics are used instead of lyrics files. Turn off \"{setting}\" or embed these lyrics to use them",
   "emptyNonMeaningfulTagFields": "you have fields with empty/non-meaningful values, make sure you really want to edit them",
   "emptyValue": "Empty Value",
   "enableArtworkCache": "Enable Artwork Cache",
@@ -760,22 +1080,41 @@
   "enablePartyModeSubtitle": "Apply fancy edge breathing effect",
   "enablePictureInPicture": "Enable Picture-in-Picture",
   "enableReordering": "Enable Reordering",
-  "enableReturnYoutubeDislike": "Enable Return Youtube Dislike",
+  "enableReturnYoutubeDislike": "Enable Return YouTube Dislike",
   "enableSearchCleanup": "Enable Search Cleanup",
   "enableSearchCleanupSubtitle": "All Symbols and Spaces will be ignored",
   "enableSponsorblock": "Enable SponsorBlock",
   "enableVideoPlayback": "Enable Video Playback",
   "endsWith": "Ends with",
   "enterSymbol": "Please Enter a Symbol",
+  "enterTheAddressShownOnTheOtherDevice": "Enter the address shown under server on the other device",
+  "eps": "EPs",
+  "eqAllPass": "All pass",
+  "eqBandPass": "Band pass",
+  "eqHighPass": "High pass",
+  "eqHighShelf": "High shelf",
+  "eqLowPass": "Low pass",
+  "eqLowShelf": "Low shelf",
+  "eqNotch": "Notch",
+  "eqPeak": "Peak",
   "equalizer": "Equalizer",
+  "equalizerImportFailed": "No equalizer filters found",
   "error": "Error",
   "errorFetchingVideoList": "Error fetching video list",
   "errorPlayingTrack": "Error playing track",
+  "exactPhrase": "Exact phrase",
+  "exclude": "Exclude",
   "excludedFodlers": "Excluded Folders",
+  "exclusive": "Exclusive",
+  "exclusiveMode": "Exclusive mode",
+  "exclusiveModeSubtitle": "Takes the device for Eclogae alone, other apps can't play on it",
   "exists": "Exists",
   "exit": "Exit",
   "exitAppSubtitle": "Tap again to exit",
   "expandedMiniplayer": "Expanded Miniplayer",
+  "explicit": "Explicit",
+  "explore": "Explore",
+  "export": "Export",
   "exportAsM3u": "Export as M3U",
   "extension": "Extension",
   "externalFiles": "External Files",
@@ -783,16 +1122,18 @@
   "extractAllColorPalettes": "Extract All Color Palettes",
   "extractAllColorPalettesSubtitle": "{number, plural, one{Extract Remaining {number}?} other{Extract Remaining {number}?}}",
   "extractFeatArtist": "Extract feat. artists from title",
-  "extractFeatArtistSubtitle": "Extracts (feat. X) and (ft. X) artists, as a new artist entry.",
+  "extractFeatArtistSubtitle": "Extracts (feat. X) and (ft. X) artists, each as a new artist entry.",
   "extractingInfo": "Extracting Info",
   "extras": "Extras",
   "extrasSubtitle": "Extra Settings to fine your experience",
   "extreme": "Extreme",
+  "fadeOnPlayPause": "Play/pause fade",
   "failed": "Failed",
   "failedEdits": "Failed Edits",
   "favourite": "Favourite",
   "favouritedDate": "Favourited Date",
   "favourites": "Favourites",
+  "featureRequest": "Feature request",
   "features": "Features",
   "fetching": "Fetching",
   "fetchingOfAllVideos": "Fetching of all videos",
@@ -803,20 +1144,31 @@
   "fileNameWoExt": "Filename without extension",
   "filenameShouldntStartWith": "Filename shouldn't start with",
   "files": "Files",
+  "fillEmptyOnly": "Fill empty only",
   "filler": "Filler",
   "filterAlbums": "Filter Albums",
   "filterArtists": "Filter Artists",
+  "filterBy": "Filter by",
   "filterGenres": "Filter Genres",
+  "filterLanguages": "Filter Languages",
+  "filterMoods": "Filter Moods",
   "filterPlaylists": "Filter Playlists",
+  "filterTags": "Filter Tags",
   "filterTracks": "Filter Tracks",
   "filterTracksBy": "Filter Tracks in Search Lists By",
   "filterType": "Filter Type",
   "filtered": "Filtered",
   "filteredBySizeAndDuration": "Tracks Filtered by size and duration",
+  "find": "Find",
+  "findAndReplace": "Find & replace",
   "finished": "Finished",
   "finishedUpdatingLibrary": "Finished Updating Library",
+  "fireflies": "Fireflies",
+  "firewallBlocksOtherDevicesFromConnecting": "The firewall blocks other devices from connecting to this server",
+  "fireworks": "Fireworks",
   "firstListen": "First listen",
   "fixYtdlpBigThumbnailSize": "Fix yt-dlp big thumbnail size",
+  "flipArtwork": "Flip Artwork",
   "floatingActionButton": "Floating Action Button",
   "focus": "Focus",
   "folder": "Folder",
@@ -824,14 +1176,20 @@
   "folderPath": "Folder Path",
   "folders": "Folders",
   "fontScale": "Font Scale",
+  "forYou": "For you",
   "forceMiniplayerFollowTrackColors": "Force miniplayer to follow track colors",
   "forceSquaredAlbumThumbnail": "Force Squared Album Thumbnail",
   "forceSquaredThumbnailNote": "Thumbnail Size & Tile Height are NOT equal, Square-ish look will not be as expected, Do you wish to make them equal?",
   "forceSquaredTrackThumbnail": "Force Squared Track Thumbnail",
   "forceStopColorPaletteGeneration": "Force stop extracting color palettes? you can still continue it later",
   "forceUseGlobalConfig": "Force use Global Config",
+  "forcedOffBy": "Greyed out options are turned off by {mode}",
   "format": "Format",
+  "frequency": "Frequency",
+  "fromClipboard": "From clipboard",
   "fullscreen": "Fullscreen",
+  "gain": "Gain",
+  "galaxy": "Galaxy",
   "gaplessPlayback": "Gapless Playback",
   "generate": "Generate",
   "generateFromDates": "Time Range",
@@ -840,18 +1198,24 @@
   "genre": "Genre",
   "genres": "Genres",
   "global": "Global",
+  "glow": "Glow",
   "goToAlbum": "Go to Album",
   "goToArtist": "Go to Artist",
   "goToChannel": "Go to channel",
   "goToFolder": "Go to Folder",
+  "goToPlaylist": "Go to Playlist",
   "goToTrack": "Go to Track",
   "goodLooking": "Good looking",
   "grantStoragePermission": "Grant Storage Permission",
+  "graphicEqualizerBands": "Graphic, {count} bands",
   "group": "Group",
   "groupArtworksByAlbum": "Group Artworks by Album",
+  "groupByTags": "Group by tags",
   "guide": "Guide",
   "habits": "Habits",
+  "halloween": "Halloween",
   "hapticFeedback": "Haptic Feedback",
+  "hashtag": "Hashtag",
   "heightOfAlbumTile": "Height of Album Tile",
   "heightOfTrackTile": "Height of Track Tile",
   "hideSkipButtonAfter": "Hide skip button after",
@@ -859,6 +1223,7 @@
   "highPerformance": "High performance",
   "highlight": "Highlight",
   "history": "History",
+  "historyImportHtmlUnreadable": "Couldn't read the HTML takeout entries, export the history as JSON instead",
   "historyImportMissingEntriesNote": "These entries couldn't be found inside library, if you believe they exist, please consider adding them manually",
   "historyListensReplaceWarning": "{listensCount, plural, one{{listensCount} listen for {oldTrackInfo} will be replaced with {newTrackInfo}, confirm?} other{{listensCount} listens for {oldTrackInfo} will be replaced with {newTrackInfo}, confirm?}}",
   "home": "Home",
@@ -869,35 +1234,40 @@
   "hours": "Hours",
   "iReadAndAgree": "I read & agree",
   "ifNotPlaying": "If not playing",
+  "ignore": "Ignore",
   "ignoreBatteryOptimizationsSubtitle": "Downloads can be throttled when the app is battery restricted",
   "ignoreCommonPrefixesWhileSorting": "Ignore common prefixes while sorting",
+  "ignorePrefixes": "Ignore prefixes",
   "ignores": "Ignores",
   "imageSource": "Image source",
   "immersiveMode": "Immersive Mode",
   "immersiveModeSubtitle": "Hide Status & Navigation bars while Miniplayer is expanded",
   "import": "Import",
   "importAll": "Import all",
-  "importLastFmHistory": "Import LastFm History",
+  "importAppleMusicHistoryGuide": "1. Go to {link}\n\n2. Request a copy of your data and check \"Apple Media Services information\"\n\n3. Download the zip files when they are ready\n\n4. Choose the zip files or the extracted folder from the next screen.",
+  "importData": "Import data",
   "importLastFmHistoryGuide": "1. Go to {lastfmCsvLink}\n\n2. Type your username, fetch and download csv file.\n\n3. Choose the file from the next screen.",
-  "importListenBrainzHistory": "Import ListenBrainz History",
   "importListenBrainzHistoryGuide": "1. Go to {link}\n\n2. Request Data & Download\n\n3. Choose zip or json files from the next screen.",
-  "importSpotifyHistory": "Import Spotify History",
-  "importSpotifyHistoryGuide": "1. Go to {link}\n\n2. Check \"Extended streaming history\"\n\n3. Request Data & Download\n\n4. Choose zip or json files from the next screen.",
+  "importPlaylist": "Import playlist",
+  "importSourceData": "Import {source} data",
+  "importSpotifyHistoryGuide": "1. Go to {link}\n\n2. Check \"Account data\" and \"Extended streaming history\"\n\n3. Request Data & Download\n\n4. Choose zip or json files from the next screen.",
   "importTimeRange": "Import time range",
-  "importYoutubeHistory": "Import Youtube History",
-  "importYoutubeHistoryGuide": "1. Go to {takeoutLink}\n\n2. Press \"Multiple Formats\" and beside \"History\" choose \"JSON\".\n\n3. Press \"All Youtube data included\", Deselect All and choose history only.\n\n4. Create Export, Download & Unzip.\n\n5. Choose \"watch-history.json\" from the next screen.",
+  "importYoutubeHistoryGuide": "1. Go to {takeoutLink}\n\n2. Press \"Multiple Formats\" and beside \"History\" choose \"JSON\".\n\n3. Press \"All YouTube data included\", Deselect All and choose history and playlists.\n\n4. Create Export & Download.\n\n5. Choose the zip files or the extracted folder from the next screen.",
   "importedNChannelsSuccessfully": "{number, plural, one{Imported {number} channel successfully} other{Imported {number} channels successfully}}",
   "importedNPlaylistsSuccessfully": "{number, plural, one{Imported {numberText} playlist successfully} other{Imported {numberText} playlists successfully}}",
-  "includeVideos": "Include videos",
+  "inTitle": "In title",
+  "includeVideos": "Include Videos",
   "indexRefreshRequired": "Do a Refresh after changing this",
   "indexer": "Indexer",
   "indexerNote": "Note: Incomplete Number of Artworks refers to the duplicated & not found Artworks",
   "indexerSubtitle": "Manage your music Library",
   "infinityQueueOnNextPrev": "Infinity Queue on Next/Previous",
-  "infinityQueueOnNextPrevSubtitle": "pressing next while playing the last item will jump to first, and vice versa",
+  "infinityQueueOnNextPrevSubtitle": "Pressing next while playing the last item will jump to first, and vice versa",
   "info": "Info",
   "inserted": "inserted",
   "instantlyApplies": "Instantly Applies",
+  "instrumental": "Instrumental",
+  "integrations": "Integrations",
   "interactionReminder": "Interaction Reminder",
   "intro": "Intro",
   "invertSelection": "Invert Selection",
@@ -920,19 +1290,24 @@
   "jumpToDay": "Jump to Day",
   "jumpToFirstTrackAfterQueueFinish": "Jump to first track after finishing queue",
   "keepCachedVersions": "Keep cached versions",
+  "keepCurrentOrder": "Keep current order",
   "keepFileDates": "Keep file dates",
+  "keepQueue": "Keep queue",
   "keepScreenAwakeMiniplayerExpanded": "Miniplayer is Expanded",
   "keepScreenAwakeMiniplayerExpandedAndVideo": "Miniplayer is Expanded and a Video is Playing",
   "keepScreenAwakeNone": "Don't keep screen awake",
   "keepScreenAwakeWhen": "Keep screen awake when",
   "killPlayerAfterDismissingApp": "Kill player after dismissing app",
   "language": "Language",
+  "languages": "Languages",
   "lastHour": "Last hour",
   "lastListen": "Last Listen",
   "lastPlayed": "Last Played",
   "lastPlayedPosition": "Last Played Position",
+  "latency": "Latency",
   "latestQueue": "Latest Queue",
   "learnMore": "Learn more",
+  "left": "Left",
   "leftAction": "Left Action",
   "legacyAuthentication": "Legacy Authentication",
   "libraryReach": "Library Reach",
@@ -942,9 +1317,13 @@
   "licenseSubtitle": "Licenses & Agreements Used by Eclogae",
   "like": "Like",
   "liked": "Liked",
+  "limit": "Limit",
+  "limiter": "Limiter",
   "link": "Link",
   "listOfFolders": "List of Folders",
   "listeningClock": "Listening Clock",
+  "listensCountBoost": "Listens Count Boost",
+  "listensPerMonth": "Listens per Month",
   "loadAll": "Load all",
   "loadingFile": "Loading File",
   "local": "Local",
@@ -961,19 +1340,31 @@
   "loudnessEnhancer": "Loudness Enhancer",
   "lyricist": "Lyricist",
   "lyrics": "Lyrics",
+  "lyricsDeleteWithTrack": "Delete lyrics with the track",
+  "lyricsDeleteWithTrackSubtitle": "Lyrics that another track uses are kept",
+  "lyricsFilesArePrioritized": "Lyrics files are used instead of embedded lyrics. Turn on \"{setting}\" to use them",
+  "lyricsFolders": "Lyrics folders",
+  "lyricsFoldersSubtitle": "Matched by track filename",
+  "lyricsSaveLocation": "Lyrics save location",
+  "lyricsSaveLocationNotWritable": "Couldn't save in the lyrics save location, cache was used",
+  "lyricsSaveLocationSubtitle": "Cache is used when the location can't be written to",
   "lyricsSource": "Lyrics source",
   "m3uPlaylist": "M3U Playlist",
   "makeYourFirstListen": "Make your first listen!",
   "manage": "Manage",
+  "manageTags": "Manage tags",
   "manageYourAccounts": "Manage your accounts",
   "manualBackup": "Manual",
   "manualBackupSubtitle": "pick up a specific file",
   "markAsRead": "Mark as read",
+  "match": "Match",
   "matchAllTracks": "Match All Tracks",
   "matchAllTracksNote": "this can have an impact on the matching speed, as it will check all tracks in your library",
+  "matchCase": "Match case",
   "matchingType": "Matching type",
   "maxAudioCacheSize": "Max audio cache size",
   "maxImageCacheSize": "Max image cache size",
+  "maxServerCacheSize": "Max server cache size",
   "maxVideoCacheSize": "Max video cache size",
   "maximum": "Maximum",
   "mediaStoreIsEnabledThisWillHaveNoEffect": "Media Store is enabled, this will have no effect",
@@ -989,6 +1380,7 @@
   "membershipUnknown": "Unknown Membership",
   "membershipYouNeedMembershipOfToAddMultipleAccounts": "You need membership of {name1} or {name2} to add multiple accounts",
   "merge": "Merge",
+  "meshGradient": "Mesh gradient",
   "metadataCache": "Metadata Cache",
   "metadataEditFailed": "Failed to edit metadata",
   "metadataReadFailed": "Failed to read metadata",
@@ -1006,6 +1398,7 @@
   "minimumSegmentDuration": "Minimum Segment Duration",
   "miniplayerCustomization": "Miniplayer Customization",
   "minutes": "Minutes",
+  "mirroredBars": "Mirrored bars",
   "missing": "Missing",
   "missingEntries": "Missing Entries",
   "missingTracks": "Missing Tracks",
@@ -1013,6 +1406,7 @@
   "mixPlaylistGeneratedByYoutube": "Mix playlist generated by youtube",
   "mixes": "Mixes",
   "mobile": "Mobile",
+  "monoAudio": "Mono audio",
   "month": "Month",
   "months": "Months",
   "mood": "Mood",
@@ -1022,12 +1416,16 @@
   "move": "Move",
   "movies": "Movies",
   "multipleTracksTagsEditNote": "You are about to edit these tracks,\nUnchanged fields remain untouched.",
+  "multipleValues": "Multiple values",
+  "music": "Music",
   "musicOfftopic": "Music Offtopic",
+  "musicalKey": "Key",
   "name": "Name",
   "nameContainsBadCharacter": "Name contains bad character",
   "never": "Never",
   "newDirectory": "New directory",
   "newLabel": "New",
+  "newReleases": "New releases",
   "newTracksAdd": "Add Tracks",
   "newTracksMoods": "Mood",
   "newTracksMoodsSubtitle": "Generate tracks based on available moods",
@@ -1037,13 +1435,18 @@
   "newTracksRatingsSubtitle": "Generate tracks that has specific rating",
   "newTracksRecommended": "Recommended",
   "newTracksRecommendedSubtitle": "Generate tracks you usually listened to with {currentTrack}",
+  "newTracksSimilar": "Similar Tracks",
+  "newTracksSimilarSubtitle": "Generate tracks similar to {currentTrack}",
   "newTracksSimilarrReleaseDate": "Similar Release Date",
   "newTracksSimilarrReleaseDateSubtitle": "Generate tracks that were released around the same time as {currentTrack}",
   "newTracksUnknownYear": "Track has unknown year",
+  "newVideosAtTop": "Add new videos to the top",
   "newest": "Newest",
   "next": "Next",
+  "nextChapter": "Next chapter",
   "no": "no",
-  "noChangesFound": "No changes has been found.",
+  "noBackCoverFound": "No back cover found",
+  "noChangesFound": "No changes found.",
   "noEnoughTracks": "You don't have much tracks..",
   "noExcludedFolders": "You Don't have any excluded folders",
   "noFolderChosen": "You haven't chosen any folder",
@@ -1063,8 +1466,12 @@
   "notSupportedForNetworkFiles": "Not Supported for Network Files",
   "notSupportedForVideoFiles": "Not Supported for Video Files",
   "note": "Note",
+  "nothingIsCached": "Nothing is cached",
   "notification": "Notification",
+  "notificationButtons": "Notification buttons",
   "notifications": "Notifications",
+  "now": "Now",
+  "nowAgo": "Now Ago",
   "number": "Number",
   "numberOfTracks": "Number of Tracks",
   "obsession": "Obsession",
@@ -1078,7 +1485,7 @@
   "onDeviceConnect": "On Device Connect",
   "onInterruption": "On Interruption",
   "onNotificationTap": "On Notification Tap",
-  "onOpeningYoutubeLink": "On opening youtube link",
+  "onOpeningYoutubeLink": "On opening YouTube link",
   "onSwiping": "On Swiping",
   "onVolumeZero": "On Volume 0",
   "ongoing": "Ongoing",
@@ -1092,9 +1499,16 @@
   "operationRequiresAccount": "Operation {name} requires account, Sign in to proceed",
   "operationRequiresMembership": "Operation {operation} requires at least membership {name}",
   "or": "or",
+  "otherAppsSounds": "Other apps' sounds",
+  "otherDeviceDidNotAnswerItsFirewallMightBeBlockingNamida": "The other device did not answer. Its firewall might be blocking Eclogae.",
   "others": "Others",
+  "outline": "Outline",
   "output": "Output",
+  "outputDevice": "Output device",
+  "outputDeviceUnavailable": "Output device is unavailable or used by another app",
   "outro": "Outro",
+  "overlayEffect": "Overlay effect",
+  "overlayEffectSubtitle": "Covers the whole app",
   "overrideOldFilesInTheSameFolder": "Override old files in the same folder",
   "palette": "Palette",
   "paletteMix": "Mix",
@@ -1102,6 +1516,7 @@
   "paletteSelectedMix": "Selected Mix",
   "parallelDownloads": "Parallel Downloads",
   "parsed": "parsed",
+  "particles": "Particles",
   "partyAddedBy": "Added by {name}",
   "partyApproximateMatch": "Matched with a YouTube video, might not be the right one",
   "partyBan": "Ban",
@@ -1208,10 +1623,12 @@
   "partyYouAreHostNow": "You are the host now",
   "partyYourOpenRooms": "Your open parties",
   "password": "Password",
+  "paste": "Paste",
   "path": "File Full Path",
   "pause": "Pause",
   "pauseFadeDuration": "Pause Fade Duration",
   "pausePlayback": "Pause playback",
+  "per": "Per",
   "percentage": "Percentage",
   "performanceMode": "Performance mode",
   "performanceNote": "Might affect performance",
@@ -1221,6 +1638,7 @@
   "personalizedRelatedVideosSubtitle": "Disabling this will increase data usage",
   "pickColorsFromDeviceWallpaper": "Pick Colors from Device Wallpaper",
   "pickFromStorage": "Pick from storage",
+  "pin": "Pin",
   "pinned": "Pinned",
   "pitch": "Pitch",
   "plain": "Plain",
@@ -1234,41 +1652,54 @@
   "playbackSetting": "Playback",
   "playbackSettingSubtitle": "Can be accessed directly in the player by long pressing the audio button",
   "playedPercentage": "Played Percentage",
+  "playerBackground": "Player background",
   "playlist": "Playlist",
+  "playlistTags": "Playlist tags",
   "playlists": "Playlists",
-  "playlistsImportM3uNative": "This will import M3U playlists to be used only by Eclogae, use if you are migrating",
-  "playlistsImportM3uSynced": "This will automatically import M3U playlists from indexer folders and keep them synced with the original M3U file. enable if you access/modify the playlists from other apps",
+  "playlistsCount": "Playlists Count",
+  "playlistsImportM3uNative": "This will import M3U Playlists to be used only by Eclogae, use if you are migrating from other apps",
+  "playlistsImportM3uSynced": "This will automatically import M3U Playlists from indexer folders and keep them synced with the original M3U files. Enable if you access/modify the Playlists from other apps",
   "playlistsImportM3uSyncedAutoImport": "Auto import M3U Playlists",
-  "playlistsImportServer": "This will automatically import playlists from configured music web servers (Jellyfin, Subsonic/Navidrome, etc) on library refresh",
+  "playlistsImportServer": "This will automatically import Playlists from configured music web servers (Jellyfin, Subsonic/Navidrome, etc) on library refresh",
   "playlistsImportServerAutoImport": "Auto import Server Playlists",
   "pleaseEnterADifferentName": "This name already exists :(\nplease try another fancy name",
   "pleaseEnterALink": "Please enter a link",
   "pleaseEnterALinkSubtitle": "umm.. is this a youtube link?",
   "pleaseEnterAName": "Please enter a name",
   "port": "Port",
+  "preamp": "Preamp",
+  "presetOnlyAppliesToSearchPage": "This preset only applies to the search page",
+  "presets": "Presets",
   "preventDuplicatedTracks": "Prevent Duplicated tracks",
-  "preventDuplicatedTracksSubtitle": "Uses filename to uniqely identify tracks",
+  "preventDuplicatedTracksSubtitle": "Skips copies that have the same title, artist and duration",
   "preview": "Preview",
   "previous": "Previous",
   "previousButtonReplays": "Previous button replays",
-  "previousButtonReplaysSubtitle": "if pressed while current position was more than seek duration",
-  "prioritizeEmbeddedLyrics": "Prioritize embedded lyrics",
+  "previousButtonReplaysSubtitle": "If pressed while current position is greater than seek duration",
+  "previousChapter": "Previous chapter",
+  "prioritizeEmbeddedLyrics": "Prefer embedded lyrics",
   "priority": "Priority",
   "private": "Private",
   "progress": "Progress",
   "promptToChangeTrackPath": "Usually this happens when you delete/move/rename the file outside Eclogae, Would you like to update current path?",
   "public": "Public",
+  "qFactor": "Q",
+  "question": "Question",
   "queue": "Queue",
   "queues": "Queues",
+  "rain": "Rain",
+  "ramadan": "Ramadan",
   "random": "Random",
   "randomPicks": "Random Picks",
   "rating": "Rating",
   "reIndex": "Re-index",
   "reIndexSubtitle": "Rebuild your music library from scratch",
   "reIndexWarning": "This process might take a while, depending on your library size.\n\nArtworks will not get re-indexed as long as they still exist",
+  "reactiveParticles": "Reactive particles",
   "readOnlyPlaylist": "Read-only Playlist",
   "reason": "Reason",
   "receive": "Receive",
+  "recent": "Recent",
   "recentActions": "Recent Actions",
   "recentAlbums": "Recent Albums",
   "recentArtists": "Recent Artists",
@@ -1279,23 +1710,27 @@
   "reconnect": "Reconnect",
   "recordLabel": "Record Label",
   "rediscoveries": "Rediscoveries",
+  "redo": "Redo",
   "refresh": "Refresh",
   "refreshLibrary": "Refresh Library",
   "refreshLibrarySubtitle": "Check for newly added or deleted music",
   "refreshOnStartup": "Refresh on startup",
   "reject": "Reject",
-  "relatedVideos": "Related videos",
+  "relatedVideos": "Related Videos",
   "releaseType": "Release Type",
   "relevance": "Relevance",
   "rememberAudioOnlyMode": "Remember audio only mode",
   "remixer": "Remixer",
   "remove": "Remove",
   "removeDuplicates": "Remove Duplicates",
+  "removeFromDownloads": "Remove from downloads",
   "removeFromFavourites": "Remove from favourites",
   "removeFromLibrary": "Remove from library",
   "removeFromPlaylist": "Remove From Playlist",
   "removeQueue": "Remove Queue",
   "removeSourceFromHistory": "Remove source from history",
+  "removeSponsorSegmentsFromDownloads": "Remove Sponsor Segments from Downloads",
+  "removeSponsorSegmentsFromDownloadsSubtitle": "Cut out the chosen categories from the downloaded files",
   "removeWhitespaces": "Remove Whitespaces",
   "removed": "Removed",
   "rename": "Rename",
@@ -1308,16 +1743,22 @@
   "repeatModeOne": "Repeat Current Track",
   "repeatRate": "Repeat Rate",
   "replaceAllListensWithAnotherTrack": "Replace all listens with another track",
+  "replaceQueue": "Replace queue",
+  "replaceWith": "Replace with",
   "replies": "Replies",
   "reply": "Reply",
+  "reportAnIssue": "Report an issue",
   "requiresClearingImageCacheAndReIndexing": "Requires clearing image cache and re indexing",
-  "rescanVideos": "Re-scan videos",
+  "resample": "Resample",
+  "rescanVideos": "Re-scan Videos",
+  "reset": "Reset",
   "resetBrightness": "Reset brightness",
   "resetToDefault": "Set to",
   "respectNoMedia": "Respect .nomedia",
   "respectNoMediaSubtitle": "Don't include folders that has .nomedia",
   "restart": "Restart",
   "restoreBackup": "Restore Backup",
+  "restoreCustomOrder": "Restore custom order",
   "restoreDefaults": "Restore Defaults",
   "restoredBackupSuccessfully": "Restored Backup",
   "restoredBackupSuccessfullySub": "Backup file has been restored successfully",
@@ -1326,49 +1767,63 @@
   "resumeIfWasPausedByDeviceDisconnect": "Resume if was paused by device disconnect",
   "resumeIfWasPausedByVolume": "Resume if was paused by volume",
   "resumeIfWasPausedForLessThanNMin": "{number, plural, one{Resume if was paused for less than {number} minute} other{Resume if was paused for less than {number} minutes}}",
-  "returnYoutubeDislike": "Return Youtube Dislike",
+  "returnYoutubeDislike": "Return YouTube Dislike",
+  "reverb": "Reverb",
   "reverseOrder": "Reverse Order",
+  "right": "Right",
   "rightAction": "Right Action",
   "ringtone": "Ringtone",
   "romanization": "Romanization",
   "rule": "Rule",
   "ruleAlreadyExists": "Rule already exists",
+  "sakura": "Sakura",
   "sameDirectoryOnly": "Same directory only",
   "sample": "Sample",
   "sampleRate": "Sample Rate",
   "save": "Save",
+  "saveAsPreset": "Save as preset",
+  "saveFilter": "Save filter",
   "saveToLibrary": "Save to library",
   "savedIn": "Saved in",
+  "saving": "Saving",
   "scaleMultiplier": "Scale Multiplier",
   "search": "Search",
   "searchYoutube": "Search YouTube",
+  "seasonalEffectsSubtitle": "Auto follows the season",
   "seconds": "Seconds",
   "seeProjectCodeOnSite": "See Project Code on {site}",
+  "seekBackward": "Seek backward",
   "seekDuration": "Seek Duration",
   "seekDurationInfo": "You can tap on current duration to seek backwards & total duration to seek forwards",
+  "seekForward": "Seek forward",
   "seekbar": "Seekbar",
   "selectAll": "Select All",
   "selectFilesAlreadyInLocalLibrary": "Select files already in local library",
+  "selectPlaylists": "Select Playlists",
+  "selectedBy": "Selected by",
   "selectedTracks": "Selected Tracks",
   "selfPromotion": "Self Promotion",
   "semitones": "Semitones",
   "send": "Send",
   "sendToAllDevices": "Send to All Devices",
+  "separators": "Separators",
   "separatorsBlacklistSubtitle": "These words will not get split",
   "separatorsMessage": "No need to insert spaces, unless you wanna use a letter/symbol that can be found in a whole word (like x and ft.)",
   "server": "Server",
   "serverAddress": "Server Address",
   "serverBlockedThisDevice": "Server blocked this device",
+  "serverCache": "Server Cache",
   "serverRejectedTheConnectionRequest": "Server rejected the connection request",
   "setAs": "Set as",
   "setAsDefault": "Set as Default",
-  "setFileLastModifiedAsVideoUploadDate": "Set file last modified as video upload date",
+  "setFileLastModifiedAsVideoUploadDate": "Set the file's last modified date as the video upload date",
   "setMonoAudio": "Set Mono Audio",
   "setMoods": "Set moods",
   "setMoodsSubtitle": "Use commas (,) to separate between them",
   "setRating": "Set Rating",
   "setTags": "Set tags",
-  "setYoutubeLink": "Set Youtube Link",
+  "setTagsNestedSubtitle": "Use slashes (/) to nest them",
+  "setYoutubeLink": "Set YouTube Link",
   "settings": "Settings",
   "setupFirstStartup": "Setup first startup",
   "share": "Share",
@@ -1383,6 +1838,7 @@
   "showFailedOnly": "Show Failed only",
   "showHideUnknownFields": "Show/hide Unknown Fields",
   "showInSeekbar": "Show in Seekbar",
+  "showLess": "Show less",
   "showMixPlaylistsIn": "Show Mixes in",
   "showMore": "Show more",
   "showShortVideosIn": "Show Shorts in",
@@ -1392,6 +1848,7 @@
   "shuffle": "Shuffle",
   "shuffleAll": "Shuffle All",
   "shuffleNext": "Shuffle Next",
+  "shuffleOnOff": "Shuffle On/Off",
   "signIn": "Sign in",
   "signInCanceled": "Sign in was canceled",
   "signInFailed": "Sign in failed",
@@ -1400,6 +1857,7 @@
   "signInYouNeedAccountToViewPage": "You need an account to view this page",
   "signOut": "Sign out",
   "signOutFromName": "Sign out from {name}",
+  "signalPath": "Audio path",
   "signingInAllowsBasicUsage": "Signing in allows basic usage",
   "signingInAllowsBasicUsageSubtitle": "Get early access through patreon or by using coupon",
   "similarDiscoverDate": "Similar Discover Date",
@@ -1412,24 +1870,37 @@
   "singles": "Singles",
   "size": "Size",
   "skip": "Skip",
+  "skipButtonsJumpChapters": "Next/Previous jump between chapters",
   "skipCountTracking": "Skip Count Tracking",
+  "skipExplicitTracks": "Skip Explicit Tracks",
   "skipSilence": "Skip Silence",
+  "skipSingleSubfolders": "Skip folders with a single subfolder",
   "skipSponsorSegmentsInVideos": "Skip Sponsor Segments in Videos",
+  "skippedExplicitTracks": "Skipped explicit tracks",
   "sleepAfter": "Sleep After",
   "sleepTimer": "Sleep timer",
+  "sliders": "Sliders",
+  "slope": "Slope",
+  "smart": "Smart",
   "smartPlaylist": "Smart Playlist",
   "smartPlaylists": "Smart Playlists",
+  "smartSearch": "Smart Search",
   "socials": "Socials",
   "socialsSubtitle": "Join us on our platforms for Updates, Tips, Discussion & Ideas",
   "someWebServersRequireAuthentication": "Some web servers require authentication. Please update credentials to maintain access to your library.",
   "sortBy": "Sort by",
   "soundControl": "Sound Control",
+  "soundEffects": "Sound effects",
   "source": "Source",
+  "sourcePerScope": "{source} per {scope}",
   "speed": "Speed",
+  "splitByChapters": "Split by Chapters",
+  "splitByChaptersSubtitle": "Save each youtube chapter as its own file, in a folder",
   "sponsor": "Sponsor",
   "sponsorblock": "SponsorBlock",
   "sponsorblockLeaderboard": "SponsorBlock Leaderboard",
   "staggeredAlbumGridView": "Staggered Album Gridview",
+  "starfield": "Starfield",
   "start": "Start",
   "startServerToLetOtherDevicesConnectToThisDevice": "Start server to let other devices connect to this device",
   "startsWith": "Starts with",
@@ -1450,21 +1921,27 @@
   "subscriber": "Subscriber",
   "subscribers": "Subscribers",
   "subscriptions": "Subscriptions",
+  "subtitles": "Subtitles",
   "succeeded": "Succeeded",
   "suggestionSubtitle": "Have an Issue or Suggestion? Open an issue on {site}",
+  "sum": "Sum",
   "support": "Support",
   "supremacy": "Supremacy",
   "sussyBaka": "Bruh no tracks",
   "swipeActions": "Swipe Actions",
   "swipeToOpenDrawer": "Swipe to open drawer",
+  "symbols": "Symbols",
   "sync": "Sync",
   "syncAppDataBetweenYourDevices": "Sync app data between your devices",
   "synced": "Synced",
   "synopsis": "Synopsis",
+  "systemAudioEffects": "System audio effects",
+  "systemDefault": "System default",
   "tagFields": "Tag Fields",
   "tags": "Tags",
   "tapAction": "Tap Action",
   "tapToSeek": "Tap to seek",
+  "templates": "Templates",
   "text": "Text",
   "theFollowingChangesWereDetected": "The following changes were detected",
   "themeMode": "Theme Mode",
@@ -1473,14 +1950,17 @@
   "themeModeSystem": "System",
   "themeSettings": "Theme",
   "themeSettingsSubtitle": "The overall vibe of your player",
+  "thisDeviceCouldNotProveItIsTheOneYouPairedAcceptOnlyIfYouResetIt": "This device could not prove it is the one you paired, accept only if you reset it",
   "thisMonth": "This month",
   "thisPlaylistHasActiveSortersDisableThemBeforeReordering": "This playlist has active sorters, please disable them before reordering.",
   "thisVideoIsLikelyDeletedOrSetToPrivate": "This video is likely deleted or set to private.",
   "thisWeek": "This week",
   "thisYear": "This year",
+  "threadsPerDownload": "Threads per download",
   "thumbnails": "Thumbnails",
   "title": "Title",
   "today": "Today",
+  "tones": "Tones",
   "top": "Top",
   "topComments": "Top comments",
   "topCommentsSubtitle": "Display comments at top instead of bottom",
@@ -1492,7 +1972,9 @@
   "totalTracks": "Total Tracks",
   "totalTracksDuration": "Total Tracks Duration",
   "track": "Track",
+  "trackArtistsDisplaySeparator": "Artists Display Separator",
   "trackArtistsSeparator": "Artists Separators",
+  "trackFolder": "Track folder",
   "trackGenresSeparator": "Genres Separators",
   "trackInfo": "Track Info",
   "trackNotFound": "Track not found",
@@ -1512,25 +1994,41 @@
   "tracks": "Tracks",
   "tracksExcludedByNomedia": "Tracks Excluded by .nomedia",
   "tracksInfo": "Tracks Info",
+  "translation": "Translation",
+  "tubeWarmth": "Tube warmth",
+  "turnsOff": "Turns off",
   "type": "Type",
   "unblock": "Unblock",
   "underrated": "Underrated",
   "undo": "Undo",
   "undoChanges": "Undo Changes?",
-  "undoChangesDeletedPlaylist": "Undo deleted playlist",
+  "undoChangesDeletedPlaylist": "Undo deleted Playlist",
   "undoChangesDeletedQueue": "Undo deleted Queue",
   "undoChangesDeletedTrack": "Undo deleted track",
   "uniqueArtworkHash": "Unique Artwork Hash",
   "unlimited": "Unlimited",
   "unlisted": "Unlisted",
   "unlock": "Unlock",
+  "unpin": "Unpin",
   "unsubscribe": "Unsubscribe",
+  "untagged": "Untagged",
   "update": "Update",
   "updateDirectoryPath": "Update directory path",
   "updateMissingTracksOnly": "Update missing tracks only",
   "updating": "Updating",
   "uploadDate": "Upload date",
+  "usbDirect": "USB direct access",
+  "usbDirectAwaitingPermission": "Allow access to {device}",
+  "usbDirectClaiming": "Connecting to {device}",
+  "usbDirectFailed": "{device} stopped responding",
+  "usbDirectHardwareVolume": "DAC volume",
+  "usbDirectNoDevice": "Connect a USB DAC",
+  "usbDirectPermissionDenied": "Access to {device} was denied",
+  "usbDirectSubtitle": "Sends audio straight to your USB DAC, bypassing Android's audio system",
+  "usbDirectUnsupportedDevice": "{device} isn't supported",
+  "usbDirectWaitingPlayback": "Stop playback in other apps to use {device}",
   "useCollapsedSettingTiles": "Use Collapsed Setting Tiles",
+  "useForDevice": "Use for {device}",
   "useMediaStore": "Use Media Store",
   "useMediaStoreSubtitle": "✓ instant indexing time\nx respect .nomedia will be forcely enabled\nx some metadata tags will be missing\nx youtube integration for local library will not work",
   "usePitchBlack": "Use Pitch Black",
@@ -1551,7 +2049,7 @@
   "videoPlaybackSourceLocal": "Local Videos",
   "videoPlaybackSourceLocalExampleSubtitle": "Alan Walker - Faded.m4a\nVideo Alan Walker - Faded (480p).mp4",
   "videoPlaybackSourceLocalSubtitle": "Checks if any video file (found inside the chosen folders list) has a filename that contains the filename of the track",
-  "videoPlaybackSourceYoutube": "From Youtube",
+  "videoPlaybackSourceYoutube": "From YouTube",
   "videoPlaybackSourceYoutubeSubtitle": "Checks in track's filename & comment for any matching youtube link, videos are cached for later use.",
   "videoQuality": "Video Quality",
   "videoQualitySubtitle": "Highest quality available will be picked.",
@@ -1560,26 +2058,35 @@
   "view": "view",
   "viewAll": "View All",
   "views": "views",
+  "vignette": "Vignette",
+  "virtualSurround": "Virtual surround",
+  "visualizer": "Visualizer",
   "volume": "Volume",
+  "volumeKeys": "Volume keys",
+  "waitingForTheOtherDeviceToAccept": "Waiting for the other device to accept",
+  "wallpaper": "Wallpaper",
   "warning": "Warning",
+  "waveform": "Waveform",
   "waveformBarsCount": "Waveform Bars Count",
+  "waves": "Waves",
   "webmNoEditTagsSupport": "WEBM format doesn't support tag editing",
   "week": "Week",
+  "weekday": "Weekday",
   "weeks": "Weeks",
   "wiredDevice": "Wired Device",
   "wirelessDevice": "Wireless Device",
+  "wordByWord": "Word by word",
   "year": "Year",
   "yearInSongs": "{count, plural, one{Year in {count} Song} other{Year in {count} Songs}}",
   "years": "Years",
   "yes": "yes",
   "youCanNowSendAndReceiveDataWithThisDevice": "You can now send and receive data with this device",
   "yourCurrentMembershipIs": "Your current membership is {name}",
-  "yourCustomOrderWillBeLost": "Your custom order will be lost, Are you sure?",
   "yourYear": "Your {year}",
-  "youtube": "Youtube",
-  "youtubeId": "Youtube ID",
-  "youtubeLink": "Youtube Link",
-  "youtubeMusic": "Youtube Music",
+  "youtube": "YouTube",
+  "youtubeId": "YouTube ID",
+  "youtubeLink": "YouTube Link",
+  "youtubeMusic": "YouTube Music",
   "youtubeSettingsSubtitle": "Customize Youtube experience",
   "youtubeStyleMiniplayer": "Youtube-style Miniplayer",
   "ytPreferNewComments": "Prefer new comments when possible",
