@@ -1,8 +1,10 @@
-# Namida「在线曲库」集成项目交接文档（Stage 0 ~ Stage 4 完成）
+# Namida「在线曲库」集成项目交接文档（Stage 0 ~ Stage 5 完成）
 
-> **更新时间**：2026-11-25  
-> **当前分支**：`feat/lx-stage3-polish`（线性基于 `feat/lx-stage2-download` -> `feat/lx-stage1-bridge` -> `feat/lx-stage0-ci` -> `hikjesen/namida` `main`）  
-> **当前状态**：✅ **Stage 0 / Stage 1 / Stage 2 / Stage 3（原生美学重构）/ Stage 4 核心功能（在线试听、波形缓存、歌单搜索与整单下载、原生单曲循环修复）全部落地并通过真机验收** -> 待决定 **合并回 `main`** 及是否按需推进后续可选增强项。
+> **更新时间**：2026-11-26
+>
+> **当前分支**：`feat/lx-stage5-fixes`（基于已合入 Stage 0~4 的 `main` / Tag `v8.6.7-lx-stage4`）
+>
+> **当前状态**：✅ **Stage 0 ~ Stage 4 已 fast-forward 合并回 `main`（Tag `v8.6.7-lx-stage4`）；Stage 5 五项核心修复与增强（歌单子文件夹归档、递归防重与后缀对齐、封面缓存并入清理、大歌单自动分页下载、外部歌单链接搜索框直达导入）已落地并通过云端 CI 全绿构建** -> 待用户在真机完成 Stage 5 回归验收，验收通过后决定合并回 `main` 及是否启动 Stage 6（Android 悬浮歌词）。
 
 ---
 
@@ -10,7 +12,7 @@
 
 - **项目目标**：在个人 Fork [`hikjesen/namida`](https://github.com/hikjesen/namida) 中无缝融入「在线曲库」（底层基于 LX Music 协议与 SDK），实现多平台聚合/分源歌曲与歌单搜索、关键词联想、用户自导入（本地 / 在线 URL）第三方 `.js` 自定义音源解析、主播放器原生在线试听（含封面/双语歌词/边播边缓/波形条/单曲循环）、多音质并发下载校验、内嵌标签封面与完整 `.lrc` 导出、以及自动入库的一体化体验。
 - **本地工作区**：
-  - 主开发仓库：`d:\namida项目\namida`（当前分支 `feat/lx-stage3-polish`，远端 `origin` = `https://github.com/hikjesen/namida.git`）
+  - 主开发仓库：`d:\namida项目\namida`（当前分支 `feat/lx-stage5-fixes`，基线 `main` = `v8.6.7-lx-stage4`，远端 `origin` = `https://github.com/hikjesen/namida.git`）
   - 只读参考仓库：`d:\namida项目\lx-music-mobile`（分支 `feature/android-download-mvp`，远端 `https://github.com/hikjesen/lx-music-mobile.git`）
 - **开发与验收约束**：
   - 本机无 Flutter / Dart / Java 环境（仅安装有 `git`、`gh`、`node`、`npm`、`codex`），全程依赖 **GitHub Actions 免费构建**（`dart analyze` + ARM64 Release APK），用户下载 Artifact 到真机测试反馈。
@@ -70,7 +72,8 @@
 | **Stage 3 (美学重构)** | `feat/lx-stage3-polish` (`d3595ca5`) | [45566841964](https://github.com/hikjesen/namida/actions/runs/45566841964) (`15m+`) | ARM64 APK | ✅ Namida 原生美学重构、底栏 YouTube 替换为「在线曲库」、毛玻璃音质窗、记住上次音质、并发 1-3、防重检测、HEAD 进度探测 |
 | **Stage 4 (在线试听与歌单)** | `feat/lx-stage3-polish` (`a2360084`) | [45606440084](https://github.com/hikjesen/namida/actions/runs/45606440084) (`15m+`) | ARM64 APK | ✅ 搜索状态持久化、聚合全源 + 关键词联想、主播放器原生在线试听/稍后播放、五平台歌单搜索网格与整单下载 |
 | **真机反馈打磨 R2** | `feat/lx-stage3-polish` (`d968cf9f`) | [45617854104](https://github.com/hikjesen/namida/actions/runs/45617854104) (`15m+`) | ARM64 APK | ✅ 顶部精简为单行搜索栏、下载管理并入「在线曲库设置」双 Tab、右上角齿轮上下文切换、试听边播边缓存与波形条渲染通过 |
-| **单曲循环根因修复 R3** | `feat/lx-stage3-polish` (`5f449d3d`) | [45629267767](https://github.com/hikjesen/namida/actions/runs/45629267767) (`15m28s`) | `50,772,738 bytes` | ✅ 接入原生 `LoopMode.one` / `loop-file=inf` + 安全 EOF 重载兜底，本地与在线试听单曲循环真机全通过 |
+| **单曲循环根因修复 R3** | `feat/lx-stage3-polish` (`5f449d3d`) -> 已合并 `main` (`v8.6.7-lx-stage4`) | [45629267767](https://github.com/hikjesen/namida/actions/runs/45629267767) (`15m28s`) | `50,772,738 bytes` | ✅ 接入原生 `LoopMode.one` / `loop-file=inf` + 安全 EOF 重载兜底，本地与在线试听单曲循环真机全通过 |
+| **Stage 5（歌单体验与缓存修复）** | `feat/lx-stage5-fixes` (`54613a3c`) | [45757092704](https://github.com/hikjesen/namida/actions/runs/45757092704) (`17m35s`) | `50,781,361 bytes` | ✅ `dart analyze` 零告警 + ARM64 APK 全绿（歌单子文件夹、全目录递归防重、后缀对齐、封面缓存清理、大歌单自动分页下载、外部歌单链接直达导入）-> 待真机回归验收 |
 
 ### 4.2 统一固定签名与 CI（已落地）
 - 已在 `hikjesen/namida` 仓库配置 GitHub Actions Secrets：`LX_ANDROID_KEYSTORE_B64`、`LX_ANDROID_KEY_PROPERTIES_B64`（PKCS12 Keystore，本地私钥生成后已销毁、永不入库）。
@@ -97,20 +100,21 @@
 
 ### 5.3 Dart「在线曲库」业务层与原生风格 UI（全部收敛在 `lib/lx_music/`）
 - **核心服务与状态**：
-  - `lx_models.dart`：曲目/歌单/搜索/歌词/音源/下载设置（含 `rememberLastQuality`、`lastSelectedQuality`、翻译/罗马音细粒度开关、并发数 1–3）与任务模型。
-  - `lx_http_proxy.dart`：复用 Namida `rhttp`，跟随全局代理配置、支持二进制透传与取消。
+  - `lx_models.dart`：曲目/歌单/搜索/歌词/音源/下载设置（含 `archiveSonglistToSubfolder`、`rememberLastQuality`、`lastSelectedQuality`、翻译/罗马音细粒度开关、并发数 1–3）与任务模型（含可跨重试保留的 `subfolderName`）。
+  - `lx_http_proxy.dart`：复用 Namida `rhttp`（关闭底层隐式跟跳并由代理层按 `follow_max` 手动跟跳 3xx、跨源剥离敏感头、回传最终重定向 `url`），跟随全局代理配置、支持二进制透传与取消。
   - `lx_user_api_store.dart`：私有目录 `<appSupport>/lx_music/` 原子持久化 `manifest.json` / `settings.json`，自动剥离 UTF-8 BOM。
   - `lx_bridge_service.dart`：QuickJS 通道、本地/URL 音源导入（限制 2 MB UTF-8）、单源与聚合搜索、`tipSearch`、歌单搜索与详情、歌词/封面/直链解析、200 条诊断日志。
-  - `lx_audio_sniffer.dart` / `lx_download_resolver.dart`：音频魔数 & 封面头校验、渐进音质降级（`flac24bit -> flac -> 320k -> 128k`）与跨平台自动换源。
-  - `lx_download_manager.dart`：可配置并发数（1–3）的 4 阶段下载队列、下载前轻量 `HEAD` 探测 `Content-Length`、队列与目录防重检测、标签/封面写入、双语+罗马音 `.lrc` 合并导出与即时入库。
-  - `lx_search_controller.dart`：全局单例持久化搜索词、所选来源（含 `all` 聚合）、歌曲/歌单模式、分页结果、滚动位置、防抖关键词联想与搜索历史。
-  - `lx_preview_player.dart`：原生主播放器在线试听引擎，支持点击标题即刻试听、稍后播放、本地已下载曲目直连复用、封面/双语歌词实时同步、`http_cache_stream` 边播边缓存至 `APP_CACHE/preview_audio/`（200 MB LRU 淘汰并保护当前在播文件）、缓存体积统计与清理，以及联动 `WaveformController` 生成播放进度波形条。
+  - `lx_audio_sniffer.dart` / `lx_download_resolver.dart`：统一音频后缀常量 `LxAudioSniffer.audioExtensions`（`flac/mp3/m4a/ogg/wav/ape/aac/opus`）、音频魔数 & 封面头校验、渐进音质降级（`flac24bit -> flac -> 320k -> 128k`）与跨平台自动换源。
+  - `lx_download_manager.dart`：可配置并发数（1–3）的 4 阶段下载队列、下载前轻量 `HEAD` 探测 `Content-Length`、歌单按名归档子文件夹与路径清洗、全下载目录递归防重检测（含提交后即时刷新子目录缓存）、标签/封面写入、双语+罗马音 `.lrc` 合并导出与即时入库。
+  - `lx_songlist_link_parser.dart`：从粘贴的分享文案或 URL 中提取链接并按域名后缀严格匹配五平台（网易云/QQ/酷狗/酷我/咪咕），供搜索框直达外部歌单并屏蔽无意义的关键词联想请求。
+  - `lx_search_controller.dart`：全局单例持久化搜索词、所选来源（含 `all` 聚合）、歌曲/歌单模式、分页结果、滚动位置、防抖关键词联想（自动跳过歌单链接）与搜索历史。
+  - `lx_preview_player.dart`：原生主播放器在线试听引擎，支持点击标题即刻试听、稍后播放、本地已下载曲目（含子目录）直连复用、封面/双语歌词实时同步、`http_cache_stream` 边播边缓存至 `APP_CACHE/preview_audio/` 与 `APP_CACHE/preview_artwork/`（共享 200 MB LRU 淘汰并保护当前在播音频及封面）、缓存体积统计与清理，以及联动 `WaveformController` 生成播放进度波形条。
 - **页面与组件**：
-  - `lx_music_page.dart`：「在线曲库」主界面——顶部收敛为**单行紧凑搜索栏**（`[来源下拉 + 搜索输入框]` + 右侧 `[歌曲 | 歌单]` 切换），条件式多选操作栏，支持聚合/单源搜索、联想浮层、分页加载与三列歌单网格。
-  - `lx_songlist_detail_page.dart`：歌单详情页（封面、描述、播放量、曲目分页列表、`下载整张歌单` 批量入队）。
-  - `lx_settings_page.dart`：**双 Tab 结构（`设置 | 下载管理`）**，提供 `LxSettingsPage.openDownloads()` 直达下载管理；收口音源导入/切换/详情/`showUpdateAlert`、下载目录、默认音质与「记住上次选择」、并发数、「在线试听缓存」大小查看与一键清理、诊断日志。
+  - `lx_music_page.dart`：「在线曲库」主界面——顶部收敛为**单行紧凑搜索栏**（`[来源下拉 + 搜索输入框]` + 右侧 `[歌曲 | 歌单]` 切换），支持直接粘贴五平台歌单链接/分享文案直达歌单详情页（不污染搜索历史与当前结果），条件式多选操作栏，支持聚合/单源搜索、联想浮层、分页加载与三列歌单网格。
+  - `lx_songlist_detail_page.dart`：歌单详情页（封面、描述、播放量、曲目分页列表、全部下载入口自动透传歌单名作为子文件夹、大歌单「下载全部」自动顺序分页拉取带毛玻璃进度/取消/断点续拉弹窗）。
+  - `lx_settings_page.dart`：**双 Tab 结构（`设置 | 下载管理`）**，提供 `LxSettingsPage.openDownloads()` 直达下载管理；收口音源导入/切换/详情/`showUpdateAlert`、下载目录与「歌单下载按歌单名建子文件夹」开关、默认音质与「记住上次选择」、并发数、「在线试听缓存」大小查看与一键清理、诊断日志。
   - `lx_app_bar_icon.dart`：在在线曲库与设置页自动隐藏，在其他页面仅当存在活跃下载时显示带数量角标的快捷图标并直达下载管理。
-  - `widgets/`：`lx_track_tile.dart`、`lx_songlist_card.dart`、`lx_cover_thumb.dart`、`lx_download_quality_dialog.dart`（`CustomBlurryDialog` 毛玻璃音质窗）、`lx_download_actions.dart`、`lx_download_task_card.dart`、`lx_lyrics_sheet.dart`、`lx_source_dialogs.dart`。
+  - `widgets/`：`lx_track_tile.dart`、`lx_songlist_card.dart`、`lx_cover_thumb.dart`、`lx_download_quality_dialog.dart`（`CustomBlurryDialog` 毛玻璃音质窗，展示含子文件夹的最终目标路径）、`lx_download_actions.dart`（下载前异步刷新递归索引）、`lx_download_task_card.dart`（已完成任务展示相对子路径）、`lx_lyrics_sheet.dart`、`lx_source_dialogs.dart`。
 
 ### 5.4 Namida 主干最小挂钩清单
 - `lib/core/namida_converter_ext.dart` & `lib/controller/scroll_search_controller.dart`：将 `LibraryTab.youtube` 槽位替换为「在线曲库」；在 `YOUTUBE_HOME` / `YOUTUBE_HOME_SECTION` 页面上，右上角设置齿轮上下文直达「在线曲库设置」（带活跃下载小红点提示）。
@@ -130,16 +134,17 @@
 3. **Dart 3.13 泛型推断**：Record 里返回空列表时必须显式写类型（如 `const <LxUserApiMeta>[]`），否则 `dart analyze` 会报 `return_of_invalid_type`。
 4. **`FilesDownloadManager.inst.download`**：`downloadingStream` 传入的是 `bytesDelta`（增量字节，断线重连时可能为负），已做下限 0 钳位并通过前置 `HEAD` 获取 `Content-Length`。
 5. **CI 日志/状态监控**：代理环境下 `gh run watch` 偶尔发生 `wsarecv` 断开，用 `gh run view --json status,conclusion` 带 `try/catch` 轮询即可稳定跟踪。
+6. **`MSOB7YY/rhttp` 重定向与最终 URL**：上游 Rust `HttpResponse` 结构体不向 Dart 回传重定向后的最终 URL（`response.request.url` 始终为初始请求地址），而五平台歌单短链（`163cn.tv` / `c6.y.qq.com` / `t1.kugou.com` / `c.migu.cn`）均依赖 `httpFetch` 返回重定向后的 `url`。已在 `LxHttpProxy` 配置 `RedirectSettings.none()` 并手工跟跳 3xx 后回传最终 `'url'`。
 
 ---
 
-## 7. 待办收尾与后续可选演进（Stage 4+）
+## 7. 待办收尾与后续演进（Stage 5+）
 
-### 7.1 工程收尾（推荐优先确认）
-- [ ] **特性分支合并回 `main`**：由用户确认是否将 `feat/lx-stage3-polish` 合并回 `hikjesen/namida` 的 `main` 分支（并按需打 Release Tag / 清理旧阶段分支）。
+### 7.1 当前待办
+- [x] **Stage 0~4 合并回 `main`**：已 fast-forward 合并并打 Tag `v8.6.7-lx-stage4`（旧阶段分支暂保留）。
+- [ ] **Stage 5 真机验收与合并 `main`**：用户下载 CI #45757092704 产物完成真机回归测试后，确认是否将 `feat/lx-stage5-fixes` 合并回 `main`。
 
-### 7.2 可选进阶增强（原计划标为“按需”，视实际使用反馈决定）
-- [ ] **Android 息屏大批量下载保活**：Namida 上游 `setKeepRunningInBackground` 在 Android 侧为空实现；若经常整张下载上百首歌单且需锁屏/切后台持续下载，可补齐 Android 前台通知 Service（带进度通知）。
-- [ ] **歌单广场 / 排行榜 / 外部歌单链接导入**：在 `tools/lx_music_sdk/entry.js` 中补导出排行榜（`leaderboard`）与热门歌单（`songList.getList`）及外链解析，支持逛榜单或直接粘贴网易云/QQ 歌单分享链接导入。
-- [ ] **播放器页一键下载当前试听曲目**：在全屏播放页菜单中为在线试听曲目补一个直达下载/音质选择的快捷动作。
-- [ ] **上游 Namida 版本同步**：后续上游 `Namida` 发布新版本时，基于隔离良好的 `lib/lx_music/` 与最小主干挂钩执行 `merge` / `rebase` 维护。
+### 7.2 后续阶段规划与按需增强
+- [ ] **Stage 6（下一阶段）：Android 悬浮歌词**：复用 Namida `lib/controller/lyrics_integrations.dart` 实时歌词管线 + 轻量 Kotlin `WindowManager`（`TYPE_APPLICATION_OVERLAY`）悬浮窗；启动前需先向用户确认自定义粒度与交互方式。
+- [ ] **Stage 7（暂搁置）：五平台原生评论区查看**。
+- [ ] **其他按需增强**：Android 息屏大批量下载前台保活 Service、歌单广场 / 排行榜浏览、上游 Namida 版本同步。
