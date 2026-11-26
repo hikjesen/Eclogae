@@ -20,6 +20,7 @@ import 'lx_preview_player.dart';
 import 'lx_search_controller.dart';
 import 'lx_settings_page.dart';
 import 'lx_songlist_detail_page.dart';
+import 'lx_songlist_link_parser.dart';
 import 'widgets/lx_download_actions.dart';
 import 'widgets/lx_lyrics_sheet.dart';
 import 'widgets/lx_songlist_card.dart';
@@ -241,6 +242,16 @@ class _SearchSectionState extends State<_SearchSection> {
 
   void _submit(String keyword) {
     _dismissTips();
+    final link = parseSonglistLink(keyword);
+    if (link != null) {
+      _search.onInputChanged(_search.submittedKeyword);
+      _search.setTipsVisible(false);
+      LxSonglistDetailPage(
+        songlist: LxSonglist(id: link.url, name: '${link.platform.label}歌单', source: link.platform),
+        onOpenDownloads: widget.onShowDownloads,
+      ).navigate();
+      return;
+    }
     _runHistoryAction(() => _search.submitSearch(keyword));
   }
 
@@ -546,7 +557,7 @@ class _SearchSectionState extends State<_SearchSection> {
           children: [
             NIcon(Broken.search_normal_1, size: 16, color: NColors.disabled),
             SizedBox(width: 6),
-            Flexible(child: NamidaText('输入关键词搜索歌曲或歌单', style: NText.small, color: NColors.disabled)),
+            Flexible(child: NamidaText('输入关键词搜索歌曲或歌单，或粘贴歌单链接直达', style: NText.small, color: NColors.disabled)),
           ],
         ),
       );

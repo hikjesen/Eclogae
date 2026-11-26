@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 abstract final class LxAudioSniffer {
+  static const audioExtensions = ['flac', 'mp3', 'm4a', 'ogg', 'wav', 'ape', 'aac', 'opus'];
+
   static Future<String> verifyAndDetectExtension(File file) async {
     final size = await file.exists() ? await file.length() : 0;
     if (size < 1024) throw FormatException('音频文件过小（$size 字节），可能下载不完整或被拦截');

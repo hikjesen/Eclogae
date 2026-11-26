@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import 'lx_bridge_service.dart';
 import 'lx_models.dart';
+import 'lx_songlist_link_parser.dart';
 import 'lx_user_api_store.dart';
 
 class LxPagedState<T> {
@@ -142,7 +143,7 @@ class LxSearchController extends ChangeNotifier {
     _inputText = text;
     _clearTips();
     final keyword = text.trim();
-    if (keyword.isNotEmpty) {
+    if (keyword.isNotEmpty && parseSonglistLink(keyword) == null) {
       _tipsVisible = true;
       final seq = _tipSeq;
       _tipTimer = Timer(const Duration(milliseconds: 220), () async {

@@ -289,6 +289,7 @@ class LxUpdateAlert {
 class LxDownloadSettings {
   const LxDownloadSettings({
     this.downloadDir,
+    this.archiveSonglistToSubfolder = true,
     this.preferredQuality = 'flac',
     this.previewQuality = '320k',
     this.autoSwitchSource = true,
@@ -306,6 +307,7 @@ class LxDownloadSettings {
   static const _unchanged = Object();
 
   final String? downloadDir;
+  final bool archiveSonglistToSubfolder;
   final String preferredQuality;
   final String previewQuality;
   final bool autoSwitchSource;
@@ -340,6 +342,7 @@ class LxDownloadSettings {
 
   LxDownloadSettings copyWith({
     Object? downloadDir = _unchanged,
+    bool? archiveSonglistToSubfolder,
     String? preferredQuality,
     String? previewQuality,
     bool? autoSwitchSource,
@@ -352,6 +355,7 @@ class LxDownloadSettings {
     int? maxConcurrent,
   }) => LxDownloadSettings(
     downloadDir: identical(downloadDir, _unchanged) ? this.downloadDir : downloadDir as String?,
+    archiveSonglistToSubfolder: archiveSonglistToSubfolder ?? this.archiveSonglistToSubfolder,
     preferredQuality: preferredQuality ?? this.preferredQuality,
     previewQuality: previewQuality ?? this.previewQuality,
     autoSwitchSource: autoSwitchSource ?? this.autoSwitchSource,
@@ -366,6 +370,7 @@ class LxDownloadSettings {
 
   factory LxDownloadSettings.fromJson(Map<String, dynamic> json) => LxDownloadSettings(
     downloadDir: json['downloadDir'] as String?,
+    archiveSonglistToSubfolder: json['archiveSonglistToSubfolder'] as bool? ?? true,
     preferredQuality: json['preferredQuality'] as String? ?? 'flac',
     previewQuality: qualityOptions.contains(json['previewQuality']) ? json['previewQuality'] as String : '320k',
     autoSwitchSource: json['autoSwitchSource'] as bool? ?? true,
@@ -380,6 +385,7 @@ class LxDownloadSettings {
 
   Map<String, dynamic> toJson() => {
     'downloadDir': downloadDir,
+    'archiveSonglistToSubfolder': archiveSonglistToSubfolder,
     'preferredQuality': preferredQuality,
     'previewQuality': previewQuality,
     'autoSwitchSource': autoSwitchSource,
@@ -414,6 +420,7 @@ class LxDownloadTask {
     required this.track,
     required this.requestedQuality,
     required this.createdAt,
+    this.subfolderName,
     this.stage = LxDownloadStage.queued,
     this.resolvedQuality,
     this.resolvedSource,
@@ -431,6 +438,7 @@ class LxDownloadTask {
   final String id;
   final LxTrack track;
   final String requestedQuality;
+  final String? subfolderName;
   final LxDownloadStage stage;
   final String? resolvedQuality;
   final LxPlatform? resolvedSource;
@@ -473,6 +481,7 @@ class LxDownloadTask {
     track: track,
     requestedQuality: requestedQuality ?? this.requestedQuality,
     createdAt: createdAt,
+    subfolderName: subfolderName,
     stage: stage ?? this.stage,
     resolvedQuality: resolvedQuality ?? this.resolvedQuality,
     resolvedSource: resolvedSource ?? this.resolvedSource,

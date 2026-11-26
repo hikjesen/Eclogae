@@ -18,6 +18,7 @@ import 'package:namida/core/enums.dart';
 import 'package:namida/core/icon_fonts/broken_icons.dart';
 import 'package:namida/ui/widgets/custom_widgets.dart';
 
+import 'lx_audio_sniffer.dart';
 import 'lx_bridge_service.dart';
 import 'lx_download_manager.dart';
 import 'lx_download_resolver.dart';
@@ -36,7 +37,6 @@ class LxPreviewPlayer {
   static const _maxTracks = 250;
   static const _maxCovers = 40;
   static const _maxAudioCacheBytes = 200 * 1024 * 1024;
-  static const _audioExts = ['flac', 'mp3', 'm4a', 'ogg', 'wav', 'aac', 'opus'];
 
   static String get _audioCacheDir => FileParts.joinPath(AppDirs.APP_CACHE, 'preview_audio');
   static String get _artworkCacheDir => FileParts.joinPath(AppDirs.APP_CACHE, 'preview_artwork');
@@ -168,7 +168,7 @@ class LxPreviewPlayer {
   File? _findCachedAudioFileSync(LxTrack track, String quality) {
     if (AppDirs.APP_CACHE.isEmpty) return null;
     final hash = _cacheKey(track, quality);
-    for (final ext in _audioExts) {
+    for (final ext in LxAudioSniffer.audioExtensions) {
       final file = FileParts.join(_audioCacheDir, '$hash.$ext');
       if (_isCompleteCacheFileSync(file)) return file;
     }
@@ -178,7 +178,7 @@ class LxPreviewPlayer {
   Future<File?> _findCachedAudioFile(LxTrack track, String quality) async {
     if (AppDirs.APP_CACHE.isEmpty) return null;
     final hash = _cacheKey(track, quality);
-    for (final ext in _audioExts) {
+    for (final ext in LxAudioSniffer.audioExtensions) {
       final file = FileParts.join(_audioCacheDir, '$hash.$ext');
       if (await _isCompleteCacheFile(file)) return file;
     }
@@ -205,7 +205,7 @@ class LxPreviewPlayer {
     final segment = uri.path.split('/').last;
     final dot = segment.lastIndexOf('.');
     final ext = dot >= 0 ? segment.substring(dot + 1).toLowerCase() : '';
-    return _audioExts.contains(ext) ? ext : (_isLossless(quality) ? 'flac' : 'mp3');
+    return LxAudioSniffer.audioExtensions.contains(ext) ? ext : (_isLossless(quality) ? 'flac' : 'mp3');
   }
 
   Future<UriSource> buildAudioSource(
@@ -291,7 +291,7 @@ class LxPreviewPlayer {
     if (_tracks.containsKey(path)) _completedCachePaths[path] = file.path;
     await _touchCachedAudio(file);
     onAudioFileReady(file);
-    await _trimPreviewAudioCache();
+    await _trimPreviewCache();
   }
 
   static Future<void> _touchCachedAudio(File file) async {
@@ -315,27 +315,29 @@ class LxPreviewPlayer {
     return active != null && (path == active || path == '$active.part' || path == '$active.metadata');
   }
 
-  Future<void> _trimPreviewAudioCache() async {
+  Future<void> _trimPreviewCache() async {
     if (AppDirs.APP_CACHE.isEmpty) return;
     final files = <({File file, FileStat stat})>[];
     var total = 0;
-    await for (final file in _cacheFiles(_audioCacheDir)) {
-      final stat = await file.stat();
-      if (stat.type != FileSystemEntityType.file) continue;
-      total += stat.size;
-      files.add((file: file, stat: stat));
+    for (final dir in [_audioCacheDir, _artworkCacheDir]) {
+      await for (final file in _cacheFiles(dir)) {
+        final stat = await file.stat();
+        if (stat.type != FileSystemEntityType.file) continue;
+        total += stat.size;
+        files.add((file: file, stat: stat));
+      }
     }
     if (total <= _maxAudioCacheBytes) return;
 
     files.sort((a, b) => a.stat.modified.compareTo(b.stat.modified));
     for (final entry in files) {
       if (total <= _maxAudioCacheBytes) break;
-      if (_isActiveCacheFile(entry.file.path)) continue;
+      if (_isActiveCacheFile(entry.file.path) || entry.file.path == _currentPreviewTrack?.pathToImage) continue;
       try {
         await entry.file.delete();
         total -= entry.stat.size;
       } on FileSystemException catch (error) {
-        logger.error('清理试听音频缓存失败', e: error);
+        logger.error('清理试听缓存失败', e: error);
       }
     }
   }

@@ -441,6 +441,17 @@ class _LxSettingsPageState extends State<LxSettingsPage> with SingleTickerProvid
                       onPressed: canEdit ? () => save(options.copyWith(downloadDir: null)) : null,
                     ),
             ),
+            CustomSwitchListTile(
+              title: '歌单下载按歌单名建子文件夹',
+              icon: Broken.folder_add,
+              subtitle: '开启后从歌单详情页下载的歌曲将归档到 <下载目录>/<歌单名>/',
+              value: options.archiveSonglistToSubfolder,
+              enabled: canEdit,
+              onChanged: (current) {
+                final next = !current;
+                save(options.copyWith(archiveSonglistToSubfolder: next));
+              },
+            ),
             CustomListTile(
               title: '默认音质',
               icon: Broken.sound,

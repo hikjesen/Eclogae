@@ -116,7 +116,7 @@ class _LxDownloadQualityDialogState extends State<LxDownloadQualityDialog> {
                   Expanded(
                     child: Tooltip(
                       message: widget.effectiveDir,
-                      child: NamidaText(widget.effectiveDir, style: NText.small, maxLines: 1, overflow: TextOverflow.ellipsis),
+                      child: NamidaText(widget.effectiveDir, style: NText.small, maxLines: 2, overflow: TextOverflow.ellipsis),
                     ),
                   ),
                 ],

@@ -9,12 +9,13 @@ import 'lx_download_quality_dialog.dart';
 import 'lx_source_dialogs.dart';
 
 class LxDownloadActions {
-  static Future<bool> downloadTracks(List<LxTrack> tracks, {bool forceDialog = false, VoidCallback? onOpenDownloads}) async {
+  static Future<bool> downloadTracks(List<LxTrack> tracks, {bool forceDialog = false, VoidCallback? onOpenDownloads, String? subfolderName}) async {
     final downloads = LxDownloadManager.inst;
     final single = tracks.length == 1;
     final queuedMessage = single ? '已在下载队列中' : '所选歌曲均已在下载队列中';
     try {
       await downloads.ensureLoaded();
+      await downloads.refreshExistingFiles();
       final (:fresh, :onDisk, :inQueue) = downloads.classifyDuplicates(tracks);
       if (fresh.isEmpty && onDisk.isEmpty) {
         snackyy(icon: Broken.info_circle, message: queuedMessage);
@@ -41,7 +42,7 @@ class LxDownloadActions {
               trackCount: targets.length,
               singleTrack: targets.length == 1 ? targets.single : null,
               initialSettings: options,
-              effectiveDir: downloads.resolveEffectiveDownloadDir(),
+              effectiveDir: downloads.resolveTargetDir(subfolderName: subfolderName),
               onSettingsChanged: downloads.updateSettings,
             );
       if (quality == null) return false;
@@ -52,7 +53,7 @@ class LxDownloadActions {
         return false;
       }
 
-      final added = downloads.enqueueBatch(finalTargets, quality: quality);
+      final added = downloads.enqueueBatch(finalTargets, quality: quality, subfolderName: subfolderName);
       snackyy(
         icon: Broken.document_download,
         message: '已将 ${added.length} 首歌曲加入下载队列',

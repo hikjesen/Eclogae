@@ -40,6 +40,11 @@ class LxDownloadTaskCard extends StatelessWidget {
       _ => colors.primary,
     };
     final savedPath = task.savedPath;
+    String? savedPathLabel;
+    if (completed && savedPath != null) {
+      final root = p.normalize(p.absolute(manager.resolveEffectiveDownloadDir()));
+      savedPathLabel = p.isWithin(root, savedPath) ? p.relative(savedPath, from: root) : p.basename(savedPath);
+    }
     final errorMessage = task.errorMessage;
     final indexedTrack = task.indexedTrack;
     final play = onPlay;
@@ -114,11 +119,11 @@ class LxDownloadTaskCard extends StatelessWidget {
             const SizedBox(height: 10),
             _progressBlock(colors),
           ],
-          if (completed && savedPath != null) ...[
+          if (savedPathLabel != null) ...[
             const SizedBox(height: 8),
             Row(
               children: [
-                Expanded(child: NamidaText(p.basename(savedPath), style: NText.small, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                Expanded(child: NamidaText(savedPathLabel, style: NText.small, maxLines: 1, overflow: TextOverflow.ellipsis)),
                 if (task.lrcPath != null) ...[
                   const SizedBox(width: 6),
                   NContainer(

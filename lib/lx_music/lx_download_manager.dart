@@ -28,7 +28,6 @@ class LxDownloadManager {
 
   static final inst = LxDownloadManager._();
   static const _downloadUa = 'Mozilla/5.0 (Linux; Android 10; Pixel 3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Mobile Safari/537.36';
-  static const _audioExtensions = ['flac', 'mp3', 'm4a', 'ogg', 'wav', 'ape'];
   static final _invalidFilenameChars = RegExp(r'[\\/:*?"<>|\x00-\x1f]');
   static final _filenameEdges = RegExp(r'^[. ]+|[. ]+$');
   static final _lrcTimestamp = RegExp(r'\[(\d{1,4}):([0-5]\d)(?:[.:](\d{1,3}))?\]');
@@ -116,6 +115,15 @@ class LxDownloadManager {
 
   String resolveEffectiveDownloadDir() => _effectiveDownloadDir(settingsNotifier.value);
 
+  String resolveTargetDir({String? subfolderName}) => _targetDir(settingsNotifier.value, subfolderName: subfolderName);
+
+  String _targetDir(LxDownloadSettings options, {String? subfolderName}) {
+    final root = _effectiveDownloadDir(options);
+    if (!options.archiveSonglistToSubfolder) return root;
+    final sub = sanitizeSubfolderName(subfolderName);
+    return sub == null ? root : p.join(root, sub);
+  }
+
   String _effectiveDownloadDir(LxDownloadSettings options) {
     final configured = options.downloadDir?.trim();
     if (configured != null && configured.isNotEmpty) return configured;
@@ -133,10 +141,10 @@ class LxDownloadManager {
     }
     final files = _existingFilesScan = <String, String>{};
     try {
-      await for (final entry in Directory(directory).list(followLinks: false)) {
+      await for (final entry in Directory(directory).list(recursive: true, followLinks: false)) {
         if (entry is! File || _uncommittedAudioPaths.contains(entry.path)) continue;
         final extension = p.extension(entry.path).toLowerCase();
-        if (_audioExtensions.any((audioExtension) => extension == '.$audioExtension')) {
+        if (LxAudioSniffer.audioExtensions.any((audioExtension) => extension == '.$audioExtension')) {
           files.putIfAbsent(p.basenameWithoutExtension(entry.path).toLowerCase(), () => entry.path);
         }
       }
@@ -154,9 +162,12 @@ class LxDownloadManager {
   String? cachedExistingAudioPath(LxTrack track) => _existingFiles[baseFilenameFor(track).toLowerCase()];
 
   String? findExistingAudioPath(LxTrack track) {
+    final base = baseFilenameFor(track);
+    final cached = _existingFiles[base.toLowerCase()];
+    if (cached != null && !_uncommittedAudioPaths.contains(cached) && File(cached).existsSync()) return cached;
     final directory = p.normalize(p.absolute(resolveEffectiveDownloadDir()));
-    final stem = p.join(directory, baseFilenameFor(track));
-    for (final extension in _audioExtensions) {
+    final stem = p.join(directory, base);
+    for (final extension in LxAudioSniffer.audioExtensions) {
       final path = '$stem.$extension';
       if (!_uncommittedAudioPaths.contains(path) && File(path).existsSync()) return path;
     }
@@ -190,13 +201,14 @@ class LxDownloadManager {
     return (fresh: fresh, inQueue: inQueue, onDisk: onDisk);
   }
 
-  LxDownloadTask enqueue(LxTrack track, {String? quality}) => enqueueBatch([track], quality: quality).single;
+  LxDownloadTask enqueue(LxTrack track, {String? quality, String? subfolderName}) => enqueueBatch([track], quality: quality, subfolderName: subfolderName).single;
 
-  List<LxDownloadTask> enqueueBatch(Iterable<LxTrack> tracks, {String? quality}) {
+  List<LxDownloadTask> enqueueBatch(Iterable<LxTrack> tracks, {String? quality, String? subfolderName}) {
     final requested = quality ?? settingsNotifier.value.effectiveQuickQuality;
+    final normalizedSubfolder = sanitizeSubfolderName(subfolderName);
     final now = DateTime.now();
     final added = [
-      for (final track in tracks) LxDownloadTask(id: const Uuid().v4(), track: track, requestedQuality: requested, createdAt: now),
+      for (final track in tracks) LxDownloadTask(id: const Uuid().v4(), track: track, requestedQuality: requested, createdAt: now, subfolderName: normalizedSubfolder),
     ];
     if (added.isEmpty) return added;
     if (quality == null && !_settingsLoaded) _useLoadedQuality.addAll(added.map((task) => task.id));
@@ -251,6 +263,7 @@ class LxDownloadManager {
     track: task.track,
     requestedQuality: task.requestedQuality,
     createdAt: task.createdAt,
+    subfolderName: task.subfolderName,
     resolvedQuality: reuseAudio ? task.resolvedQuality : null,
     resolvedSource: reuseAudio ? task.resolvedSource : null,
     resolveDetail: reuseAudio ? task.resolveDetail : null,
@@ -346,7 +359,7 @@ class LxDownloadManager {
       _checkCanceled(id);
       final extension = await LxAudioSniffer.verifyAndDetectExtension(part);
       final size = await part.length();
-      final dir = await Directory(p.normalize(p.absolute(_effectiveDownloadDir(options)))).create(recursive: true);
+      final dir = await Directory(p.normalize(p.absolute(_targetDir(options, subfolderName: task.subfolderName)))).create(recursive: true);
       _checkCanceled(id);
       final target = _allocateFile(dir, task.track, extension, exportLrc: options.exportLrc);
       await _commitAudio(id, part, target, size, resolved.track);
@@ -421,14 +434,24 @@ class LxDownloadManager {
 
   static String baseFilenameFor(LxTrack track) {
     final label = track.singer.isEmpty ? track.name : '${track.singer} - ${track.name}';
-    final clean = label.replaceAll(_invalidFilenameChars, '_').replaceAll(_filenameEdges, '');
+    final name = _sanitizePathSegment(label);
+    return name.isEmpty ? '在线曲库' : name;
+  }
+
+  static String? sanitizeSubfolderName(String? raw) {
+    if (raw == null) return null;
+    final name = _sanitizePathSegment(raw);
+    return name.isEmpty ? null : name;
+  }
+
+  static String _sanitizePathSegment(String raw) {
+    final clean = raw.replaceAll(_invalidFilenameChars, '_').replaceAll(_filenameEdges, '');
     var nameBytes = 0;
     final prefix = clean.runes.take(120).takeWhile((rune) {
       nameBytes += utf8.encode(String.fromCharCode(rune)).length;
       return nameBytes <= 235;
     });
-    final capped = String.fromCharCodes(prefix).replaceAll(_filenameEdges, '');
-    return capped.isEmpty ? '在线曲库' : capped;
+    return String.fromCharCodes(prefix).replaceAll(_filenameEdges, '');
   }
 
   static File _allocateFile(Directory dir, LxTrack track, String extension, {required bool exportLrc}) {
@@ -439,7 +462,7 @@ class LxDownloadManager {
       if (FileSystemEntity.typeSync(path, followLinks: false) != FileSystemEntityType.notFound) continue;
       if (exportLrc &&
           (FileSystemEntity.typeSync('$stem.lrc', followLinks: false) != FileSystemEntityType.notFound ||
-              _audioExtensions.any((ext) => ext != extension && FileSystemEntity.typeSync('$stem.$ext', followLinks: false) != FileSystemEntityType.notFound))) {
+              LxAudioSniffer.audioExtensions.any((ext) => ext != extension && FileSystemEntity.typeSync('$stem.$ext', followLinks: false) != FileSystemEntityType.notFound))) {
         continue;
       }
       final file = File(path);
@@ -461,7 +484,8 @@ class LxDownloadManager {
       _taggingSources[id] = source;
       committed = true;
       _uncommittedAudioPaths.remove(target.path);
-      final cacheTarget = p.dirname(target.path) == _existingFilesDirectory;
+      final root = _existingFilesDirectory;
+      final cacheTarget = root != null && (p.equals(p.dirname(target.path), root) || p.isWithin(root, target.path));
       if (cacheTarget) {
         final stem = p.basenameWithoutExtension(target.path).toLowerCase();
         _existingFiles[stem] = target.path;

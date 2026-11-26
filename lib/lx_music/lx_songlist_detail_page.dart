@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:namida/class/route.dart';
 import 'package:namida/class/track.dart';
+import 'package:namida/controller/navigator_controller.dart';
 import 'package:namida/controller/player_controller.dart';
 import 'package:namida/core/dimensions.dart';
 import 'package:namida/core/enums.dart';
@@ -53,6 +54,8 @@ class _LxSonglistDetailPageState extends State<LxSonglistDetailPage> {
   bool _hasMore = false;
   bool _descExpanded = false;
   bool _multiSelect = false;
+  bool _fetchingAll = false;
+  bool _downloadingAll = false;
   bool _downloadingSelected = false;
   String? _error;
 
@@ -64,7 +67,7 @@ class _LxSonglistDetailPageState extends State<LxSonglistDetailPage> {
 
   Future<void> _loadPage(int page) async {
     final first = page == 1;
-    if (_loading || (!first && (_loadingMore || !_hasMore))) return;
+    if (_fetchingAll || _loading || (!first && (_loadingMore || !_hasMore))) return;
     final request = ++_requestId;
     setState(() {
       _loading = first;
@@ -106,6 +109,125 @@ class _LxSonglistDetailPageState extends State<LxSonglistDetailPage> {
 
   VoidCallback get _openDownloads => widget.onOpenDownloads ?? LxSettingsPage.openDownloads;
 
+  bool get _canDownloadAll => _tracks.isNotEmpty && !_loading && !_loadingMore && !_fetchingAll && !_downloadingAll && !_downloadingSelected;
+  bool get _canDownloadSelected => _selected.isNotEmpty && !_fetchingAll && !_downloadingAll && !_downloadingSelected;
+
+  Future<void> _downloadAll() async {
+    if (!_canDownloadAll) return;
+    setState(() {
+      _fetchingAll = _hasMore;
+      _downloadingAll = !_hasMore;
+      if (_fetchingAll) _error = null;
+    });
+    try {
+      if (_fetchingAll) {
+        if (!await _fetchRemainingTracks() || !mounted) return;
+        setState(() {
+          _fetchingAll = false;
+          _downloadingAll = true;
+        });
+      }
+      await LxDownloadActions.downloadTracks(_tracks, subfolderName: _info.name, onOpenDownloads: _openDownloads);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _fetchingAll = false;
+          _downloadingAll = false;
+        });
+      }
+    }
+  }
+
+  Future<bool> _fetchRemainingTracks() async {
+    final request = ++_requestId;
+    final navigator = NamidaNavigator.inst;
+    final progress = ValueNotifier<({int loaded, int? total})>((loaded: _tracks.length, total: _total ?? _info.total));
+    var canceled = false;
+    var dialogOpen = true;
+
+    bool isActive() => mounted && request == _requestId && !canceled;
+
+    void closeProgressDialog({bool cancel = false}) {
+      if (!dialogOpen) return;
+      dialogOpen = false;
+      canceled = cancel;
+      navigator.closeDialog();
+    }
+
+    final dialogClosed = navigator
+        .navigateDialog<void>(
+          // The navigator uses the same callback for Back and barrier taps. The full-size tap detector handles barrier taps here.
+          tapToDismiss: () {
+            closeProgressDialog(cancel: true);
+            return false;
+          },
+          scale: 1,
+          dialog: TapDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {},
+            child: CustomBlurryDialog(
+              normalTitleStyle: true,
+              title: '正在拉取歌单曲目',
+              icon: Broken.document_download,
+              actions: [NamidaButton(text: '取消', dense: true, onTap: () => closeProgressDialog(cancel: true))],
+              child: ValueListenableBuilder<({int loaded, int? total})>(
+                valueListenable: progress,
+                builder: (context, value, _) {
+                  final (:loaded, :total) = value;
+                  final fraction = total != null && total > 0 ? (loaded / total).clamp(0.0, 1.0).toDouble() : null;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      NamidaText(fraction == null ? '已加载 $loaded 首' : '已加载 $loaded / $total 首', style: NText.small),
+                      const SizedBox(height: 8),
+                      LinearProgressIndicator(value: fraction),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        )
+        .whenComplete(() {
+          if (dialogOpen) canceled = true;
+          dialogOpen = false;
+        });
+
+    final seen = _tracks.map((track) => track.uniqueKey).toSet();
+    Object? fetchError;
+    try {
+      while (_hasMore && !canceled) {
+        final detail = await LxBridgeService.inst.getSonglistDetail(
+          platform: widget.songlist.source,
+          id: widget.songlist.id,
+          page: _page + 1,
+          fallbackInfo: _info,
+        );
+        if (!isActive()) return false;
+        final added = detail.tracks.where((track) => seen.add(track.uniqueKey)).toList();
+        setState(() {
+          _info = detail.info;
+          _tracks = [..._tracks, ...added];
+          _page = detail.page;
+          _total = detail.total;
+          _hasMore = added.isNotEmpty && detail.hasMore;
+        });
+        progress.value = (loaded: _tracks.length, total: _total);
+      }
+    } catch (error) {
+      fetchError = error;
+    } finally {
+      closeProgressDialog();
+      await dialogClosed.whenComplete(progress.dispose);
+    }
+    if (!isActive()) return false;
+    if (fetchError != null) {
+      snackyy(icon: Broken.info_circle, message: '拉取歌单剩余曲目失败：$fetchError', isError: true);
+      return false;
+    }
+    return true;
+  }
+
   void _toggleMultiSelect() => setState(() {
     _multiSelect = !_multiSelect;
     if (!_multiSelect) _selected.clear();
@@ -117,9 +239,10 @@ class _LxSonglistDetailPageState extends State<LxSonglistDetailPage> {
   });
 
   Future<void> _downloadSelected() async {
+    if (!_canDownloadSelected) return;
     final selected = _tracks.where((track) => _selected.contains(track.uniqueKey)).toList();
     setState(() => _downloadingSelected = true);
-    final added = await LxDownloadActions.downloadTracks(selected, onOpenDownloads: _openDownloads);
+    final added = await LxDownloadActions.downloadTracks(selected, subfolderName: _info.name, onOpenDownloads: _openDownloads);
     if (!mounted) return;
     setState(() {
       _downloadingSelected = false;
@@ -260,8 +383,8 @@ class _LxSonglistDetailPageState extends State<LxSonglistDetailPage> {
                 text: '下载全部',
                 icon: Broken.document_download,
                 dense: true,
-                enabled: available,
-                onTap: () => LxDownloadActions.downloadTracks(_tracks, onOpenDownloads: _openDownloads),
+                enabled: _canDownloadAll,
+                onTap: _downloadAll,
               ),
               NamidaButton(
                 text: '多选',
@@ -273,11 +396,6 @@ class _LxSonglistDetailPageState extends State<LxSonglistDetailPage> {
               ),
             ],
           ),
-          if (_hasMore)
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: NamidaText('下载全部将下载已加载的 ${_tracks.length} 首', style: NText.small, color: const NColors(.onSurface, opacity: 0.65)),
-            ),
           if (_multiSelect)
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -299,7 +417,7 @@ class _LxSonglistDetailPageState extends State<LxSonglistDetailPage> {
                       }
                     }),
                   ),
-                  NamidaButton(text: '下载所选', dense: true, enabled: _selected.isNotEmpty && !_downloadingSelected, onTap: _downloadSelected),
+                  NamidaButton(text: '下载所选', dense: true, enabled: _canDownloadSelected, onTap: _downloadSelected),
                   NamidaButton(text: '取消', dense: true, onTap: _toggleMultiSelect),
                 ],
               ),
@@ -311,8 +429,8 @@ class _LxSonglistDetailPageState extends State<LxSonglistDetailPage> {
 
   Widget _buildTrack(int index) {
     final track = _tracks[index];
-    void download() => LxDownloadActions.downloadTracks([track], onOpenDownloads: _openDownloads);
-    void chooseQuality() => LxDownloadActions.downloadTracks([track], forceDialog: true, onOpenDownloads: _openDownloads);
+    void download() => LxDownloadActions.downloadTracks([track], subfolderName: _info.name, onOpenDownloads: _openDownloads);
+    void chooseQuality() => LxDownloadActions.downloadTracks([track], forceDialog: true, subfolderName: _info.name, onOpenDownloads: _openDownloads);
     return AnimatedBuilder(
       key: ValueKey(track.uniqueKey),
       animation: _trackChanges,

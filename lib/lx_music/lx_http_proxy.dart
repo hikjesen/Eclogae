@@ -14,6 +14,7 @@ class LxHttpProxy {
   }
 
   static const _userAgent = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+  static const _maxRedirects = 10;
 
   final _proxyController = NetworkProxyController.inst;
   final _activeTokens = <String, CancelToken>{};
@@ -21,7 +22,7 @@ class LxHttpProxy {
 
   Future<RhttpClient> _getClient() async {
     final pending = _client ??= RhttpClient.create(
-      settings: ClientSettings(proxySettings: _proxyController.rhttpProxySettings, throwOnStatusCode: false),
+      settings: ClientSettings(proxySettings: _proxyController.rhttpProxySettings, throwOnStatusCode: false, redirectSettings: const RedirectSettings.none()),
     );
     try {
       return await pending;
@@ -45,6 +46,12 @@ class LxHttpProxy {
     final body = _requestBody(options, contentType);
     final timeout = Duration(milliseconds: (options['timeout'] as num? ?? 15000).clamp(0, 60000).toInt());
     final binary = options['binary'] as bool? ?? false;
+    final maxRedirects = (options['follow_max'] as num?)?.toInt().clamp(0, _maxRedirects) ?? _maxRedirects;
+
+    var currentUrl = url;
+    var currentMethod = method;
+    final currentHeaders = Map<String, String>.from(headers);
+    var currentBody = body;
 
     final cancelToken = CancelToken();
     _activeTokens[requestKey] = cancelToken;
@@ -55,18 +62,43 @@ class LxHttpProxy {
     });
     try {
       final client = await _getClient();
-      final response = await client.request(
-        method: HttpMethod(method),
-        url: url,
-        headers: HttpHeaders.rawMap(headers),
-        body: body,
-        expectBody: binary ? HttpExpectBody.bytes : HttpExpectBody.text,
-        cancelToken: cancelToken,
-      );
+      HttpResponse response;
+      for (var redirects = 0; ; redirects++) {
+        response = await client.request(
+          method: HttpMethod(currentMethod),
+          url: currentUrl,
+          headers: HttpHeaders.rawMap(currentHeaders),
+          body: currentBody,
+          expectBody: binary ? HttpExpectBody.bytes : HttpExpectBody.text,
+          cancelToken: cancelToken,
+        );
+        final status = response.statusCode;
+        if (redirects == maxRedirects || !const {301, 302, 303, 307, 308}.contains(status)) break;
+
+        final location = response.headerMap.entries.where((entry) => entry.key.toLowerCase() == 'location').firstOrNull?.value.trim();
+        if (location == null || location.isEmpty) break;
+
+        final target = Uri.tryParse(location);
+        if (target == null) break;
+        final currentUri = Uri.parse(currentUrl);
+        final nextUri = currentUri.resolveUri(target);
+        if ((nextUri.scheme != 'http' && nextUri.scheme != 'https') || nextUri.host.isEmpty) break;
+
+        if (const {301, 302, 303}.contains(status) && currentMethod != 'GET' && currentMethod != 'HEAD') {
+          currentMethod = 'GET';
+          currentBody = null;
+          currentHeaders.removeWhere((name, _) => const {'content-type', 'content-length'}.contains(name.toLowerCase()));
+        }
+        if (currentUri.origin != nextUri.origin) {
+          currentHeaders.removeWhere((name, _) => const {'authorization', 'cookie'}.contains(name.toLowerCase()));
+        }
+        currentUrl = nextUri.toString();
+      }
       return {
         'statusCode': response.statusCode,
         'statusMessage': '',
         'headers': response.headerMap,
+        'url': currentUrl,
         'binary': binary,
         'body': binary ? base64Encode((response as HttpBytesResponse).body) : _decodeText((response as HttpTextResponse).body),
       };
