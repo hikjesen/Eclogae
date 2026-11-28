@@ -107,6 +107,7 @@ const binaryLyric = Buffer.concat([
 let kugouDownloads = 0
 let qqLyricRequests = 0
 let qqDetailRequests = 0
+const neteaseDetailCookies = []
 let kuwoNodeRequests = 0
 let kuwoDigest5Requests = 0
 let miguDetailRequests = 0
@@ -219,15 +220,33 @@ const fixture = createRuntime((url, options) => {
     case 'www2.kugou.kugou.com':
       assert.equal(pathname, '/yueku/v9/special/single/44-5-9999.html')
       return { statusCode: 200, body: `global.data = [];\nglobal = { name: "Kugou playlist", pic: "${cover}" };` }
-    case 'interface.music.163.com':
+    case 'interface.music.163.com': {
       assert.equal(pathname, '/eapi/batch')
       assert.equal(options.method, 'POST')
       assert.equal(options.headers['Content-Type'], 'application/x-www-form-urlencoded')
       assert.match(options.body, /^params=[A-F0-9]+$/)
-      return { statusCode: 200, body: { code: 200, result: { playlistCount: '50', playlists: [{
-        id: 33, creator: { nickname: 'NetEase author' }, name: 'NetEase playlist',
-        playCount: 125000000, coverImgUrl: cover, trackCount: 1, description: 'NetEase description',
-      }] } } }
+      const params = new URLSearchParams(options.body).get('params')
+      const decipher = createDecipheriv('aes-128-ecb', 'e82ckenh8dichen8', null)
+      const plaintext = decipher.update(params, 'hex', 'utf8') + decipher.final('utf8')
+      const [apiPath, payload] = plaintext.split('-36cd479b6b5-')
+      const headers = new Headers(options.headers)
+      if (apiPath === '/api/cloudsearch/pc') {
+        assert.equal(headers.has('cookie'), false)
+        return { statusCode: 200, body: { code: 200, result: { playlistCount: '50', playlists: [{
+          id: 33, creator: { nickname: 'NetEase author' }, name: 'NetEase playlist',
+          playCount: 125000000, coverImgUrl: cover, trackCount: 1, description: 'NetEase description',
+        }] } } }
+      }
+      assert.equal(apiPath, '/api/v3/playlist/detail')
+      assert.deepEqual(JSON.parse(payload), { id: '33', n: 100000, s: 8 })
+      neteaseDetailCookies.push(headers.get('cookie'))
+      return { statusCode: 200, body: { code: 200, playlist: {
+        trackIds: [{ id: 24 }],
+        tracks: [{ id: 24, name: 'NetEase track', ar: [{ name: 'NetEase singer' }], dt: 70000 }],
+        playCount: 125000000, name: 'NetEase playlist', coverImgUrl: cover,
+        creator: { nickname: 'NetEase author' }, description: null,
+      }, privileges: [{ id: 24, maxbr: 128000 }] } }
+    }
     case 'interface3.music.163.com':
       assert.equal(options.method, 'POST')
       assert.equal(options.headers['Content-Type'], 'application/x-www-form-urlencoded')
@@ -236,16 +255,6 @@ const fixture = createRuntime((url, options) => {
     case 'music.163.com': {
       const form = new URLSearchParams(options.body)
       assert.equal(options.headers['Content-Type'], 'application/x-www-form-urlencoded')
-      if (pathname === '/api/linux/forward') {
-        assert.equal(options.method, 'POST')
-        assert.match(form.get('eparams'), /^[A-F0-9]+$/)
-        return { statusCode: 200, body: { code: 200, playlist: {
-          trackIds: [{ id: 24 }],
-          tracks: [{ id: 24, name: 'NetEase track', ar: [{ name: 'NetEase singer' }], dt: 70000 }],
-          playCount: 125000000, name: 'NetEase playlist', coverImgUrl: cover,
-          creator: { nickname: 'NetEase author' }, description: null,
-        }, privileges: [{ id: 24, maxbr: 128000 }] } }
-      }
       assert.ok(form.get('params'))
       assert.match(form.get('encSecKey'), /^[0-9a-f]{256}$/)
       return { statusCode: 200, body: { code: 200, songs: [{ al: { picUrl: 'https://example.com/album.jpg' } }] } }
@@ -391,6 +400,8 @@ assert.deepEqual({ ...neteaseDetail, list: undefined }, {
   info: { name: 'NetEase playlist', img: cover, desc: '', author: 'NetEase author', play_count: '1.2亿' },
 })
 assert.equal(neteaseDetail.list[0].songmid, 24)
+assert.deepEqual(resultOf(await fixture.rpc('getSonglistDetail', { source: 'wy', id: '33###test-token' })), neteaseDetail)
+assert.deepEqual(neteaseDetailCookies, ['MUSIC_U=', 'MUSIC_U=test-token'])
 
 assert.deepEqual(resultOf(await fixture.rpc('getSonglistDetail', { source: 'kg', id: 'id_44' })), {
   list: [], page: 1, limit: 10000, total: 0, source: 'kg',

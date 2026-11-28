@@ -51,6 +51,48 @@ const sourceEdits = {
   ],
   // A short decimal representation otherwise produces an invalid AES-128 key.
   'musicSdk/wy/utils/crypto.js': [['String(Math.random()).substring(2, 18)', 'Math.random().toFixed(16).slice(2)']],
+  // LX Music Mobile v1.9.3 fetches NetEase playlist details through EAPI.
+  'musicSdk/wy/songList.js': [
+    ["import { weapi, linuxapi } from './utils/crypto'", "import { weapi } from './utils/crypto'"],
+    [`const requestObj_listDetail = httpFetch('https://music.163.com/api/linux/forward', {
+      method: 'post',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+        Cookie: this.cookie,
+      },
+      credentials: 'omit',
+      cache: 'default',
+      form: linuxapi({
+        method: 'POST',
+        url: 'https://music.163.com/api/v3/playlist/detail',
+        params: {
+          id,
+          n: this.limit_song,
+          s: 8,
+        },
+      }),
+    })`, `const requestObj_listDetail = eapiRequest('/api/v3/playlist/detail', {
+      id,
+      n: this.limit_song,
+      s: 8,
+    }, this.cookie)`],
+  ],
+  'musicSdk/wy/utils/index.js': [
+    [`export const eapiRequest = (url, data) => {
+  return httpFetch('http://interface.music.163.com/eapi/batch', {
+    method: 'post',
+    headers: {`, `export const eapiRequest = (url, data, cookie) => {
+  const headers = {`],
+    [`    },
+    form: eapi(url, data),`, `  }
+  if (cookie) headers.cookie = cookie
+  return httpFetch('http://interface.music.163.com/eapi/batch', {
+    method: 'post',
+    headers,
+    credentials: 'omit',
+    cache: 'default',
+    form: eapi(url, data),`],
+  ],
 }
 
 const result = await build({
